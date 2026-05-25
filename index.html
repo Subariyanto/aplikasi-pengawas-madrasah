@@ -12,8 +12,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .sidebar.closed{transform:translateX(-250px)}
 .sidebar-header{padding:16px;text-align:center;border-bottom:1px solid rgba(255,255,255,.15)}
 .sidebar-header h1{font-size:14px;margin-top:4px}
-.sidebar-header .emoji{font-size:28px}
-.menu-item{display:block;padding:10px 20px;cursor:pointer;transition:background .2s;font-size:13px;border:none;width:100%;text-align:left;color:#fff;background:none;text-decoration:none}
+.menu-item{display:block;padding:10px 20px;cursor:pointer;transition:background .2s;font-size:13px;border:none;width:100%;text-align:left;color:#fff;background:none}
 .menu-item:hover,.menu-item.active{background:rgba(255,255,255,.15)}
 .menu-item .icon{margin-right:8px}
 .menu-section{padding:8px 20px 4px;font-size:10px;text-transform:uppercase;opacity:.5;margin-top:8px}
@@ -38,6 +37,8 @@ tr:hover{background:#f9f9f9}
 .btn-warning{background:var(--warning);color:#fff}
 .btn-info{background:var(--info);color:#fff}
 .btn-sm{padding:4px 8px;font-size:11px}
+.btn-penggalian{background:#e8f5e9;color:var(--primary);border:1px solid var(--primary);padding:3px 6px;font-size:10px;border-radius:3px;cursor:pointer}
+.btn-penggalian:hover{background:var(--primary);color:#fff}
 .form-group{margin-bottom:12px}
 .form-group label{display:block;font-size:12px;font-weight:500;margin-bottom:4px}
 .form-group input,.form-group select,.form-group textarea{width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;font-size:13px}
@@ -54,6 +55,12 @@ tr:hover{background:#f9f9f9}
 .modal-overlay.show{display:flex}
 .modal{background:#fff;border-radius:8px;padding:24px;max-width:700px;width:92%;max-height:85vh;overflow-y:auto}
 .modal h3{color:var(--primary);margin-bottom:16px}
+#modalPenggalian{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:3000;justify-content:center;align-items:center}
+#modalPenggalian .modal-inner{background:#fff;border-radius:8px;padding:24px;max-width:600px;width:92%;max-height:80vh;overflow-y:auto}
+#modalPenggalian h3{color:var(--primary);margin-bottom:12px;font-size:14px}
+#modalPenggalian ul{margin:8px 0 8px 20px}
+#modalPenggalian li{margin-bottom:4px;font-size:12px}
+#modalPenggalian b{color:var(--primary-light)}
 .login-page{display:flex;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg,var(--primary),var(--accent))}
 .login-box{background:#fff;padding:40px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.2);width:90%;max-width:360px;text-align:center}
 .login-box h1{color:var(--primary);margin-bottom:4px;font-size:18px}
@@ -61,31 +68,39 @@ tr:hover{background:#f9f9f9}
 .login-box input{width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:10px;font-size:13px}
 .login-box button{width:100%;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer}
 .login-box .error{color:var(--danger);font-size:12px;margin-top:8px}
-.tab-bar{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto}
-.tab-item{padding:8px 16px;cursor:pointer;font-size:13px;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
-.tab-item.active{border-bottom-color:var(--primary);color:var(--primary);font-weight:500}
-.score-cell{width:50px;text-align:center}
-.score-cell input{width:40px;text-align:center;padding:4px;border:1px solid var(--border);border-radius:3px}
+.score-select{width:50px;text-align:center;padding:4px;border:1px solid var(--border);border-radius:3px;font-size:12px}
+.indikator-row{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0}
+.indikator-row:last-child{border-bottom:none}
+.indikator-num{width:30px;font-weight:bold;font-size:12px;color:var(--primary)}
+.indikator-text{flex:1;font-size:12px;padding-right:8px}
+.indikator-actions{display:flex;gap:4px;align-items:center}
 .quick-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .quick-link{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .2s}
 .quick-link:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .quick-link .ql-icon{font-size:24px;margin-bottom:6px}
 .quick-link .ql-label{font-size:11px;color:var(--text-light)}
-@media print{.sidebar,.topbar,.hamburger,.btn,.no-print{display:none!important}.main{margin-left:0!important;padding:10px!important}.card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid}}
+@media print{.sidebar,.topbar,.hamburger,.btn,.btn-penggalian,.no-print{display:none!important}.main{margin-left:0!important;padding:10px!important}.card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid}}
 @media(max-width:768px){.sidebar{transform:translateX(-250px)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.hamburger{display:block}.form-row{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div id="app"></div>
+<div id="modalPenggalian" onclick="if(event.target===this)closePenggalian()">
+<div class="modal-inner">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<h3 id="penggalianTitle">Penggalian Data</h3>
+<button class="btn btn-sm" onclick="closePenggalian()" style="background:#eee">✕</button>
+</div>
+<div id="penggalianContent"></div>
+</div>
+</div>
 <script>
 
-// ===== APP STATE & DATA =====
-const APP = {
-  currentPage: 'dashboard',
-  isLoggedIn: false
-};
+'use strict';
+// ===== APP STATE =====
+const APP = { currentPage:'dashboard', isLoggedIn:false };
 
-// Default madrasah data
+// ===== DEFAULT DATA =====
 const DEFAULT_MADRASAH = [
   {id:1,nama:"MA Al-Hidayah",nsm:"131235090001",alamat:"Sukowono",kamad:"H. Ahmad Fauzi, S.Pd.I",akreditasi:"B",status:"Aktif"},
   {id:2,nama:"MA Miftahul Ulum",nsm:"131235090002",alamat:"Sukowono",kamad:"Drs. Muhammad Hasan",akreditasi:"B",status:"Aktif"},
@@ -109,1307 +124,735 @@ const DEFAULT_MADRASAH = [
   {id:20,nama:"MA Darussalam",nsm:"131235090020",alamat:"Sukowono",kamad:"H. Moh. Basri, S.Pd.I",akreditasi:"A",status:"Aktif"}
 ];
 
-// PKG Kompetensi (14 kompetensi, skor 0-1-2)
-const PKG_KOMPETENSI = [
-  {id:1,nama:"Mengenal karakteristik peserta didik",kategori:"PEDAGOGIK",indikator:["Guru dapat mengidentifikasi karakteristik belajar setiap peserta didik di kelasnya","Guru memastikan semua peserta didik mendapat kesempatan berpartisipasi aktif","Guru mencoba mengetahui penyebab penyimpangan perilaku peserta didik","Guru memahami minat, bakat, kebutuhan peserta didik untuk pembelajaran mendalam"]},
-  {id:2,nama:"Menguasai teori belajar dan prinsip pembelajaran",kategori:"PEDAGOGIK",indikator:["Guru memberi kesempatan peserta didik menguasai materi sesuai usia dan kemampuan","Guru memastikan tingkat pemahaman peserta didik dan menyesuaikan aktivitas","Guru menjelaskan alasan pelaksanaan kegiatan terkait keberhasilan pembelajaran","Guru menggunakan berbagai teknik untuk memotivasi kemauan belajar","Guru merencanakan kegiatan pembelajaran yang saling terkait","Guru memperhatikan respon peserta didik yang belum memahami materi"]},
-  {id:3,nama:"Pengembangan kurikulum",kategori:"PEDAGOGIK",indikator:["Guru menyusun silabus yang sesuai dengan kurikulum","Guru merancang RPP sesuai silabus untuk mencapai kompetensi dasar","Guru mengembangkan materi pembelajaran untuk mencapai kompetensi dasar","Guru mengikuti urutan materi dengan memperhatikan tujuan pembelajaran","Guru memilih materi yang sesuai, tepat, mutakhir, dan kontekstual","Guru mengintegrasikan Kurikulum Berbasis Cinta dengan nilai kasih sayang"]},
-  {id:4,nama:"Kegiatan Pembelajaran yang Mendidik",kategori:"PEDAGOGIK",indikator:["Guru melaksanakan aktivitas pembelajaran sesuai rancangan","Guru melaksanakan aktivitas untuk membantu proses belajar, bukan menguji","Guru menyikapi kesalahan peserta didik sebagai tahapan proses pembelajaran","Guru melaksanakan pembelajaran sesuai kurikulum dan konteks kehidupan","Guru melakukan aktivitas bervariasi dengan mempertimbangkan kondisi","Guru mengelola kelas dengan efektif tanpa mendominasi","Guru memberi kesempatan peserta didik bertanya dan berinteraksi","Guru mengatur pelaksanaan aktivitas secara sistematis","Guru menggunakan alat bantu mengajar dan TIK","Guru menerapkan strategi deep learning yang melatih berpikir kritis"]},
-  {id:5,nama:"Memahami dan mengembangkan potensi",kategori:"PEDAGOGIK",indikator:["Guru menganalisis hasil belajar untuk mengetahui tingkat kemajuan","Guru merancang aktivitas yang mendorong belajar sesuai kecakapan masing-masing","Guru merancang aktivitas untuk memunculkan kreativitas dan berpikir kritis","Guru secara aktif membantu peserta didik dengan perhatian kepada setiap individu","Guru mengidentifikasi bakat, minat, potensi, dan kesulitan belajar","Guru memberikan kesempatan belajar sesuai cara belajar masing-masing"]},
-  {id:6,nama:"Komunikasi dengan peserta didik",kategori:"PEDAGOGIK",indikator:["Guru menggunakan pertanyaan untuk mengetahui pemahaman dan menjaga partisipasi","Guru memberikan perhatian dan mendengarkan semua pertanyaan tanpa menginterupsi","Guru menanggapi pertanyaan secara tepat, benar, dan mutakhir","Guru menyajikan kegiatan yang menumbuhkan kerja sama antar peserta didik","Guru mendengarkan dan memberikan perhatian terhadap semua jawaban"]},
-  {id:7,nama:"Penilaian dan evaluasi",kategori:"PEDAGOGIK",indikator:["Guru menyusun alat penilaian sesuai tujuan pembelajaran","Guru melaksanakan penilaian dengan berbagai teknik dan jenis","Guru menganalisis hasil penilaian untuk identifikasi kekuatan dan kelemahan","Guru mengintegrasikan materi dengan konsep Al-Quran dan Hadits","Guru memanfaatkan hasil penilaian untuk perbaikan pembelajaran"]},
-  {id:8,nama:"Bertindak sesuai norma agama, hukum, sosial dan kebudayaan",kategori:"KEPRIBADIAN",indikator:["Guru bertingkah laku sopan dalam berbicara, berpenampilan dan berbuat","Guru mau berbagi pengalaman dengan kolega termasuk mengundang untuk observasi","Guru mampu mengelola pembelajaran yang membuktikan penghargaan terhadap peserta didik"]},
-  {id:9,nama:"Menunjukkan pribadi yang dewasa dan teladan",kategori:"KEPRIBADIAN",indikator:["Guru bertingkah laku sopan dalam berbicara, berpenampilan dan berbuat","Guru mau berbagi pengalaman dengan kolega","Guru mampu mengelola pembelajaran yang membuktikan penghargaan","Guru bersikap dewasa dalam menerima masukan dari peserta didik dan kolega","Guru berperilaku baik untuk mencitrakan nama baik madrasah"]},
-  {id:10,nama:"Etos kerja, tanggung jawab yang tinggi, dan rasa bangga menjadi guru",kategori:"KEPRIBADIAN",indikator:["Guru mengawali dan mengakhiri pembelajaran dengan tepat waktu","Guru mengelola kelas agar peserta didik memanfaatkan waktu secara produktif","Guru mampu membuktikan keberhasilan peserta didik dalam pembelajaran","Guru memprioritaskan tugas utama di atas tugas lain","Guru hadir di madrasah sesuai jadwal yang ditentukan","Guru memenuhi jam mengajar dan melaksanakan tugas lainnya","Guru melaksanakan tugas tambahan yang diberikan madrasah","Guru menunjukkan dedikasi tinggi terhadap profesi guru"]},
-  {id:11,nama:"Bersikap inklusif, bertindak objektif, serta tidak diskriminatif",kategori:"SOSIAL",indikator:["Guru memperlakukan semua peserta didik secara adil dan setara","Guru menjaga hubungan baik dan peduli dengan teman sejawat","Guru sering berinteraksi dengan peserta didik tanpa membedakan","Guru mengelola kelas tanpa diskriminasi"]},
-  {id:12,nama:"Komunikasi dengan sesama guru, tenaga pendidikan, orang tua, dan masyarakat",kategori:"SOSIAL",indikator:["Guru menyampaikan informasi tentang kemajuan peserta didik kepada orang tua","Guru turut serta dalam kegiatan kemasyarakatan","Guru berperan aktif dalam kegiatan di luar pembelajaran yang diselenggarakan madrasah"]},
-  {id:13,nama:"Penguasaan materi struktur konsep dan pola pikir keilmuan",kategori:"PROFESIONAL",indikator:["Guru menyusun materi yang berisi informasi tepat dan mutakhir","Guru melakukan pemetaan standar kompetensi dan kompetensi dasar","Guru mengintegrasikan materi dengan konsep Al-Quran dan Hadits","Guru menyertakan informasi yang tepat dan mutakhir di dalam perencanaan"]},
-  {id:14,nama:"Mengembangkan keprofesian melalui tindakan reflektif",kategori:"PROFESIONAL",indikator:["Guru melakukan evaluasi diri secara spesifik dan lengkap","Guru memiliki jurnal pembelajaran sebagai bukti kinerja","Guru memanfaatkan bukti kinerja untuk mengembangkan perencanaan","Guru dapat mengaplikasikan pengalaman PKB dalam pembelajaran","Guru melakukan penelitian dan mengembangkan karya inovasi","Guru memanfaatkan TIK dalam berkomunikasi dan pelaksanaan PKB","Guru aktif mengikuti kegiatan ilmiah dan melaksanakan PKB"]}
-];
-
-// PKKM Komponen
-const PKKM_KOMPONEN = [
-  {id:"A",nama:"Usaha Pengembangan Madrasah",unsur:[
-    {kode:"1.1",nama:"Mengembangkan madrasah sesuai kebutuhan",indikator:["Mengembangkan struktur organisasi sesuai kebutuhan program","Menempatkan personalia sesuai kebutuhan","Mengembangkan pedoman dan prosedur kerja organisasi"]},
-    {kode:"1.2",nama:"Mengelola perubahan dan pengembangan madrasah",indikator:["Mengembangkan program baru untuk target lebih tinggi","Membangun tim kerja yang efektif","Menerapkan teknik pembaharuan dalam pengelolaan pembelajaran","Mengembangkan potensi dan meningkatkan prestasi madrasah"]},
-    {kode:"1.3",nama:"Mengelola hubungan madrasah dan masyarakat",indikator:["Merencanakan kerjasama dengan lembaga pemerintah/swasta/masyarakat","Melakukan pendekatan untuk mendapatkan dukungan","Memanfaatkan dan memelihara hubungan kerjasama"]},
-    {kode:"1.4",nama:"Mengelola pencapaian 8 SNP",indikator:["Mengaplikasikan pengembangan kurikulum (standar isi)","Mengaplikasikan pengembangan proses pembelajaran","Mengaplikasikan sistem penilaian pembelajaran","Melaksanakan penjaminan mutu pencapaian SKL"]},
-    {kode:"1.5",nama:"Mengelola unit layanan khusus madrasah",indikator:["Mengelola laboratorium secara optimal","Mengelola perpustakaan untuk sumber belajar","Mengelola usaha madrasah untuk pembelajaran","Mengelola koperasi madrasah"]},
-    {kode:"1.6",nama:"Mengelola sistem informasi madrasah",indikator:["Memanfaatkan TIK dalam manajemen madrasah","Memanfaatkan TIK dalam pembelajaran","Memanfaatkan TIK dalam menjalin kerjasama","Memanfaatkan TIK dalam promosi program madrasah"]},
-    {kode:"1.7",nama:"Memanfaatkan kemajuan teknologi informasi",indikator:["Mengembangkan sistem administrasi dengan TIK","Mengelola administrasi pembelajaran dengan TIK","Mengembangkan sistem pengelolaan perpustakaan dengan TIK"]}
+// ===== INSTRUMEN SUPERVISI MANAJERIAL (8 SNP, skor 1-4) =====
+const INSTRUMEN_MANAJERIAL = [
+  {nama:"Standar Kompetensi Lulusan",indikator:["Lulusan memiliki kompetensi sikap spiritual dan sosial","Lulusan memiliki kompetensi pengetahuan yang memadai","Lulusan memiliki kompetensi keterampilan yang memadai","Lulusan memiliki karakter sesuai profil pelajar Pancasila","Lulusan mampu bersaing di jenjang pendidikan selanjutnya"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Dokumen SKL yang ditetapkan madrasah</li><li>Data kelulusan 3 tahun terakhir</li><li>Prestasi akademik dan non-akademik lulusan</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana madrasah memastikan lulusan memiliki kompetensi sikap spiritual?</li><li>Program apa yang mendukung pembentukan karakter?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Hasil ujian/asesmen nasional</li><li>Rata-rata nilai rapor</li><li>Data penerimaan lulusan di jenjang berikutnya</li></ul><b>Melalui wawancara:</b><ul><li>Strategi apa yang dilakukan untuk meningkatkan kompetensi pengetahuan?</li><li>Bagaimana hasil evaluasi digunakan untuk perbaikan?</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Kegiatan praktik/keterampilan peserta didik</li><li>Hasil karya peserta didik</li></ul><b>Melalui telaah dokumen:</b><ul><li>Portofolio keterampilan peserta didik</li><li>Sertifikat keahlian/keterampilan</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Pembiasaan karakter di lingkungan madrasah</li><li>Kegiatan penguatan profil pelajar Pancasila</li></ul><b>Melalui telaah dokumen:</b><ul><li>Program penguatan karakter</li><li>Rapor karakter/sikap peserta didik</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Data penerimaan lulusan di PT/dunia kerja</li><li>Prestasi lomba tingkat kabupaten/provinsi/nasional</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana madrasah mempersiapkan daya saing lulusan?</li><li>Program bimbingan karir apa yang tersedia?</li></ul>'
   ]},
-  {id:"B",nama:"Pelaksanaan Tugas Manajerial",unsur:[
-    {kode:"2.1",nama:"Menyusun perencanaan madrasah",indikator:["Mengembangkan RKJM, RKT/RKAM berdasarkan evaluasi 8 SNP","Merumuskan visi-misi sebagai arah pengembangan","Menentukan strategi pencapaian tujuan yang terukur","Menyusun program dengan rencana evaluasi"]},
-    {kode:"2.2",nama:"Memimpin pendayagunaan sumber daya",indikator:["Memberi contoh berdisiplin dan tepat waktu","Melaksanakan peraturan sesuai ketentuan","Menunjukkan keteladanan memanfaatkan sumber daya","Menunjukkan kedisiplinan sebagai insan pembelajar"]},
-    {kode:"2.3",nama:"Menciptakan budaya dan iklim madrasah kondusif",indikator:["Menjadi contoh berbudaya mutu yang kompetitif","Melengkapi sarana prasarana untuk suasana belajar kondusif","Memfasilitasi kegiatan budaya baca dan tulis","Memfasilitasi kegiatan lomba akademik dan nonakademik"]},
-    {kode:"2.4",nama:"Mengelola guru dan staf",indikator:["Menyusun perencanaan pengembangan pendidik dan tenaga kependidikan","Melaksanakan pembinaan secara berkala","Mengelola penempatan dan penugasan sesuai kompetensi","Memfasilitasi pengembangan profesi berkelanjutan"]},
-    {kode:"2.5",nama:"Mengelola sarana dan prasarana",indikator:["Merencanakan kebutuhan fasilitas madrasah","Mengelola pengadaan fasilitas sesuai kebutuhan","Mengelola pemeliharaan fasilitas","Mengelola kegiatan inventaris sarana dan prasarana"]},
-    {kode:"2.6",nama:"Mengelola peserta didik (PPDB sampai kelulusan)",indikator:["Mengelola penerimaan peserta didik baru","Mengelola pengembangan kapasitas peserta didik","Mengelola layanan bimbingan dan konseling","Memantau perkembangan akademik peserta didik"]},
-    {kode:"2.7",nama:"Mengelola pengembangan kurikulum dan pembelajaran",indikator:["Memfasilitasi pengembangan kurikulum tingkat satuan pendidikan","Memfasilitasi guru dalam mengembangkan RPP","Memfasilitasi guru dalam melaksanakan pembelajaran aktif","Memfasilitasi guru dalam melaksanakan penilaian autentik"]},
-    {kode:"2.8",nama:"Mengelola keuangan madrasah",indikator:["Menyusun RKAS sesuai ketentuan","Mengelola keuangan secara transparan dan akuntabel","Melaporkan penggunaan keuangan secara berkala","Melaksanakan pengelolaan keuangan sesuai prinsip efisiensi"]}
+  {nama:"Standar Isi",indikator:["Kurikulum disusun sesuai ketentuan yang berlaku","Muatan lokal dikembangkan sesuai kebutuhan daerah","Beban belajar peserta didik sesuai ketentuan","Kalender pendidikan disusun sesuai kebutuhan","Silabus/ATP dikembangkan berdasarkan standar"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Dokumen KTSP/Kurikulum Operasional Madrasah</li><li>SK penetapan kurikulum</li><li>Notulen rapat penyusunan kurikulum</li></ul><b>Melalui wawancara:</b><ul><li>Siapa saja yang terlibat dalam penyusunan kurikulum?</li><li>Bagaimana proses review dan revisi kurikulum?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Dokumen muatan lokal yang dikembangkan</li><li>SK muatan lokal</li></ul><b>Melalui wawancara:</b><ul><li>Apa dasar pemilihan muatan lokal?</li><li>Bagaimana relevansi muatan lokal dengan kebutuhan daerah?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Struktur kurikulum dan alokasi waktu</li><li>Jadwal pelajaran</li></ul><b>Melalui wawancara:</b><ul><li>Apakah beban belajar sudah sesuai dengan ketentuan?</li><li>Bagaimana pengaturan jam belajar tambahan?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Kalender pendidikan madrasah</li><li>Program semester dan tahunan</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana penyusunan kalender pendidikan?</li><li>Apakah ada penyesuaian dengan kalender Kemenag?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Silabus/ATP semua mata pelajaran</li><li>Dokumen analisis CP/KD</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana guru mengembangkan silabus/ATP?</li><li>Apakah ada supervisi terhadap pengembangan silabus?</li></ul>'
   ]},
-  {id:"C",nama:"Pengembangan Kewirausahaan",unsur:[
-    {kode:"3.1",nama:"Menciptakan inovasi untuk pengembangan madrasah",indikator:["Menciptakan inovasi yang berguna bagi pengembangan madrasah","Bekerja keras untuk mencapai keberhasilan madrasah","Memiliki motivasi kuat untuk sukses dalam tugas pokok dan fungsi"]},
-    {kode:"3.2",nama:"Bekerja keras untuk mencapai keberhasilan",indikator:["Pantang menyerah dan selalu mencari solusi terbaik","Memiliki naluri kewirausahaan dalam mengelola kegiatan madrasah","Kreatif dan inovatif dalam menjalankan tugas"]},
-    {kode:"3.3",nama:"Memiliki motivasi kuat untuk sukses",indikator:["Menunjukkan rasa keingintahuan yang tinggi","Bertindak produktif dan berorientasi pada hasil","Memiliki kemampuan untuk melihat peluang pengembangan"]}
+  {nama:"Standar Proses",indikator:["RPP/Modul Ajar disusun lengkap dan sistematis","Pembelajaran dilaksanakan secara interaktif dan inspiratif","Pembelajaran menggunakan metode yang bervariasi","Sumber belajar dimanfaatkan secara optimal","Penilaian proses dilakukan selama pembelajaran"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>RPP/Modul Ajar guru (sampel 3-5 guru)</li><li>Kelengkapan komponen RPP</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana proses penyusunan RPP?</li><li>Apakah RPP direview oleh kepala madrasah?</li></ul>',
+    '<b>Melalui pengamatan pembelajaran:</b><ul><li>Guru membuka dengan apersepsi yang menarik</li><li>Peserta didik aktif bertanya dan berdiskusi</li><li>Suasana kelas hidup dan menyenangkan</li></ul><b>Melalui wawancara murid:</b><ul><li>Apakah pembelajaran menyenangkan?</li><li>Apakah guru memberi kesempatan bertanya?</li></ul>',
+    '<b>Melalui pengamatan pembelajaran:</b><ul><li>Variasi metode: ceramah, diskusi, praktik, proyek</li><li>Penggunaan model pembelajaran aktif</li></ul><b>Melalui telaah dokumen:</b><ul><li>RPP memuat metode yang bervariasi</li><li>Catatan supervisi akademik</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Penggunaan buku, media digital, alat peraga</li><li>Pemanfaatan perpustakaan dan laboratorium</li></ul><b>Melalui telaah dokumen:</b><ul><li>Daftar sumber belajar yang digunakan</li><li>Jadwal penggunaan lab/perpustakaan</li></ul>',
+    '<b>Melalui pengamatan pembelajaran:</b><ul><li>Guru melakukan asesmen formatif (tanya jawab, kuis, observasi)</li><li>Guru memberikan umpan balik langsung</li></ul><b>Melalui telaah dokumen:</b><ul><li>Instrumen penilaian proses</li><li>Catatan penilaian harian guru</li></ul>'
   ]},
-  {id:"D",nama:"Supervisi Kepada Guru dan Tenaga Kependidikan",unsur:[
-    {kode:"4.1",nama:"Merencanakan program supervisi akademik",indikator:["Menyusun program supervisi akademik","Menentukan pendekatan dan teknik supervisi yang tepat","Menyusun jadwal supervisi akademik","Menyiapkan instrumen supervisi"]},
-    {kode:"4.2",nama:"Melaksanakan supervisi akademik",indikator:["Melaksanakan supervisi akademik terhadap guru","Memberikan umpan balik hasil supervisi","Membina guru dalam meningkatkan kualitas pembelajaran","Memfasilitasi guru dalam mengatasi permasalahan pembelajaran"]},
-    {kode:"4.3",nama:"Menindaklanjuti hasil supervisi akademik",indikator:["Menganalisis hasil supervisi akademik","Menyusun rencana tindak lanjut","Melaksanakan tindak lanjut hasil supervisi","Melaporkan hasil supervisi dan tindak lanjutnya"]}
+  {nama:"Standar Penilaian",indikator:["Penilaian dilakukan secara objektif dan transparan","Instrumen penilaian disusun sesuai kompetensi","Hasil penilaian digunakan untuk perbaikan pembelajaran","Laporan hasil belajar disampaikan tepat waktu","Penilaian mencakup sikap, pengetahuan, dan keterampilan"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Pedoman penilaian madrasah</li><li>Rubrik penilaian</li><li>Bukti sosialisasi kriteria penilaian ke peserta didik</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana peserta didik mengetahui kriteria penilaian?</li><li>Apakah ada mekanisme keberatan nilai?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Kisi-kisi soal</li><li>Bank soal</li><li>Instrumen penilaian sikap dan keterampilan</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana guru menyusun instrumen penilaian?</li><li>Apakah ada analisis butir soal?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Program remedial dan pengayaan</li><li>Analisis hasil penilaian</li><li>Tindak lanjut hasil penilaian</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana hasil penilaian digunakan untuk perbaikan?</li><li>Program remedial apa yang dilaksanakan?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Jadwal pembagian rapor</li><li>Bukti penyerahan rapor</li></ul><b>Melalui wawancara:</b><ul><li>Apakah rapor dibagikan tepat waktu?</li><li>Bagaimana komunikasi hasil belajar ke orang tua?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Rapor yang memuat nilai sikap, pengetahuan, keterampilan</li><li>Instrumen penilaian ketiga aspek</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana penilaian sikap dilakukan?</li><li>Teknik apa yang digunakan untuk menilai keterampilan?</li></ul>'
+  ]},
+  {nama:"Standar Pendidik dan Tenaga Kependidikan",indikator:["Guru memiliki kualifikasi akademik yang sesuai","Guru memiliki kompetensi pedagogik yang memadai","Tenaga kependidikan memiliki kualifikasi yang sesuai","Pengembangan profesi guru dilaksanakan berkelanjutan","Rasio guru dan peserta didik sesuai ketentuan"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Data kualifikasi akademik guru (ijazah)</li><li>Sertifikat pendidik</li><li>Data guru yang sedang studi lanjut</li></ul><b>Melalui wawancara:</b><ul><li>Berapa persen guru yang sudah S1/S2?</li><li>Apakah ada guru yang mengajar tidak sesuai kualifikasi?</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Kemampuan guru mengelola kelas</li><li>Penguasaan metode pembelajaran</li></ul><b>Melalui telaah dokumen:</b><ul><li>Hasil PKG/supervisi akademik</li><li>Sertifikat pelatihan pedagogik</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Data kualifikasi tenaga kependidikan</li><li>Uraian tugas tenaga kependidikan</li></ul><b>Melalui wawancara:</b><ul><li>Apakah tenaga administrasi memiliki kompetensi yang memadai?</li><li>Pelatihan apa yang pernah diikuti?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Program PKB madrasah</li><li>Sertifikat diklat/workshop guru</li><li>Kegiatan KKG/MGMP internal</li></ul><b>Melalui wawancara:</b><ul><li>Kegiatan pengembangan profesi apa yang rutin dilakukan?</li><li>Bagaimana madrasah memfasilitasi PKB guru?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Data jumlah guru dan peserta didik</li><li>Pembagian tugas mengajar</li></ul><b>Melalui wawancara:</b><ul><li>Apakah ada kekurangan guru pada mapel tertentu?</li><li>Bagaimana solusi jika rasio tidak ideal?</li></ul>'
+  ]},
+  {nama:"Standar Sarana dan Prasarana",indikator:["Lahan madrasah memenuhi ketentuan luas minimum","Bangunan gedung memenuhi persyaratan keselamatan","Ruang kelas memenuhi standar kelayakan","Perpustakaan memiliki koleksi yang memadai","Laboratorium/ruang praktik tersedia dan berfungsi"],
+  penggalian:[
+    '<b>Melalui pengamatan:</b><ul><li>Luas lahan dan pemanfaatannya</li><li>Kondisi lingkungan madrasah</li></ul><b>Melalui telaah dokumen:</b><ul><li>Sertifikat tanah/bukti kepemilikan</li><li>Denah madrasah</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Kondisi fisik bangunan</li><li>Ketersediaan jalur evakuasi, APAR</li><li>Ventilasi dan pencahayaan</li></ul><b>Melalui telaah dokumen:</b><ul><li>IMB/PBG</li><li>Hasil pemeriksaan kelayakan bangunan</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Ukuran ruang kelas</li><li>Kelengkapan meja, kursi, papan tulis</li><li>Kebersihan dan kenyamanan</li></ul><b>Melalui telaah dokumen:</b><ul><li>Data inventaris ruang kelas</li><li>Rasio ruang kelas dan rombel</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Kondisi perpustakaan</li><li>Jumlah dan variasi koleksi buku</li></ul><b>Melalui telaah dokumen:</b><ul><li>Katalog buku perpustakaan</li><li>Data kunjungan perpustakaan</li><li>Program literasi</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Ketersediaan lab IPA/komputer/bahasa</li><li>Kondisi dan kelengkapan alat</li></ul><b>Melalui telaah dokumen:</b><ul><li>Jadwal penggunaan laboratorium</li><li>Inventaris alat lab</li><li>SOP penggunaan lab</li></ul>'
+  ]},
+  {nama:"Standar Pengelolaan",indikator:["Visi, misi, dan tujuan madrasah dirumuskan dengan jelas","RKM dan RKAS disusun secara partisipatif","Struktur organisasi dan pembagian tugas jelas","Sistem informasi manajemen berfungsi dengan baik","Pengawasan dan evaluasi dilakukan secara berkala"],
+  penggalian:[
+    '<b>Melalui pengamatan:</b><ul><li>Visi-misi terpampang dan tersosialisasi</li></ul><b>Melalui telaah dokumen:</b><ul><li>Dokumen visi, misi, tujuan madrasah</li><li>Notulen rapat perumusan visi-misi</li></ul><b>Melalui wawancara:</b><ul><li>Apakah warga madrasah memahami visi-misi?</li><li>Bagaimana visi-misi diterjemahkan dalam program?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Dokumen RKM/RKT/RKAS</li><li>Notulen rapat penyusunan</li><li>Daftar hadir stakeholder</li></ul><b>Melalui wawancara:</b><ul><li>Siapa saja yang terlibat dalam penyusunan RKAS?</li><li>Bagaimana aspirasi guru dan komite ditampung?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>SK struktur organisasi</li><li>Uraian tugas (job description)</li><li>SK pembagian tugas mengajar</li></ul><b>Melalui wawancara:</b><ul><li>Apakah pembagian tugas sudah jelas dan merata?</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Penggunaan aplikasi/sistem informasi</li><li>Website/media sosial madrasah</li></ul><b>Melalui telaah dokumen:</b><ul><li>Data EMIS/Simpatika yang terupdate</li><li>Laporan berbasis data</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Program supervisi internal</li><li>Laporan EDS (Evaluasi Diri Sekolah)</li><li>Tindak lanjut hasil evaluasi</li></ul><b>Melalui wawancara:</b><ul><li>Seberapa rutin evaluasi internal dilakukan?</li><li>Bagaimana tindak lanjut hasil evaluasi?</li></ul>'
+  ]},
+  {nama:"Standar Pembiayaan",indikator:["Sumber pembiayaan madrasah teridentifikasi dengan jelas","RKAS disusun secara transparan dan akuntabel","Pengelolaan keuangan dilakukan sesuai prosedur","Pelaporan keuangan dilakukan secara berkala","Pembiayaan operasional mencukupi kebutuhan minimal"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Dokumen sumber dana (BOS, DIPA, donatur, dll)</li><li>Rencana pendapatan madrasah</li></ul><b>Melalui wawancara:</b><ul><li>Dari mana saja sumber pembiayaan madrasah?</li><li>Apakah ada upaya diversifikasi sumber dana?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Dokumen RKAS yang disahkan</li><li>Notulen rapat penyusunan RKAS</li><li>Bukti sosialisasi RKAS</li></ul><b>Melalui wawancara:</b><ul><li>Apakah RKAS disosialisasikan ke warga madrasah?</li><li>Bagaimana mekanisme penyusunan RKAS?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Buku kas umum</li><li>Bukti transaksi (kuitansi, nota)</li><li>SOP pengelolaan keuangan</li></ul><b>Melalui wawancara:</b><ul><li>Siapa yang bertanggung jawab mengelola keuangan?</li><li>Bagaimana mekanisme pencairan dan pertanggungjawaban?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Laporan keuangan bulanan/triwulanan</li><li>Laporan BOS</li><li>Hasil audit internal/eksternal</li></ul><b>Melalui wawancara:</b><ul><li>Kapan laporan keuangan disusun?</li><li>Kepada siapa laporan disampaikan?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Realisasi anggaran vs kebutuhan</li><li>Data kebutuhan operasional</li></ul><b>Melalui wawancara:</b><ul><li>Apakah dana operasional mencukupi?</li><li>Bagaimana prioritas penggunaan dana yang terbatas?</li></ul>'
   ]}
 ];
 
-// ===== STORAGE HELPERS =====
-function getData(key, def) { try { return JSON.parse(localStorage.getItem(key)) || def; } catch(e) { return def; } }
-function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
-function getMadrasah() { return getData('madrasah', DEFAULT_MADRASAH); }
-function saveMadrasah(d) { setData('madrasah', d); }
-function getProfil() { return getData('profil', {nama:'Subariyanto, S.Pd.I',nip:'197012051998031002',pangkat:'Pembina / IV.a',wilayah:'KKMA 04 Jember (Kec. Sukowono)'}); }
-function saveProfil(d) { setData('profil', d); }
-function getSupervisiManajerial() { return getData('supervisi_manajerial', []); }
-function saveSupervisiManajerial(d) { setData('supervisi_manajerial', d); }
-function getPKG() { return getData('pkg_data', []); }
-function savePKG(d) { setData('pkg_data', d); }
-function getPKKM() { return getData('pkkm_data', []); }
-function savePKKM(d) { setData('pkkm_data', d); }
-function getSekolahModel() { return getData('sekolah_model', []); }
-function saveSekolahModel(d) { setData('sekolah_model', d); }
-function getRencanaKerja() { return getData('rencana_kerja', []); }
-function saveRencanaKerja(d) { setData('rencana_kerja', d); }
-function getPassword() { return getData('app_password', 'admin123'); }
-function setPassword(p) { setData('app_password', p); }
-function today() { return new Date().toISOString().split('T')[0]; }
 
-// ===== PREDIKAT HELPERS =====
-function getPredikat(persen) {
-  if(persen >= 85) return {label:'Amat Baik',cls:'badge-success'};
-  if(persen >= 70) return {label:'Baik',cls:'badge-info'};
-  if(persen >= 50) return {label:'Cukup',cls:'badge-warning'};
-  return {label:'Kurang',cls:'badge-danger'};
+// ===== PKG INSTRUMEN (14 kompetensi, skor 1-4 + penggalian data) =====
+const INSTRUMEN_PKG = [
+  {nama:"Mengenal karakteristik peserta didik",kategori:"PEDAGOGIK",indikator:["Guru mengidentifikasi karakteristik belajar setiap peserta didik","Guru memastikan semua peserta didik berpartisipasi aktif","Guru mengetahui penyebab penyimpangan perilaku peserta didik","Guru memahami minat, bakat, dan kebutuhan peserta didik"],
+  penggalian:[
+    '<b>Melalui pengamatan:</b><ul><li>Guru memberikan tugas/aktivitas yang berbeda sesuai kemampuan peserta didik</li><li>Guru mengelompokkan peserta didik berdasarkan karakteristik belajar</li></ul><b>Melalui telaah dokumen:</b><ul><li>Catatan anekdot peserta didik</li><li>Data hasil asesmen diagnostik</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Semua peserta didik diberi kesempatan menjawab/bertanya</li><li>Guru memperhatikan peserta didik yang pasif</li></ul><b>Melalui wawancara murid:</b><ul><li>Apakah guru memberi kesempatan semua siswa untuk aktif?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Catatan bimbingan/konseling</li><li>Buku kasus peserta didik</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana guru menangani peserta didik bermasalah?</li><li>Apakah ada koordinasi dengan BK/wali kelas?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Data bakat dan minat peserta didik</li><li>Hasil asesmen diagnostik</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana guru mengidentifikasi bakat/minat?</li><li>Program apa untuk mengembangkan potensi peserta didik?</li></ul>'
+  ]},
+  {nama:"Menguasai teori belajar dan prinsip pembelajaran",kategori:"PEDAGOGIK",indikator:["Guru memberi kesempatan menguasai materi sesuai kemampuan","Guru memastikan tingkat pemahaman dan menyesuaikan aktivitas","Guru menjelaskan alasan pelaksanaan kegiatan","Guru menggunakan teknik memotivasi belajar","Guru merencanakan kegiatan yang saling terkait","Guru memperhatikan respon peserta didik yang belum paham"],
+  penggalian:[
+    '<b>Melalui pengamatan:</b><ul><li>Guru memberikan waktu yang cukup untuk memahami materi</li><li>Aktivitas bervariasi sesuai tingkat kemampuan</li></ul><b>Melalui telaah dokumen:</b><ul><li>RPP yang memuat diferensiasi</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru melakukan pengecekan pemahaman (formative check)</li><li>Guru menyesuaikan kecepatan/metode berdasarkan respon</li></ul>',
+    '<b>Melalui wawancara guru:</b><ul><li>Mengapa memilih metode/aktivitas tersebut?</li><li>Apa pertimbangan jika berbeda dari rencana?</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru menggunakan reward, pujian, tantangan</li><li>Suasana kelas antusias dan termotivasi</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>RPP menunjukkan keterkaitan antar pertemuan</li><li>Alur pembelajaran yang sistematis</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru mengulang penjelasan dengan cara berbeda</li><li>Guru mendekati peserta didik yang kesulitan</li></ul>'
+  ]},
+  {nama:"Pengembangan kurikulum",kategori:"PEDAGOGIK",indikator:["Guru menyusun silabus/ATP sesuai kurikulum","Guru merancang RPP/Modul Ajar untuk mencapai kompetensi","Guru mengembangkan materi pembelajaran","Guru mengikuti urutan materi sesuai tujuan","Guru memilih materi yang sesuai dan kontekstual","Guru mengintegrasikan nilai-nilai Islam dalam pembelajaran"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Silabus/ATP yang disusun guru</li><li>Kesesuaian dengan kurikulum yang berlaku</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>RPP/Modul Ajar lengkap</li><li>Kesesuaian dengan silabus/ATP</li><li>Kelengkapan komponen</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Bahan ajar yang dikembangkan guru</li><li>LKPD, media pembelajaran buatan guru</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Urutan materi dalam RPP logis dan sistematis</li><li>Peta konsep/alur materi</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Materi dikaitkan dengan kehidupan sehari-hari</li><li>Contoh-contoh kontekstual digunakan</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru mengaitkan materi dengan nilai Al-Quran/Hadits</li><li>Integrasi nilai Islam dalam pembelajaran</li></ul><b>Melalui telaah dokumen:</b><ul><li>RPP memuat integrasi nilai Islam</li></ul>'
+  ]},
+  {nama:"Kegiatan Pembelajaran yang Mendidik",kategori:"PEDAGOGIK",indikator:["Guru melaksanakan pembelajaran sesuai rancangan","Guru melaksanakan aktivitas untuk membantu belajar","Guru menyikapi kesalahan sebagai proses pembelajaran","Guru mengaitkan pembelajaran dengan konteks kehidupan","Guru melakukan aktivitas bervariasi","Guru mengelola kelas dengan efektif","Guru memberi kesempatan bertanya dan berinteraksi","Guru mengatur aktivitas secara sistematis","Guru menggunakan alat bantu dan TIK","Guru menerapkan strategi deep learning"],
+  penggalian:[
+    '<b>Melalui pengamatan:</b><ul><li>Kegiatan sesuai dengan RPP yang disusun</li><li>Langkah-langkah pembelajaran terlaksana</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Suasana belajar tidak menekan</li><li>Guru memfasilitasi bukan menguji</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru tidak langsung menyalahkan</li><li>Guru mengajak diskusi atas jawaban yang berbeda</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Contoh dari kehidupan nyata digunakan</li><li>Materi dikaitkan dengan pengalaman peserta didik</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Metode bervariasi: diskusi, praktik, presentasi</li><li>Mempertimbangkan waktu dan kondisi kelas</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Kelas tertib tanpa guru mendominasi</li><li>Waktu dimanfaatkan produktif</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Peserta didik aktif bertanya</li><li>Interaksi antar peserta didik terjadi</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Alur kegiatan terstruktur: pembuka-inti-penutup</li><li>Transisi antar kegiatan lancar</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Penggunaan LCD, laptop, video, audio</li><li>Media digital dimanfaatkan</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Peserta didik berpikir kritis dan reflektif</li><li>Kegiatan mendorong pemahaman mendalam</li><li>Kolaborasi dan problem solving terjadi</li></ul>'
+  ]},
+  {nama:"Memahami dan mengembangkan potensi",kategori:"PEDAGOGIK",indikator:["Guru menganalisis hasil belajar setiap peserta didik","Guru merancang aktivitas sesuai kecakapan masing-masing","Guru memunculkan kreativitas dan berpikir kritis","Guru membantu peserta didik secara individual","Guru mengidentifikasi bakat, minat, dan kesulitan belajar","Guru memberi kesempatan belajar sesuai cara belajar masing-masing"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Analisis hasil ulangan/asesmen</li><li>Catatan kemajuan peserta didik</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Diferensiasi tugas/aktivitas</li><li>Peserta didik bekerja sesuai level</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Tugas open-ended yang memicu kreativitas</li><li>Pertanyaan tingkat tinggi (HOTS)</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru berkeliling membantu individu</li><li>Perhatian khusus pada yang kesulitan</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Data bakat minat peserta didik</li><li>Hasil asesmen diagnostik</li><li>Catatan BK</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Variasi cara belajar difasilitasi (visual, auditori, kinestetik)</li></ul>'
+  ]},
+  {nama:"Komunikasi dengan peserta didik",kategori:"PEDAGOGIK",indikator:["Guru menggunakan pertanyaan untuk mengetahui pemahaman","Guru mendengarkan semua pertanyaan tanpa menginterupsi","Guru menanggapi pertanyaan secara tepat dan mutakhir","Guru menumbuhkan kerja sama antar peserta didik","Guru memberikan perhatian terhadap semua jawaban"],
+  penggalian:[
+    '<b>Melalui pengamatan:</b><ul><li>Guru bertanya untuk mengecek pemahaman</li><li>Pertanyaan terbuka yang memicu berpikir</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru sabar mendengarkan</li><li>Tidak memotong pembicaraan peserta didik</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Jawaban guru akurat dan relevan</li><li>Tidak mempermalukan peserta didik</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Kegiatan kelompok/kolaboratif</li><li>Peserta didik saling membantu</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru merespon semua jawaban</li><li>Apresiasi terhadap usaha peserta didik</li></ul>'
+  ]},
+  {nama:"Penilaian dan evaluasi",kategori:"PEDAGOGIK",indikator:["Guru menyusun alat penilaian sesuai tujuan","Guru melaksanakan penilaian dengan berbagai teknik","Guru menganalisis hasil untuk identifikasi kekuatan/kelemahan","Guru memanfaatkan hasil penilaian untuk perbaikan","Guru mengintegrasikan penilaian dengan nilai-nilai Islam"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Kisi-kisi dan instrumen penilaian</li><li>Kesesuaian dengan tujuan pembelajaran</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Variasi teknik: tes, observasi, portofolio, proyek</li><li>Bukti pelaksanaan berbagai jenis penilaian</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Analisis butir soal</li><li>Daftar peserta didik yang perlu remedial/pengayaan</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Program remedial dan pengayaan</li><li>Revisi RPP berdasarkan hasil penilaian</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Penilaian sikap spiritual dan sosial</li><li>Instrumen penilaian karakter Islami</li></ul>'
+  ]},
+  {nama:"Bertindak sesuai norma agama, hukum, sosial",kategori:"KEPRIBADIAN",indikator:["Guru bertingkah laku sopan dalam berbicara dan berpenampilan","Guru mau berbagi pengalaman dengan kolega","Guru menunjukkan penghargaan terhadap peserta didik"],
+  penggalian:[
+    '<b>Melalui pengamatan:</b><ul><li>Penampilan rapi dan sopan</li><li>Tutur kata santun</li><li>Sikap menghormati semua pihak</li></ul>',
+    '<b>Melalui wawancara kolega:</b><ul><li>Apakah guru bersedia berbagi pengalaman?</li><li>Apakah guru terbuka untuk observasi?</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru menghargai pendapat peserta didik</li><li>Tidak ada diskriminasi dalam perlakuan</li></ul>'
+  ]},
+  {nama:"Menunjukkan pribadi yang dewasa dan teladan",kategori:"KEPRIBADIAN",indikator:["Guru bersikap dewasa dalam menerima masukan","Guru berperilaku baik mencitrakan nama baik madrasah","Guru menunjukkan kestabilan emosi","Guru menjadi teladan bagi peserta didik","Guru menunjukkan etos kerja yang tinggi"],
+  penggalian:[
+    '<b>Melalui wawancara:</b><ul><li>Bagaimana guru merespon kritik/masukan?</li></ul><b>Melalui pengamatan:</b><ul><li>Sikap guru saat mendapat masukan</li></ul>',
+    '<b>Melalui wawancara:</b><ul><li>Bagaimana perilaku guru di lingkungan madrasah dan masyarakat?</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru tidak mudah marah</li><li>Tetap tenang menghadapi situasi sulit</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru datang tepat waktu</li><li>Berpakaian rapi, bertutur sopan</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru menyelesaikan tugas tepat waktu</li><li>Dedikasi tinggi terhadap profesi</li></ul>'
+  ]},
+  {nama:"Etos kerja, tanggung jawab, dan rasa bangga menjadi guru",kategori:"KEPRIBADIAN",indikator:["Guru mengawali dan mengakhiri pembelajaran tepat waktu","Guru memanfaatkan waktu secara produktif","Guru membuktikan keberhasilan peserta didik","Guru memprioritaskan tugas utama","Guru hadir sesuai jadwal","Guru memenuhi jam mengajar","Guru melaksanakan tugas tambahan","Guru menunjukkan dedikasi tinggi"],
+  penggalian:[
+    '<b>Melalui pengamatan:</b><ul><li>Guru masuk dan keluar kelas tepat waktu</li></ul><b>Melalui telaah dokumen:</b><ul><li>Jurnal kelas/presensi mengajar</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Tidak ada waktu terbuang sia-sia</li><li>Peserta didik selalu ada kegiatan</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Data prestasi peserta didik</li><li>Hasil belajar yang meningkat</li></ul>',
+    '<b>Melalui wawancara:</b><ul><li>Bagaimana guru memprioritaskan tugas mengajar?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Daftar hadir guru</li><li>Rekap kehadiran</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Jadwal mengajar dan realisasinya</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>SK tugas tambahan</li><li>Laporan pelaksanaan tugas tambahan</li></ul>',
+    '<b>Melalui wawancara dan pengamatan:</b><ul><li>Guru aktif dalam kegiatan madrasah</li><li>Guru bangga dengan profesinya</li></ul>'
+  ]},
+  {nama:"Bersikap inklusif, objektif, tidak diskriminatif",kategori:"SOSIAL",indikator:["Guru memperlakukan semua peserta didik secara adil","Guru menjaga hubungan baik dengan teman sejawat","Guru berinteraksi tanpa membedakan","Guru mengelola kelas tanpa diskriminasi"],
+  penggalian:[
+    '<b>Melalui pengamatan:</b><ul><li>Semua peserta didik mendapat perlakuan setara</li><li>Tidak ada favoritisme</li></ul>',
+    '<b>Melalui wawancara kolega:</b><ul><li>Bagaimana hubungan guru dengan rekan kerja?</li><li>Apakah guru kooperatif?</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru berinteraksi dengan semua peserta didik</li><li>Tidak membedakan latar belakang</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Pengelolaan kelas adil untuk semua</li><li>Kesempatan yang sama untuk semua peserta didik</li></ul>'
+  ]},
+  {nama:"Komunikasi dengan sesama guru, orang tua, masyarakat",kategori:"SOSIAL",indikator:["Guru menyampaikan informasi kemajuan ke orang tua","Guru turut serta dalam kegiatan kemasyarakatan","Guru berperan aktif dalam kegiatan di luar pembelajaran"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Bukti komunikasi dengan orang tua (WA group, surat, pertemuan)</li><li>Notulen pertemuan wali murid</li></ul>',
+    '<b>Melalui wawancara:</b><ul><li>Kegiatan kemasyarakatan apa yang diikuti guru?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Bukti keikutsertaan dalam kegiatan madrasah di luar jam mengajar</li></ul>'
+  ]},
+  {nama:"Penguasaan materi struktur konsep dan pola pikir keilmuan",kategori:"PROFESIONAL",indikator:["Guru menyusun materi yang tepat dan mutakhir","Guru melakukan pemetaan kompetensi dasar","Guru mengintegrasikan materi dengan Al-Quran dan Hadits","Guru menyertakan informasi mutakhir dalam perencanaan"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Bahan ajar yang disusun guru</li><li>Referensi yang digunakan up-to-date</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Pemetaan KD/CP</li><li>Analisis keterkaitan antar kompetensi</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru mengaitkan materi dengan ayat/hadits</li></ul><b>Melalui telaah dokumen:</b><ul><li>RPP memuat integrasi keislaman</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>RPP memuat informasi terkini</li><li>Sumber belajar mutakhir</li></ul>'
+  ]},
+  {nama:"Mengembangkan keprofesian melalui tindakan reflektif",kategori:"PROFESIONAL",indikator:["Guru melakukan evaluasi diri secara spesifik","Guru memiliki jurnal pembelajaran","Guru memanfaatkan bukti kinerja untuk pengembangan","Guru mengaplikasikan pengalaman PKB","Guru melakukan penelitian/karya inovasi","Guru memanfaatkan TIK dalam PKB","Guru aktif mengikuti kegiatan ilmiah"],
+  penggalian:[
+    '<b>Melalui telaah dokumen:</b><ul><li>Lembar evaluasi diri guru</li><li>Refleksi pembelajaran</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Jurnal/catatan pembelajaran harian</li><li>Catatan refleksi mengajar</li></ul>',
+    '<b>Melalui wawancara:</b><ul><li>Bagaimana guru menggunakan hasil refleksi untuk perbaikan?</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Sertifikat pelatihan/diklat</li><li>Bukti penerapan hasil pelatihan</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>PTK/karya ilmiah</li><li>Inovasi pembelajaran yang dikembangkan</li></ul>',
+    '<b>Melalui pengamatan:</b><ul><li>Guru menggunakan TIK untuk belajar dan berkomunikasi profesional</li></ul>',
+    '<b>Melalui telaah dokumen:</b><ul><li>Sertifikat seminar/workshop/konferensi</li><li>Bukti keikutsertaan KKG/MGMP</li></ul>'
+  ]}
+];
+
+
+// ===== PKKM INSTRUMEN (4 komponen, skor 1-4 + penggalian) =====
+const INSTRUMEN_PKKM = [
+  {id:"A",nama:"Usaha Pengembangan Madrasah",unsur:[
+    {kode:"1.1",nama:"Mengembangkan madrasah sesuai kebutuhan",indikator:["Mengembangkan struktur organisasi sesuai kebutuhan","Menempatkan personalia sesuai kebutuhan","Mengembangkan pedoman dan prosedur kerja"],penggalian:['<b>Telaah dokumen:</b><ul><li>Struktur organisasi terbaru</li><li>SK pembagian tugas</li></ul><b>Wawancara:</b><ul><li>Bagaimana proses pengembangan struktur organisasi?</li></ul>','<b>Telaah dokumen:</b><ul><li>SK penempatan personalia</li><li>Kesesuaian kompetensi dengan tugas</li></ul>','<b>Telaah dokumen:</b><ul><li>SOP yang berlaku</li><li>Pedoman kerja tertulis</li></ul>']},
+    {kode:"1.2",nama:"Mengelola perubahan dan pengembangan madrasah",indikator:["Mengembangkan program baru untuk target lebih tinggi","Membangun tim kerja yang efektif","Menerapkan teknik pembaharuan pengelolaan","Mengembangkan potensi dan prestasi madrasah"],penggalian:['<b>Telaah dokumen:</b><ul><li>Program inovasi baru</li><li>Bukti implementasi program</li></ul>','<b>Telaah dokumen:</b><ul><li>SK tim kerja</li><li>Notulen rapat tim</li><li>Hasil kerja tim</li></ul>','<b>Telaah dokumen:</b><ul><li>Bukti penerapan strategi pembaharuan</li><li>Program terprogram</li></ul>','<b>Telaah dokumen:</b><ul><li>Data prestasi madrasah yang meningkat</li><li>Piagam/trofi</li></ul>']},
+    {kode:"1.3",nama:"Mengelola hubungan madrasah dan masyarakat",indikator:["Merencanakan kerjasama dengan lembaga","Melakukan pendekatan untuk dukungan","Memanfaatkan dan memelihara kerjasama"],penggalian:['<b>Telaah dokumen:</b><ul><li>MoU/perjanjian kerjasama</li><li>Program kerjasama</li></ul>','<b>Wawancara:</b><ul><li>Pendekatan apa yang dilakukan?</li><li>Dengan siapa saja kerjasama?</li></ul>','<b>Telaah dokumen:</b><ul><li>Laporan pelaksanaan kerjasama</li><li>Bukti manfaat kerjasama</li></ul>']},
+    {kode:"1.4",nama:"Mengelola pencapaian 8 SNP",indikator:["Mengaplikasikan pengembangan kurikulum","Mengaplikasikan pengembangan proses pembelajaran","Mengaplikasikan sistem penilaian","Melaksanakan penjaminan mutu SKL"],penggalian:['<b>Telaah dokumen:</b><ul><li>Dokumen kurikulum yang dikembangkan</li><li>Analisis standar isi</li></ul>','<b>Telaah dokumen:</b><ul><li>Dokumen analisis standar proses</li><li>Supervisi pembelajaran</li></ul>','<b>Telaah dokumen:</b><ul><li>Dokumen analisis standar penilaian</li><li>Pedoman penilaian</li></ul>','<b>Telaah dokumen:</b><ul><li>Program penjaminan mutu</li><li>Hasil EDS</li><li>Tindak lanjut</li></ul>']},
+    {kode:"1.5",nama:"Mengelola unit layanan khusus",indikator:["Mengelola laboratorium secara optimal","Mengelola perpustakaan untuk sumber belajar","Mengelola usaha madrasah","Mengelola koperasi madrasah"],penggalian:['<b>Pengamatan:</b><ul><li>Kondisi dan pemanfaatan lab</li></ul><b>Telaah dokumen:</b><ul><li>Jadwal penggunaan lab</li><li>Inventaris alat</li></ul>','<b>Pengamatan:</b><ul><li>Kondisi perpustakaan</li><li>Koleksi buku</li></ul><b>Telaah dokumen:</b><ul><li>Data kunjungan</li><li>Program literasi</li></ul>','<b>Telaah dokumen:</b><ul><li>Bukti kegiatan usaha madrasah</li><li>Laporan keuangan usaha</li></ul>','<b>Telaah dokumen:</b><ul><li>Bukti pemanfaatan koperasi</li><li>Laporan koperasi</li></ul>']},
+    {kode:"1.6",nama:"Mengelola sistem informasi madrasah",indikator:["Memanfaatkan TIK dalam manajemen","Memanfaatkan TIK dalam pembelajaran","Memanfaatkan TIK dalam kerjasama","Memanfaatkan TIK dalam promosi"],penggalian:['<b>Pengamatan:</b><ul><li>Penggunaan aplikasi manajemen</li><li>EMIS/Simpatika terupdate</li></ul>','<b>Pengamatan:</b><ul><li>Penggunaan TIK dalam KBM</li><li>E-learning/LMS</li></ul>','<b>Telaah dokumen:</b><ul><li>Bukti komunikasi digital dengan mitra</li></ul>','<b>Pengamatan:</b><ul><li>Website/medsos madrasah aktif</li><li>Konten promosi</li></ul>']},
+    {kode:"1.7",nama:"Memanfaatkan kemajuan teknologi informasi",indikator:["Mengembangkan sistem administrasi dengan TIK","Mengelola administrasi pembelajaran dengan TIK","Mengembangkan pengelolaan perpustakaan dengan TIK"],penggalian:['<b>Pengamatan:</b><ul><li>Sistem administrasi berbasis komputer</li></ul><b>Telaah dokumen:</b><ul><li>Aplikasi administrasi yang digunakan</li></ul>','<b>Telaah dokumen:</b><ul><li>E-rapor, e-learning, bank soal digital</li></ul>','<b>Pengamatan:</b><ul><li>Sistem perpustakaan digital</li><li>Katalog online</li></ul>']}
+  ]},
+  {id:"B",nama:"Pelaksanaan Tugas Manajerial",unsur:[
+    {kode:"2.1",nama:"Menyusun perencanaan madrasah",indikator:["Mengembangkan RKJM/RKT/RKAM berdasarkan evaluasi","Merumuskan visi-misi sebagai arah pengembangan","Menentukan strategi pencapaian tujuan terukur","Menyusun program dengan rencana evaluasi"],penggalian:['<b>Telaah dokumen:</b><ul><li>Dokumen RKJM, RKT, RKAM</li><li>Kesesuaian dengan hasil evaluasi</li></ul>','<b>Telaah dokumen:</b><ul><li>Dokumen visi-misi</li><li>Notulen perumusan</li></ul><b>Wawancara:</b><ul><li>Bagaimana proses perumusan visi-misi?</li></ul>','<b>Telaah dokumen:</b><ul><li>Indikator pencapaian yang terukur</li><li>Target per tahun</li></ul>','<b>Telaah dokumen:</b><ul><li>Rencana evaluasi program</li><li>Instrumen evaluasi</li></ul>']},
+    {kode:"2.2",nama:"Memimpin pendayagunaan sumber daya",indikator:["Memberi contoh berdisiplin dan tepat waktu","Melaksanakan peraturan sesuai ketentuan","Menunjukkan keteladanan memanfaatkan sumber daya","Menunjukkan kedisiplinan sebagai insan pembelajar"],penggalian:['<b>Pengamatan:</b><ul><li>Kamad hadir tepat waktu</li><li>Disiplin dalam jadwal</li></ul>','<b>Telaah dokumen:</b><ul><li>Tata tertib yang ditegakkan</li><li>Bukti penegakan aturan</li></ul>','<b>Pengamatan:</b><ul><li>Efisiensi penggunaan sumber daya</li></ul>','<b>Wawancara:</b><ul><li>Kegiatan belajar kamad?</li><li>Buku/referensi yang dibaca?</li></ul>']},
+    {kode:"2.3",nama:"Menciptakan budaya dan iklim kondusif",indikator:["Menjadi contoh berbudaya mutu kompetitif","Melengkapi sarpras untuk suasana kondusif","Memfasilitasi budaya baca dan tulis","Memfasilitasi kegiatan lomba"],penggalian:['<b>Pengamatan:</b><ul><li>Budaya mutu terlihat di lingkungan</li><li>Prestasi dipajang</li></ul>','<b>Pengamatan:</b><ul><li>Lingkungan bersih, asri, nyaman</li><li>Fasilitas memadai</li></ul>','<b>Telaah dokumen:</b><ul><li>Program literasi</li><li>Data kunjungan perpustakaan</li></ul>','<b>Telaah dokumen:</b><ul><li>Jadwal lomba internal</li><li>Piagam/trofi</li></ul>']},
+    {kode:"2.4",nama:"Mengelola guru dan staf",indikator:["Menyusun perencanaan pengembangan PTK","Melaksanakan pembinaan secara berkala","Mengelola penempatan sesuai kompetensi","Memfasilitasi pengembangan profesi"],penggalian:['<b>Telaah dokumen:</b><ul><li>Program pengembangan PTK</li><li>Analisis kebutuhan</li></ul>','<b>Telaah dokumen:</b><ul><li>Jadwal pembinaan</li><li>Notulen rapat pembinaan</li></ul>','<b>Telaah dokumen:</b><ul><li>SK pembagian tugas</li><li>Kesesuaian kompetensi-tugas</li></ul>','<b>Telaah dokumen:</b><ul><li>Sertifikat diklat guru</li><li>Program PKB</li></ul>']},
+    {kode:"2.5",nama:"Mengelola sarana dan prasarana",indikator:["Merencanakan kebutuhan fasilitas","Mengelola pengadaan fasilitas","Mengelola pemeliharaan fasilitas","Mengelola inventaris sarpras"],penggalian:['<b>Telaah dokumen:</b><ul><li>Rencana kebutuhan sarpras</li><li>Proposal pengadaan</li></ul>','<b>Telaah dokumen:</b><ul><li>Bukti pengadaan</li><li>Berita acara serah terima</li></ul>','<b>Pengamatan:</b><ul><li>Kondisi pemeliharaan</li></ul><b>Telaah dokumen:</b><ul><li>Jadwal pemeliharaan</li></ul>','<b>Telaah dokumen:</b><ul><li>Buku inventaris</li><li>Kartu inventaris barang</li></ul>']},
+    {kode:"2.6",nama:"Mengelola peserta didik",indikator:["Mengelola PPDB","Mengelola pengembangan kapasitas peserta didik","Mengelola layanan BK","Memantau perkembangan akademik"],penggalian:['<b>Telaah dokumen:</b><ul><li>Pedoman PPDB</li><li>Laporan PPDB</li></ul>','<b>Telaah dokumen:</b><ul><li>Program pengembangan peserta didik</li><li>Kegiatan ekstrakurikuler</li></ul>','<b>Telaah dokumen:</b><ul><li>Program BK</li><li>Catatan konseling</li></ul>','<b>Telaah dokumen:</b><ul><li>Rapor/hasil belajar</li><li>Analisis perkembangan</li></ul>']},
+    {kode:"2.7",nama:"Mengelola pengembangan kurikulum dan pembelajaran",indikator:["Memfasilitasi pengembangan kurikulum","Memfasilitasi guru mengembangkan RPP","Memfasilitasi pembelajaran aktif","Memfasilitasi penilaian autentik"],penggalian:['<b>Telaah dokumen:</b><ul><li>Tim pengembang kurikulum</li><li>Notulen workshop kurikulum</li></ul>','<b>Telaah dokumen:</b><ul><li>Jadwal workshop RPP</li><li>Hasil review RPP</li></ul>','<b>Pengamatan:</b><ul><li>Dukungan kamad terhadap pembelajaran aktif</li></ul>','<b>Telaah dokumen:</b><ul><li>Pedoman penilaian autentik</li><li>Contoh instrumen</li></ul>']},
+    {kode:"2.8",nama:"Mengelola keuangan madrasah",indikator:["Menyusun RKAS sesuai ketentuan","Mengelola keuangan transparan dan akuntabel","Melaporkan penggunaan keuangan berkala","Mengelola keuangan sesuai prinsip efisiensi"],penggalian:['<b>Telaah dokumen:</b><ul><li>Dokumen RKAS</li><li>SK penetapan</li></ul>','<b>Telaah dokumen:</b><ul><li>Buku kas</li><li>Bukti transaksi</li><li>Papan informasi keuangan</li></ul>','<b>Telaah dokumen:</b><ul><li>Laporan keuangan bulanan/triwulanan</li><li>Laporan BOS</li></ul>','<b>Wawancara:</b><ul><li>Bagaimana prioritas penggunaan dana?</li></ul>']}
+  ]},
+  {id:"C",nama:"Pengembangan Kewirausahaan",unsur:[
+    {kode:"3.1",nama:"Menciptakan inovasi untuk pengembangan",indikator:["Menciptakan inovasi yang berguna","Bekerja keras untuk keberhasilan","Memiliki motivasi kuat untuk sukses"],penggalian:['<b>Wawancara:</b><ul><li>Inovasi apa yang sudah diciptakan?</li><li>Dampaknya terhadap madrasah?</li></ul>','<b>Pengamatan:</b><ul><li>Etos kerja kamad terlihat</li></ul><b>Wawancara:</b><ul><li>Bagaimana kamad mengatasi hambatan?</li></ul>','<b>Wawancara:</b><ul><li>Apa target utama kamad?</li><li>Strategi mencapai target?</li></ul>']},
+    {kode:"3.2",nama:"Naluri kewirausahaan dalam pengelolaan",indikator:["Pantang menyerah dan mencari solusi","Memiliki naluri kewirausahaan","Kreatif dan inovatif dalam tugas"],penggalian:['<b>Wawancara:</b><ul><li>Contoh situasi sulit dan solusinya?</li></ul>','<b>Telaah dokumen:</b><ul><li>Program income generating</li><li>Usaha madrasah</li></ul>','<b>Wawancara:</b><ul><li>Ide kreatif apa yang sudah diterapkan?</li><li>Hasilnya?</li></ul>']},
+    {kode:"3.3",nama:"Motivasi dan orientasi hasil",indikator:["Menunjukkan rasa keingintahuan tinggi","Bertindak produktif dan berorientasi hasil","Melihat peluang pengembangan"],penggalian:['<b>Wawancara:</b><ul><li>Apa yang sedang dipelajari kamad?</li><li>Referensi yang dibaca?</li></ul>','<b>Telaah dokumen:</b><ul><li>Capaian program kerja</li><li>Target vs realisasi</li></ul>','<b>Wawancara:</b><ul><li>Peluang apa yang dilihat untuk pengembangan?</li><li>Rencana ke depan?</li></ul>']}
+  ]},
+  {id:"D",nama:"Supervisi Kepada Guru dan Tenaga Kependidikan",unsur:[
+    {kode:"4.1",nama:"Merencanakan program supervisi akademik",indikator:["Menyusun program supervisi akademik","Menentukan pendekatan dan teknik supervisi","Menyusun jadwal supervisi","Menyiapkan instrumen supervisi"],penggalian:['<b>Telaah dokumen:</b><ul><li>Program supervisi akademik</li><li>Tujuan dan sasaran jelas</li></ul>','<b>Wawancara:</b><ul><li>Pendekatan apa yang digunakan?</li><li>Mengapa memilih pendekatan tersebut?</li></ul>','<b>Telaah dokumen:</b><ul><li>Jadwal supervisi</li><li>Realisasi jadwal</li></ul>','<b>Telaah dokumen:</b><ul><li>Instrumen supervisi yang digunakan</li><li>Kesesuaian dengan tujuan</li></ul>']},
+    {kode:"4.2",nama:"Melaksanakan supervisi akademik",indikator:["Melaksanakan supervisi terhadap guru","Memberikan umpan balik hasil supervisi","Membina guru meningkatkan kualitas","Memfasilitasi guru mengatasi permasalahan"],penggalian:['<b>Telaah dokumen:</b><ul><li>Catatan pelaksanaan supervisi</li><li>Instrumen yang terisi</li></ul>','<b>Telaah dokumen:</b><ul><li>Catatan umpan balik</li><li>Notulen post-conference</li></ul>','<b>Wawancara guru:</b><ul><li>Bagaimana pembinaan dari kamad?</li><li>Apakah membantu?</li></ul>','<b>Wawancara guru:</b><ul><li>Apakah kamad membantu mengatasi masalah pembelajaran?</li></ul>']},
+    {kode:"4.3",nama:"Menindaklanjuti hasil supervisi",indikator:["Menganalisis hasil supervisi","Menyusun rencana tindak lanjut","Melaksanakan tindak lanjut","Melaporkan hasil supervisi"],penggalian:['<b>Telaah dokumen:</b><ul><li>Analisis hasil supervisi</li><li>Identifikasi masalah</li></ul>','<b>Telaah dokumen:</b><ul><li>Dokumen RTL supervisi</li><li>Target perbaikan</li></ul>','<b>Telaah dokumen:</b><ul><li>Bukti pelaksanaan RTL</li><li>Workshop/IHT yang dilakukan</li></ul>','<b>Telaah dokumen:</b><ul><li>Laporan supervisi</li><li>Disampaikan ke pengawas</li></ul>']}
+  ]}
+];
+
+// ===== SEKOLAH MODEL INSTRUMEN (skor 1-4 + penggalian) =====
+const INSTRUMEN_SEKOLAH_MODEL = [
+  {nama:"Keunggulan belajar murid (pembelajaran mendalam)",penggalian:'<b>Melalui pengamatan:</b><ul><li>Peserta didik aktif berpikir kritis dan reflektif</li><li>Pembelajaran bermakna dan mendalam terjadi</li><li>Murid menunjukkan pemahaman konseptual</li></ul><b>Melalui wawancara murid:</b><ul><li>Apa yang kamu pelajari hari ini?</li><li>Bagaimana cara gurumu mengajar?</li></ul>'},
+  {nama:"Keunggulan mengajar pendidik (guru menerapkan PM)",penggalian:'<b>Melalui pengamatan:</b><ul><li>Guru menggunakan strategi deep learning</li><li>Guru memfasilitasi berpikir tingkat tinggi</li><li>Guru melakukan diferensiasi</li></ul><b>Melalui telaah dokumen:</b><ul><li>RPP berbasis PM</li><li>Bukti refleksi mengajar</li></ul>'},
+  {nama:"Keunggulan kepemimpinan kepala madrasah",penggalian:'<b>Melalui wawancara:</b><ul><li>Bagaimana kamad memimpin transformasi PM?</li><li>Dukungan apa yang diberikan?</li></ul><b>Melalui telaah dokumen:</b><ul><li>Program kamad untuk PM</li><li>SK tim PM</li></ul>'},
+  {nama:"Visi-misi madrasah mencerminkan PM & KKA",penggalian:'<b>Melalui pengamatan:</b><ul><li>Visi-misi terpampang dan mencerminkan PM</li></ul><b>Melalui telaah dokumen:</b><ul><li>Dokumen visi-misi</li><li>Program yang selaras dengan visi PM</li></ul><b>Melalui wawancara:</b><ul><li>Apakah warga madrasah memahami arah PM?</li></ul>'},
+  {nama:"Budaya belajar profesional terbangun",penggalian:'<b>Melalui pengamatan:</b><ul><li>Guru berdiskusi tentang pembelajaran</li><li>Ada kegiatan lesson study/peer teaching</li></ul><b>Melalui telaah dokumen:</b><ul><li>Jadwal KKG internal</li><li>Notulen diskusi profesional</li></ul>'},
+  {nama:"Supervisi akademik mendukung PM",penggalian:'<b>Melalui telaah dokumen:</b><ul><li>Instrumen supervisi berbasis PM</li><li>Hasil supervisi dan tindak lanjut</li></ul><b>Melalui wawancara guru:</b><ul><li>Apakah supervisi membantu implementasi PM?</li></ul>'},
+  {nama:"Sumber daya dialokasikan untuk PM & KKA",penggalian:'<b>Melalui telaah dokumen:</b><ul><li>RKAS memuat alokasi untuk PM</li><li>Pengadaan media/buku untuk PM</li></ul><b>Melalui pengamatan:</b><ul><li>Ketersediaan sumber belajar untuk PM</li></ul>'},
+  {nama:"Kolaborasi antar guru dalam pengembangan PM",penggalian:'<b>Melalui pengamatan:</b><ul><li>Guru berkolaborasi menyusun perangkat PM</li></ul><b>Melalui telaah dokumen:</b><ul><li>Jadwal kolaborasi</li><li>Hasil kerja kolaboratif</li></ul><b>Melalui wawancara:</b><ul><li>Bagaimana guru berkolaborasi?</li></ul>'},
+  {nama:"Keterlibatan peserta didik dalam pembelajaran aktif",penggalian:'<b>Melalui pengamatan:</b><ul><li>Peserta didik aktif, antusias, terlibat</li><li>Student-centered learning terjadi</li></ul><b>Melalui wawancara murid:</b><ul><li>Apakah kamu senang belajar di sini?</li><li>Apa yang paling menarik?</li></ul>'},
+  {nama:"Dokumentasi dan diseminasi praktik baik",penggalian:'<b>Melalui telaah dokumen:</b><ul><li>Dokumentasi praktik baik (video, foto, tulisan)</li><li>Bukti berbagi ke madrasah lain</li></ul><b>Melalui wawancara:</b><ul><li>Praktik baik apa yang sudah didokumentasikan?</li><li>Sudah dibagikan ke mana?</li></ul>'}
+];
+
+// ===== STORAGE HELPERS =====
+function getData(key,def){try{return JSON.parse(localStorage.getItem(key))||def}catch(e){return def}}
+function setData(key,val){localStorage.setItem(key,JSON.stringify(val))}
+function getMadrasah(){return getData('apm_madrasah',DEFAULT_MADRASAH)}
+function saveMadrasah(d){setData('apm_madrasah',d)}
+function getProfil(){return getData('apm_profil',{nama:'Subariyanto, S.Pd.I',nip:'197012051998031002',pangkat:'Pembina / IV.a',wilayah:'KKMA 04 Jember (Kec. Sukowono)'})}
+function saveProfil(d){setData('apm_profil',d)}
+function getSupManajerial(){return getData('apm_sup_manajerial',[])}
+function saveSupManajerial(d){setData('apm_sup_manajerial',d)}
+function getPKGData(){return getData('apm_pkg',[])}
+function savePKGData(d){setData('apm_pkg',d)}
+function getPKKMData(){return getData('apm_pkkm',[])}
+function savePKKMData(d){setData('apm_pkkm',d)}
+function getModelData(){return getData('apm_model',[])}
+function saveModelData(d){setData('apm_model',d)}
+function getRencanaKerja(){return getData('apm_rk',[])}
+function saveRencanaKerja(d){setData('apm_rk',d)}
+function getPassword(){return getData('apm_pass','admin123')}
+function setPassword(p){setData('apm_pass',p)}
+function today(){return new Date().toISOString().split('T')[0]}
+
+// ===== HELPERS =====
+function getPredikat(persen){
+  if(persen>=85)return{label:'Amat Baik',cls:'badge-success'};
+  if(persen>=70)return{label:'Baik',cls:'badge-info'};
+  if(persen>=50)return{label:'Cukup',cls:'badge-warning'};
+  return{label:'Kurang',cls:'badge-danger'};
 }
-function autoRTL(nama, persen) {
-  if(persen >= 85) return 'Pertahankan dan tingkatkan kualitas ' + nama;
-  if(persen >= 70) return 'Lakukan pembinaan berkala pada ' + nama;
-  if(persen >= 50) return 'Perlu pembinaan intensif pada ' + nama;
-  return 'Perlu pembinaan sangat intensif dan pendampingan pada ' + nama;
+function autoRTL(nama,persen){
+  if(persen>=85)return'Pertahankan dan tingkatkan kualitas '+nama;
+  if(persen>=70)return'Lakukan pembinaan berkala pada '+nama;
+  if(persen>=50)return'Perlu pembinaan intensif pada '+nama;
+  return'Perlu pembinaan sangat intensif dan pendampingan pada '+nama;
 }
-function autoCatatan(nama, persen) {
-  if(persen >= 85) return nama + ' sudah sangat baik, perlu dipertahankan';
-  if(persen >= 70) return nama + ' sudah baik, masih ada ruang peningkatan';
-  if(persen >= 50) return nama + ' cukup, perlu peningkatan di beberapa aspek';
-  return nama + ' masih kurang, perlu perhatian khusus dan pembinaan intensif';
+function autoCatatan(nama,persen){
+  if(persen>=85)return nama+' sudah sangat baik, perlu dipertahankan';
+  if(persen>=70)return nama+' sudah baik, masih ada ruang peningkatan';
+  if(persen>=50)return nama+' cukup, perlu peningkatan di beberapa aspek';
+  return nama+' masih kurang, perlu perhatian khusus dan pembinaan intensif';
+}
+
+// ===== PENGGALIAN DATA MODAL =====
+function showPenggalian(title,content){
+  document.getElementById('penggalianTitle').textContent='Penggalian Data: '+title;
+  document.getElementById('penggalianContent').innerHTML=content;
+  document.getElementById('modalPenggalian').style.display='flex';
+}
+function closePenggalian(){
+  document.getElementById('modalPenggalian').style.display='none';
 }
 
 
 // ===== NAVIGATION & RENDER =====
-function navigate(page) {
-  APP.currentPage = page;
-  render();
+function navigate(page){APP.currentPage=page;render()}
+function toggleSidebar(){const sb=document.querySelector('.sidebar');sb.classList.toggle('open');sb.classList.toggle('closed')}
+
+function render(){
+  if(!APP.isLoggedIn){renderLogin();return}
+  const app=document.getElementById('app');
+  app.innerHTML=renderSidebar()+'<div class="main">'+renderTopbar()+renderPage()+'</div>';
+  if(window.innerWidth<=768){const sb=document.querySelector('.sidebar');if(sb){sb.classList.remove('open');sb.classList.add('closed')}}
 }
 
-function toggleSidebar() {
-  const sb = document.querySelector('.sidebar');
-  sb.classList.toggle('open');
-  sb.classList.toggle('closed');
+function renderLogin(){
+  document.getElementById('app').innerHTML='<div class="login-page"><div class="login-box"><div style="font-size:40px;margin-bottom:10px">🕌</div><h1>Aplikasi Pengawas Madrasah</h1><h2>KKMA 04 Kabupaten Jember</h2><input type="text" id="loginUser" placeholder="Username" value="admin"><input type="password" id="loginPass" placeholder="Password" onkeypress="if(event.key===\'Enter\')doLogin()"><button onclick="doLogin()">Masuk</button><div id="loginError" class="error"></div></div></div>';
+}
+function doLogin(){
+  if(document.getElementById('loginUser').value==='admin'&&document.getElementById('loginPass').value===getPassword()){APP.isLoggedIn=true;render()}
+  else{document.getElementById('loginError').textContent='Username atau password salah!'}
+}
+function doLogout(){APP.isLoggedIn=false;render()}
+
+function renderSidebar(){
+  const items=[{page:'dashboard',icon:'📊',label:'Dashboard'},{section:'DATA'},{page:'madrasah',icon:'🕌',label:'Data Madrasah'},{section:'SUPERVISI & PENILAIAN'},{page:'sup-manajerial',icon:'📋',label:'Supervisi Manajerial'},{page:'pkg',icon:'👨‍🏫',label:'PKG'},{page:'pkkm',icon:'👔',label:'PKKM'},{section:'PEMBINAAN'},{page:'sekolah-model',icon:'🏫',label:'Sekolah Model PM & KKA'},{page:'rencana-kerja',icon:'📅',label:'Rencana Kerja'},{section:'LAPORAN'},{page:'rekap',icon:'📈',label:'Rekap & Laporan'},{section:'SISTEM'},{page:'pengaturan',icon:'⚙️',label:'Pengaturan'}];
+  let h='<div class="sidebar"><div class="sidebar-header"><div style="font-size:28px">🕌</div><h1>Aplikasi Pengawas Madrasah</h1></div><div style="padding:8px 0">';
+  items.forEach(item=>{if(item.section){h+='<div class="menu-section">'+item.section+'</div>'}else{h+='<a class="menu-item'+(APP.currentPage===item.page?' active':'')+'" onclick="navigate(\''+item.page+'\')"><span class="icon">'+item.icon+'</span>'+item.label+'</a>'}});
+  h+='<div class="menu-section" style="margin-top:16px"></div><a class="menu-item" onclick="doLogout()"><span class="icon">🚪</span>Keluar</a></div></div>';
+  return h;
 }
 
-function render() {
-  if(!APP.isLoggedIn) { renderLogin(); return; }
-  const app = document.getElementById('app');
-  app.innerHTML = renderSidebar() + '<div class="main" id="mainContent">' + renderTopbar() + renderPage() + '</div>';
-  // Close sidebar on mobile after nav
-  if(window.innerWidth <= 768) {
-    const sb = document.querySelector('.sidebar');
-    if(sb) { sb.classList.remove('open'); sb.classList.add('closed'); }
+function renderTopbar(){
+  const titles={'dashboard':'Dashboard','madrasah':'Data Madrasah Binaan','sup-manajerial':'Supervisi Manajerial','pkg':'Penilaian Kinerja Guru (PKG)','pkkm':'Penilaian Kinerja Kepala Madrasah','sekolah-model':'Sekolah Model PM & KKA','rencana-kerja':'Rencana Kerja Pengawas','rekap':'Rekap & Laporan','pengaturan':'Pengaturan'};
+  return'<div class="topbar no-print"><button class="hamburger" onclick="toggleSidebar()">☰</button><h1>'+(titles[APP.currentPage]||'')+'</h1><div style="font-size:12px;color:var(--text-light)">'+today()+'</div></div>';
+}
+
+function renderPage(){
+  switch(APP.currentPage){
+    case'dashboard':return renderDashboard();
+    case'madrasah':return renderMadrasah();
+    case'sup-manajerial':return renderSupManajerial();
+    case'pkg':return renderPKG();
+    case'pkkm':return renderPKKM();
+    case'sekolah-model':return renderSekolahModel();
+    case'rencana-kerja':return renderRencanaKerja();
+    case'rekap':return renderRekap();
+    case'pengaturan':return renderPengaturan();
+    default:return renderDashboard();
   }
-}
-
-function renderLogin() {
-  document.getElementById('app').innerHTML = `
-    <div class="login-page">
-      <div class="login-box">
-        <div style="font-size:40px;margin-bottom:10px">🕌</div>
-        <h1>Aplikasi Pengawas Madrasah</h1>
-        <h2>KKMA 04 Kabupaten Jember</h2>
-        <input type="text" id="loginUser" placeholder="Username" value="admin">
-        <input type="password" id="loginPass" placeholder="Password" onkeypress="if(event.key==='Enter')doLogin()">
-        <button onclick="doLogin()">Masuk</button>
-        <div id="loginError" class="error"></div>
-      </div>
-    </div>`;
-}
-
-function doLogin() {
-  const user = document.getElementById('loginUser').value;
-  const pass = document.getElementById('loginPass').value;
-  if(user === 'admin' && pass === getPassword()) {
-    APP.isLoggedIn = true;
-    render();
-  } else {
-    document.getElementById('loginError').textContent = 'Username atau password salah!';
-  }
-}
-
-function doLogout() {
-  APP.isLoggedIn = false;
-  render();
-}
-
-function renderSidebar() {
-  const items = [
-    {page:'dashboard',icon:'📊',label:'Dashboard'},
-    {section:'DATA'},
-    {page:'madrasah',icon:'🕌',label:'Data Madrasah'},
-    {section:'SUPERVISI & PENILAIAN'},
-    {page:'supervisi-manajerial',icon:'📋',label:'Supervisi Manajerial'},
-    {page:'pkg',icon:'👨‍🏫',label:'PKG (Penilaian Kinerja Guru)'},
-    {page:'pkkm',icon:'👔',label:'PKKM (Kinerja Kamad)'},
-    {section:'PEMBINAAN'},
-    {page:'sekolah-model',icon:'🏫',label:'Sekolah Model PM & KKA'},
-    {page:'rencana-kerja',icon:'📅',label:'Rencana Kerja'},
-    {section:'LAPORAN'},
-    {page:'rekap',icon:'📈',label:'Rekap & Laporan'},
-    {section:'SISTEM'},
-    {page:'pengaturan',icon:'⚙️',label:'Pengaturan'},
-  ];
-  let html = '<div class="sidebar"><div class="sidebar-header"><div class="emoji">🕌</div><h1>Aplikasi Pengawas Madrasah</h1></div><div class="sidebar-menu">';
-  items.forEach(item => {
-    if(item.section) {
-      html += '<div class="menu-section">' + item.section + '</div>';
-    } else {
-      const active = APP.currentPage === item.page ? ' active' : '';
-      html += '<a class="menu-item' + active + '" onclick="navigate(\'' + item.page + '\')">' +
-        '<span class="icon">' + item.icon + '</span>' + item.label + '</a>';
-    }
-  });
-  html += '<div class="menu-section" style="margin-top:20px"></div>';
-  html += '<a class="menu-item" onclick="doLogout()"><span class="icon">🚪</span>Keluar</a>';
-  html += '</div></div>';
-  return html;
-}
-
-function renderTopbar() {
-  const titles = {
-    'dashboard':'Dashboard','madrasah':'Data Madrasah Binaan','supervisi-manajerial':'Supervisi Manajerial',
-    'pkg':'Penilaian Kinerja Guru (PKG)','pkkm':'Penilaian Kinerja Kepala Madrasah (PKKM)',
-    'sekolah-model':'Pembinaan Sekolah Model PM & KKA','rencana-kerja':'Rencana Kerja Pengawas',
-    'rekap':'Rekap & Laporan','pengaturan':'Pengaturan'
-  };
-  return '<div class="topbar no-print"><button class="hamburger" onclick="toggleSidebar()">☰</button><h1>' + (titles[APP.currentPage]||'') + '</h1><div style="font-size:12px;color:var(--text-light)">' + today() + '</div></div>';
-}
-
-function renderPage() {
-  switch(APP.currentPage) {
-    case 'dashboard': return renderDashboard();
-    case 'madrasah': return renderMadrasah();
-    case 'supervisi-manajerial': return renderSupervisiManajerial();
-    case 'pkg': return renderPKG();
-    case 'pkkm': return renderPKKM();
-    case 'sekolah-model': return renderSekolahModel();
-    case 'rencana-kerja': return renderRencanaKerja();
-    case 'rekap': return renderRekap();
-    case 'pengaturan': return renderPengaturan();
-    default: return renderDashboard();
-  }
-}
-
-// ===== DASHBOARD =====
-function renderDashboard() {
-  const madrasah = getMadrasah();
-  const sm = getSupervisiManajerial();
-  const pkg = getPKG();
-  const pkkm = getPKKM();
-  const model = getSekolahModel();
-  const profil = getProfil();
-
-  let html = '<div class="card"><p style="font-size:13px;color:var(--text-light)">Selamat datang, <strong>' + profil.nama + '</strong> | ' + profil.wilayah + '</p></div>';
-
-  html += '<div class="stats-grid">';
-  html += '<div class="stat-card"><div class="number">' + madrasah.length + '</div><div class="label">Madrasah Binaan</div></div>';
-  html += '<div class="stat-card"><div class="number">' + sm.length + '</div><div class="label">Supervisi Manajerial</div></div>';
-  html += '<div class="stat-card"><div class="number">' + pkg.length + '</div><div class="label">PKG Selesai</div></div>';
-  html += '<div class="stat-card"><div class="number">' + pkkm.length + '</div><div class="label">PKKM Selesai</div></div>';
-  html += '<div class="stat-card"><div class="number">' + model.length + '</div><div class="label">Sekolah Model</div></div>';
-  html += '</div>';
-
-  // Quick links
-  html += '<div class="card"><h3>📌 Menu Cepat</h3><div class="quick-links">';
-  html += '<div class="quick-link" onclick="navigate(\'supervisi-manajerial\')"><div class="ql-icon">📋</div><div class="ql-label">Supervisi Manajerial</div></div>';
-  html += '<div class="quick-link" onclick="navigate(\'pkg\')"><div class="ql-icon">👨‍🏫</div><div class="ql-label">PKG</div></div>';
-  html += '<div class="quick-link" onclick="navigate(\'pkkm\')"><div class="ql-icon">👔</div><div class="ql-label">PKKM</div></div>';
-  html += '<div class="quick-link" onclick="navigate(\'sekolah-model\')"><div class="ql-icon">🏫</div><div class="ql-label">Sekolah Model</div></div>';
-  html += '<div class="quick-link" onclick="navigate(\'rencana-kerja\')"><div class="ql-icon">📅</div><div class="ql-label">Rencana Kerja</div></div>';
-  html += '<div class="quick-link" onclick="navigate(\'rekap\')"><div class="ql-icon">📈</div><div class="ql-label">Rekap</div></div>';
-  html += '</div></div>';
-
-  // Progress supervisi
-  const totalTarget = madrasah.length;
-  const smDone = sm.length;
-  const smPersen = totalTarget > 0 ? Math.round(smDone/totalTarget*100) : 0;
-  html += '<div class="card"><h3>📊 Progress Supervisi Semester Ini</h3>';
-  html += '<p style="font-size:13px;margin-bottom:8px">Supervisi Manajerial: ' + smDone + '/' + totalTarget + ' madrasah (' + smPersen + '%)</p>';
-  html += '<div class="progress-bar"><div class="progress-fill" style="width:' + smPersen + '%"></div></div>';
-  html += '</div>';
-
-  return html;
-}
-
-// ===== DATA MADRASAH =====
-function renderMadrasah() {
-  const data = getMadrasah();
-  let html = '<div class="card no-print"><button class="btn btn-primary" onclick="showAddMadrasah()">+ Tambah Madrasah</button></div>';
-  html += '<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Nama Madrasah</th><th>NSM</th><th>Kecamatan</th><th>Kepala Madrasah</th><th>Akreditasi</th><th>Aksi</th></tr>';
-  data.forEach((m, i) => {
-    html += '<tr><td>' + (i+1) + '</td><td>' + m.nama + '</td><td>' + m.nsm + '</td><td>' + m.alamat + '</td><td>' + m.kamad + '</td><td><span class="badge badge-' + (m.akreditasi==='A'?'success':m.akreditasi==='B'?'info':'warning') + '">' + m.akreditasi + '</span></td>';
-    html += '<td><button class="btn btn-warning btn-sm" onclick="editMadrasah(' + m.id + ')">Edit</button> <button class="btn btn-danger btn-sm" onclick="deleteMadrasah(' + m.id + ')">Hapus</button></td></tr>';
-  });
-  html += '</table></div></div>';
-  return html;
-}
-
-function showAddMadrasah() {
-  showModal('Tambah Madrasah', `
-    <div class="form-group"><label>Nama Madrasah</label><input id="mNama"></div>
-    <div class="form-row">
-      <div class="form-group"><label>NSM</label><input id="mNsm"></div>
-      <div class="form-group"><label>Kecamatan</label><input id="mAlamat"></div>
-    </div>
-    <div class="form-group"><label>Kepala Madrasah</label><input id="mKamad"></div>
-    <div class="form-row">
-      <div class="form-group"><label>Akreditasi</label><select id="mAkreditasi"><option>A</option><option selected>B</option><option>C</option><option>Belum</option></select></div>
-      <div class="form-group"><label>Status</label><select id="mStatus"><option selected>Aktif</option><option>Tidak Aktif</option></select></div>
-    </div>
-    <button class="btn btn-primary" onclick="addMadrasah()">Simpan</button>
-  `);
-}
-
-function addMadrasah() {
-  const data = getMadrasah();
-  const newId = data.length > 0 ? Math.max(...data.map(m=>m.id)) + 1 : 1;
-  data.push({
-    id: newId,
-    nama: document.getElementById('mNama').value,
-    nsm: document.getElementById('mNsm').value,
-    alamat: document.getElementById('mAlamat').value,
-    kamad: document.getElementById('mKamad').value,
-    akreditasi: document.getElementById('mAkreditasi').value,
-    status: document.getElementById('mStatus').value
-  });
-  saveMadrasah(data);
-  closeModal();
-  render();
-}
-
-function editMadrasah(id) {
-  const data = getMadrasah();
-  const m = data.find(x => x.id === id);
-  if(!m) return;
-  showModal('Edit Madrasah', `
-    <div class="form-group"><label>Nama Madrasah</label><input id="mNama" value="${m.nama}"></div>
-    <div class="form-row">
-      <div class="form-group"><label>NSM</label><input id="mNsm" value="${m.nsm}"></div>
-      <div class="form-group"><label>Kecamatan</label><input id="mAlamat" value="${m.alamat}"></div>
-    </div>
-    <div class="form-group"><label>Kepala Madrasah</label><input id="mKamad" value="${m.kamad}"></div>
-    <div class="form-row">
-      <div class="form-group"><label>Akreditasi</label><select id="mAkreditasi"><option ${m.akreditasi==='A'?'selected':''}>A</option><option ${m.akreditasi==='B'?'selected':''}>B</option><option ${m.akreditasi==='C'?'selected':''}>C</option><option ${m.akreditasi==='Belum'?'selected':''}>Belum</option></select></div>
-      <div class="form-group"><label>Status</label><select id="mStatus"><option ${m.status==='Aktif'?'selected':''}>Aktif</option><option ${m.status==='Tidak Aktif'?'selected':''}>Tidak Aktif</option></select></div>
-    </div>
-    <button class="btn btn-primary" onclick="updateMadrasah(${id})">Simpan</button>
-  `);
-}
-
-function updateMadrasah(id) {
-  const data = getMadrasah();
-  const idx = data.findIndex(x => x.id === id);
-  if(idx === -1) return;
-  data[idx] = {...data[idx],
-    nama: document.getElementById('mNama').value,
-    nsm: document.getElementById('mNsm').value,
-    alamat: document.getElementById('mAlamat').value,
-    kamad: document.getElementById('mKamad').value,
-    akreditasi: document.getElementById('mAkreditasi').value,
-    status: document.getElementById('mStatus').value
-  };
-  saveMadrasah(data);
-  closeModal();
-  render();
-}
-
-function deleteMadrasah(id) {
-  if(!confirm('Hapus madrasah ini?')) return;
-  const data = getMadrasah().filter(x => x.id !== id);
-  saveMadrasah(data);
-  render();
 }
 
 // ===== MODAL =====
-function showModal(title, content) {
-  const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay show';
-  overlay.id = 'modalOverlay';
-  overlay.innerHTML = '<div class="modal"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3>' + title + '</h3><button class="btn btn-sm" onclick="closeModal()" style="background:#eee">✕</button></div><div id="modalBody">' + content + '</div></div>';
-  overlay.onclick = function(e) { if(e.target === overlay) closeModal(); };
-  document.body.appendChild(overlay);
+function showModal(title,content){
+  const o=document.createElement('div');o.className='modal-overlay show';o.id='modalOverlay';
+  o.innerHTML='<div class="modal"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3>'+title+'</h3><button class="btn btn-sm" onclick="closeModal()" style="background:#eee">✕</button></div><div id="modalBody">'+content+'</div></div>';
+  o.onclick=function(e){if(e.target===o)closeModal()};
+  document.body.appendChild(o);
+}
+function closeModal(){const m=document.getElementById('modalOverlay');if(m)m.remove()}
+
+// ===== DASHBOARD =====
+function renderDashboard(){
+  const madrasah=getMadrasah(),sm=getSupManajerial(),pkg=getPKGData(),pkkm=getPKKMData(),model=getModelData(),profil=getProfil();
+  let h='<div class="card"><p style="font-size:13px;color:var(--text-light)">Selamat datang, <strong>'+profil.nama+'</strong> | '+profil.wilayah+'</p></div>';
+  h+='<div class="stats-grid"><div class="stat-card"><div class="number">'+madrasah.length+'</div><div class="label">Madrasah Binaan</div></div>';
+  h+='<div class="stat-card"><div class="number">'+sm.length+'</div><div class="label">Supervisi Manajerial</div></div>';
+  h+='<div class="stat-card"><div class="number">'+pkg.length+'</div><div class="label">PKG</div></div>';
+  h+='<div class="stat-card"><div class="number">'+pkkm.length+'</div><div class="label">PKKM</div></div>';
+  h+='<div class="stat-card"><div class="number">'+model.length+'</div><div class="label">Sekolah Model</div></div></div>';
+  h+='<div class="card"><h3>📌 Menu Cepat</h3><div class="quick-links">';
+  h+='<div class="quick-link" onclick="navigate(\'sup-manajerial\')"><div class="ql-icon">📋</div><div class="ql-label">Supervisi Manajerial</div></div>';
+  h+='<div class="quick-link" onclick="navigate(\'pkg\')"><div class="ql-icon">👨‍🏫</div><div class="ql-label">PKG</div></div>';
+  h+='<div class="quick-link" onclick="navigate(\'pkkm\')"><div class="ql-icon">👔</div><div class="ql-label">PKKM</div></div>';
+  h+='<div class="quick-link" onclick="navigate(\'sekolah-model\')"><div class="ql-icon">🏫</div><div class="ql-label">Sekolah Model</div></div>';
+  h+='<div class="quick-link" onclick="navigate(\'rencana-kerja\')"><div class="ql-icon">📅</div><div class="ql-label">Rencana Kerja</div></div>';
+  h+='<div class="quick-link" onclick="navigate(\'rekap\')"><div class="ql-icon">📈</div><div class="ql-label">Rekap</div></div></div></div>';
+  const total=madrasah.length,done=sm.length,pct=total>0?Math.round(done/total*100):0;
+  h+='<div class="card"><h3>📊 Progress Supervisi</h3><p style="font-size:13px;margin-bottom:8px">Supervisi Manajerial: '+done+'/'+total+' ('+pct+'%)</p><div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div></div>';
+  return h;
 }
 
-function closeModal() {
-  const m = document.getElementById('modalOverlay');
-  if(m) m.remove();
+// ===== DATA MADRASAH =====
+function renderMadrasah(){
+  const data=getMadrasah();
+  let h='<div class="card no-print"><button class="btn btn-primary" onclick="showAddMadrasah()">+ Tambah Madrasah</button></div>';
+  h+='<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Nama</th><th>NSM</th><th>Kecamatan</th><th>Kamad</th><th>Akreditasi</th><th>Aksi</th></tr>';
+  data.forEach((m,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+m.nama+'</td><td>'+m.nsm+'</td><td>'+m.alamat+'</td><td>'+m.kamad+'</td><td><span class="badge badge-'+(m.akreditasi==='A'?'success':m.akreditasi==='B'?'info':'warning')+'">'+m.akreditasi+'</span></td><td><button class="btn btn-warning btn-sm" onclick="editMadrasah('+m.id+')">Edit</button> <button class="btn btn-danger btn-sm" onclick="deleteMadrasah('+m.id+')">Hapus</button></td></tr>'});
+  h+='</table></div></div>';return h;
+}
+function showAddMadrasah(){showModal('Tambah Madrasah','<div class="form-group"><label>Nama</label><input id="mNama"></div><div class="form-row"><div class="form-group"><label>NSM</label><input id="mNsm"></div><div class="form-group"><label>Kecamatan</label><input id="mAlamat"></div></div><div class="form-group"><label>Kepala Madrasah</label><input id="mKamad"></div><div class="form-row"><div class="form-group"><label>Akreditasi</label><select id="mAkr"><option>A</option><option selected>B</option><option>C</option><option>Belum</option></select></div><div class="form-group"><label>Status</label><select id="mSts"><option selected>Aktif</option><option>Tidak Aktif</option></select></div></div><button class="btn btn-primary" onclick="addMadrasah()">Simpan</button>')}
+function addMadrasah(){const d=getMadrasah();d.push({id:d.length>0?Math.max(...d.map(x=>x.id))+1:1,nama:document.getElementById('mNama').value,nsm:document.getElementById('mNsm').value,alamat:document.getElementById('mAlamat').value,kamad:document.getElementById('mKamad').value,akreditasi:document.getElementById('mAkr').value,status:document.getElementById('mSts').value});saveMadrasah(d);closeModal();render()}
+function editMadrasah(id){const d=getMadrasah(),m=d.find(x=>x.id===id);if(!m)return;showModal('Edit Madrasah','<div class="form-group"><label>Nama</label><input id="mNama" value="'+m.nama+'"></div><div class="form-row"><div class="form-group"><label>NSM</label><input id="mNsm" value="'+m.nsm+'"></div><div class="form-group"><label>Kecamatan</label><input id="mAlamat" value="'+m.alamat+'"></div></div><div class="form-group"><label>Kepala Madrasah</label><input id="mKamad" value="'+m.kamad+'"></div><div class="form-row"><div class="form-group"><label>Akreditasi</label><select id="mAkr"><option '+(m.akreditasi==='A'?'selected':'')+'>A</option><option '+(m.akreditasi==='B'?'selected':'')+'>B</option><option '+(m.akreditasi==='C'?'selected':'')+'>C</option><option '+(m.akreditasi==='Belum'?'selected':'')+'>Belum</option></select></div><div class="form-group"><label>Status</label><select id="mSts"><option '+(m.status==='Aktif'?'selected':'')+'>Aktif</option><option '+(m.status!=='Aktif'?'selected':'')+'>Tidak Aktif</option></select></div></div><button class="btn btn-primary" onclick="updateMadrasah('+id+')">Simpan</button>')}
+function updateMadrasah(id){const d=getMadrasah(),i=d.findIndex(x=>x.id===id);if(i===-1)return;d[i]={...d[i],nama:document.getElementById('mNama').value,nsm:document.getElementById('mNsm').value,alamat:document.getElementById('mAlamat').value,kamad:document.getElementById('mKamad').value,akreditasi:document.getElementById('mAkr').value,status:document.getElementById('mSts').value};saveMadrasah(d);closeModal();render()}
+function deleteMadrasah(id){if(!confirm('Hapus?'))return;saveMadrasah(getMadrasah().filter(x=>x.id!==id));render()}
+
+// ===== AUTO-FILL HELPER =====
+function autoFillMdr(prefix){
+  const id=parseInt(document.getElementById(prefix+'Mdr').value);
+  const m=getMadrasah().find(x=>x.id===id);
+  const n=document.getElementById(prefix+'Nsm'),k=document.getElementById(prefix+'Kamad');
+  if(m){if(n)n.value=m.nsm;if(k)k.value=m.kamad}else{if(n)n.value='';if(k)k.value=''}
 }
 
 
-// ===== SUPERVISI MANAJERIAL =====
-const STANDAR_MANAJERIAL = [
-  {id:1,nama:"Standar Kompetensi Lulusan",sub:["Lulusan memiliki kompetensi sikap spiritual dan sosial","Lulusan memiliki kompetensi pengetahuan yang memadai","Lulusan memiliki kompetensi keterampilan yang memadai","Lulusan memiliki karakter sesuai profil pelajar Pancasila","Lulusan mampu bersaing di jenjang pendidikan selanjutnya"]},
-  {id:2,nama:"Standar Isi",sub:["Kurikulum disusun sesuai ketentuan yang berlaku","Muatan lokal dikembangkan sesuai kebutuhan daerah","Beban belajar peserta didik sesuai ketentuan","Kalender pendidikan disusun sesuai kebutuhan","Silabus dikembangkan berdasarkan standar yang berlaku"]},
-  {id:3,nama:"Standar Proses",sub:["RPP disusun oleh guru secara lengkap dan sistematis","Pembelajaran dilaksanakan secara interaktif dan inspiratif","Pembelajaran menggunakan metode yang bervariasi","Sumber belajar dimanfaatkan secara optimal","Penilaian proses dilakukan selama pembelajaran berlangsung"]},
-  {id:4,nama:"Standar Penilaian",sub:["Penilaian dilakukan secara objektif dan transparan","Instrumen penilaian disusun sesuai kompetensi","Hasil penilaian digunakan untuk perbaikan pembelajaran","Laporan hasil belajar disampaikan tepat waktu","Penilaian mencakup aspek sikap, pengetahuan, dan keterampilan"]},
-  {id:5,nama:"Standar Pendidik dan Tenaga Kependidikan",sub:["Guru memiliki kualifikasi akademik yang sesuai","Guru memiliki kompetensi pedagogik yang memadai","Tenaga kependidikan memiliki kualifikasi yang sesuai","Pengembangan profesi guru dilaksanakan secara berkelanjutan","Rasio guru dan peserta didik sesuai ketentuan"]},
-  {id:6,nama:"Standar Sarana dan Prasarana",sub:["Lahan madrasah memenuhi ketentuan luas minimum","Bangunan gedung memenuhi persyaratan keselamatan","Ruang kelas memenuhi standar kelayakan","Perpustakaan memiliki koleksi yang memadai","Laboratorium/ruang praktik tersedia dan berfungsi"]},
-  {id:7,nama:"Standar Pengelolaan",sub:["Visi, misi, dan tujuan madrasah dirumuskan dengan jelas","RKM dan RKAS disusun secara partisipatif","Struktur organisasi dan pembagian tugas jelas","Sistem informasi manajemen berfungsi dengan baik","Pengawasan dan evaluasi dilakukan secara berkala"]},
-  {id:8,nama:"Standar Pembiayaan",sub:["Sumber pembiayaan madrasah teridentifikasi dengan jelas","RKAS disusun secara transparan dan akuntabel","Pengelolaan keuangan dilakukan sesuai prosedur","Pelaporan keuangan dilakukan secara berkala","Pembiayaan operasional mencukupi kebutuhan minimal"]}
-];
-
-function renderSupervisiManajerial() {
-  const data = getSupervisiManajerial();
-  let html = '<div class="card no-print"><button class="btn btn-primary" onclick="showFormSupervisiManajerial()">+ Supervisi Baru</button> <button class="btn btn-info" onclick="showRekapSupervisiManajerial()">📊 Rekap</button></div>';
-
-  if(data.length === 0) {
-    html += '<div class="card"><p style="color:var(--text-light);text-align:center">Belum ada data supervisi manajerial. Klik tombol di atas untuk memulai.</p></div>';
-    return html;
-  }
-
-  html += '<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Tanggal</th><th>Madrasah</th><th>Skor</th><th>Predikat</th><th>Aksi</th></tr>';
-  data.forEach((d, i) => {
-    const pred = getPredikat(d.persen);
-    html += '<tr><td>' + (i+1) + '</td><td>' + d.tanggal + '</td><td>' + d.madrasah + '</td><td>' + d.persen.toFixed(1) + '%</td><td><span class="badge ' + pred.cls + '">' + pred.label + '</span></td>';
-    html += '<td><button class="btn btn-info btn-sm" onclick="cetakSupervisiManajerial(' + i + ')">Cetak</button> <button class="btn btn-danger btn-sm" onclick="deleteSupervisiManajerial(' + i + ')">Hapus</button></td></tr>';
-  });
-  html += '</table></div></div>';
-  return html;
+// ===== SUPERVISI MANAJERIAL (skor 1-4 + penggalian) =====
+function renderSupManajerial(){
+  const data=getSupManajerial();
+  let h='<div class="card no-print"><button class="btn btn-primary" onclick="showFormSupMan()">+ Supervisi Baru</button> <button class="btn btn-info" onclick="showRekapSupMan()">📊 Rekap</button></div>';
+  if(data.length===0)return h+'<div class="card"><p style="color:var(--text-light);text-align:center">Belum ada data. Klik + Supervisi Baru untuk memulai.</p></div>';
+  h+='<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Tanggal</th><th>Madrasah</th><th>Skor</th><th>Predikat</th><th>Aksi</th></tr>';
+  data.forEach((d,i)=>{const p=getPredikat(d.persen);h+='<tr><td>'+(i+1)+'</td><td>'+d.tanggal+'</td><td>'+d.madrasah+'</td><td>'+d.persen.toFixed(1)+'%</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td><td><button class="btn btn-info btn-sm" onclick="cetakSupMan('+i+')">Cetak</button> <button class="btn btn-danger btn-sm" onclick="delSupMan('+i+')">Hapus</button></td></tr>'});
+  h+='</table></div></div>';return h;
 }
 
-function showFormSupervisiManajerial(editIdx) {
-  const madrasah = getMadrasah();
-  const isEdit = editIdx !== undefined;
-  const existing = isEdit ? getSupervisiManajerial()[editIdx] : null;
-
-  let madrasahOptions = '<option value="">-- Pilih Madrasah --</option>';
-  madrasah.forEach(m => {
-    const sel = existing && existing.madrasahId === m.id ? 'selected' : '';
-    madrasahOptions += '<option value="' + m.id + '" ' + sel + '>' + m.nama + '</option>';
-  });
-
-  let formHtml = '<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="smTanggal" value="' + (existing ? existing.tanggal : today()) + '"></div>';
-  formHtml += '<div class="form-group"><label>Madrasah</label><select id="smMadrasah" onchange="autoFillMadrasah(\'sm\')">' + madrasahOptions + '</select></div></div>';
-  formHtml += '<div class="form-row"><div class="form-group"><label>NSM</label><input id="smNsm" readonly></div><div class="form-group"><label>Kepala Madrasah</label><input id="smKamad" readonly></div></div>';
-
-  formHtml += '<hr style="margin:16px 0"><h4 style="margin-bottom:12px">Penilaian 8 Standar Nasional Pendidikan</h4>';
-  formHtml += '<p style="font-size:11px;color:var(--text-light);margin-bottom:12px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik</p>';
-
-  STANDAR_MANAJERIAL.forEach((std, si) => {
-    formHtml += '<div style="margin-bottom:12px;padding:10px;background:#f9f9f9;border-radius:6px"><strong style="font-size:13px">' + (si+1) + '. ' + std.nama + '</strong><table style="margin-top:8px"><tr><th style="background:var(--primary-light)">No</th><th style="background:var(--primary-light)">Sub-Indikator</th><th style="background:var(--primary-light)">Skor</th></tr>';
-    std.sub.forEach((sub, subi) => {
-      const val = existing ? (existing.skor[si] && existing.skor[si][subi]) || 3 : 3;
-      formHtml += '<tr><td>' + (subi+1) + '</td><td style="font-size:12px">' + sub + '</td><td class="score-cell"><input type="number" min="1" max="4" value="' + val + '" id="sm_' + si + '_' + subi + '"></td></tr>';
+function showFormSupMan(){
+  const mdr=getMadrasah();let opts='<option value="">-- Pilih Madrasah --</option>';
+  mdr.forEach(m=>{opts+='<option value="'+m.id+'">'+m.nama+'</option>'});
+  let f='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="smTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="smMdr" onchange="autoFillMdr(\'sm\')">'+opts+'</select></div></div>';
+  f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="smNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="smKamad" readonly></div></div>';
+  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 untuk panduan penggalian data.</p>';
+  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{
+    f+='<div style="margin-bottom:12px;padding:10px;background:#f9f9f9;border-radius:6px"><strong style="font-size:13px;color:var(--primary)">'+(si+1)+'. '+std.nama+'</strong>';
+    std.indikator.forEach((ind,ii)=>{
+      f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+std.nama+' - '+(ii+1)+'\',INSTRUMEN_MANAJERIAL['+si+'].penggalian['+ii+'])">🔍</button><select class="score-select" id="sm_'+si+'_'+ii+'"><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1</option></select></span></div>';
     });
-    formHtml += '</table></div>';
+    f+='</div>';
   });
-
-  formHtml += '<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveFormSupervisiManajerial(' + (isEdit ? editIdx : -1) + ')">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
-
-  showModal((isEdit ? 'Edit' : 'Tambah') + ' Supervisi Manajerial', formHtml);
-
-  if(existing) {
-    setTimeout(() => {
-      const sel = document.getElementById('smMadrasah');
-      if(sel) { sel.value = existing.madrasahId; autoFillMadrasah('sm'); }
-    }, 100);
-  }
+  f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveSupMan()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
+  showModal('Supervisi Manajerial',f);
 }
 
-function autoFillMadrasah(prefix) {
-  const sel = document.getElementById(prefix + 'Madrasah');
-  const id = parseInt(sel.value);
-  const m = getMadrasah().find(x => x.id === id);
-  const nsmEl = document.getElementById(prefix + 'Nsm');
-  const kamadEl = document.getElementById(prefix + 'Kamad');
-  if(m) {
-    if(nsmEl) nsmEl.value = m.nsm;
-    if(kamadEl) kamadEl.value = m.kamad;
-  } else {
-    if(nsmEl) nsmEl.value = '';
-    if(kamadEl) kamadEl.value = '';
-  }
+function saveSupMan(){
+  const mid=parseInt(document.getElementById('smMdr').value);const m=getMadrasah().find(x=>x.id===mid);
+  if(!m){alert('Pilih madrasah!');return}
+  const skor=[];let total=0,max=0;
+  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{skor[si]=[];std.indikator.forEach((ind,ii)=>{const v=parseInt(document.getElementById('sm_'+si+'_'+ii).value)||3;skor[si][ii]=v;total+=v;max+=4})});
+  const persen=(total/max)*100;const catatan=[],rtl=[];
+  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{const st=skor[si].reduce((a,b)=>a+b,0),sm2=skor[si].length*4,sp=(st/sm2)*100;catatan.push(autoCatatan(std.nama,sp));rtl.push(autoRTL(std.nama,sp))});
+  const entry={tanggal:document.getElementById('smTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,total,max,persen,predikat:getPredikat(persen).label,catatan,rtl};
+  const data=getSupManajerial();data.push(entry);saveSupManajerial(data);closeModal();render();
 }
 
-function saveFormSupervisiManajerial(editIdx) {
-  const data = getSupervisiManajerial();
-  const madrasahId = parseInt(document.getElementById('smMadrasah').value);
-  const m = getMadrasah().find(x => x.id === madrasahId);
-  if(!m) { alert('Pilih madrasah terlebih dahulu!'); return; }
+function delSupMan(i){if(!confirm('Hapus?'))return;const d=getSupManajerial();d.splice(i,1);saveSupManajerial(d);render()}
 
-  const skor = [];
-  let totalSkor = 0, totalMax = 0;
-  STANDAR_MANAJERIAL.forEach((std, si) => {
-    skor[si] = [];
-    std.sub.forEach((sub, subi) => {
-      const val = parseInt(document.getElementById('sm_' + si + '_' + subi).value) || 3;
-      skor[si][subi] = val;
-      totalSkor += val;
-      totalMax += 4;
+function cetakSupMan(idx){
+  const d=getSupManajerial()[idx];if(!d)return;const profil=getProfil();
+  let h='<div style="text-align:center;margin-bottom:16px"><h3>INSTRUMEN SUPERVISI MANAJERIAL</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
+  h+='<table style="width:auto;border:none;margin-bottom:12px"><tr><td style="border:none;padding:2px 8px">Madrasah</td><td style="border:none">: '+d.madrasah+'</td></tr><tr><td style="border:none;padding:2px 8px">NSM</td><td style="border:none">: '+d.nsm+'</td></tr><tr><td style="border:none;padding:2px 8px">Kamad</td><td style="border:none">: '+d.kamad+'</td></tr><tr><td style="border:none;padding:2px 8px">Tanggal</td><td style="border:none">: '+d.tanggal+'</td></tr></table>';
+  h+='<table><tr><th>No</th><th>Standar</th><th>Skor</th><th>Maks</th><th>%</th><th>Predikat</th></tr>';
+  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{const st=d.skor[si].reduce((a,b)=>a+b,0),sm2=d.skor[si].length*4,sp=(st/sm2)*100;const p=getPredikat(sp);h+='<tr><td>'+(si+1)+'</td><td>'+std.nama+'</td><td>'+st+'</td><td>'+sm2+'</td><td>'+sp.toFixed(1)+'</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td></tr>'});
+  const pred=getPredikat(d.persen);h+='<tr style="font-weight:bold"><td colspan="2">TOTAL</td><td>'+d.total+'</td><td>'+d.max+'</td><td>'+d.persen.toFixed(1)+'</td><td><span class="badge '+pred.cls+'">'+pred.label+'</span></td></tr></table>';
+  h+='<h4 style="margin-top:16px">Catatan & RTL:</h4><table><tr><th>Standar</th><th>Catatan</th><th>RTL</th></tr>';
+  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{h+='<tr><td style="font-size:11px">'+std.nama+'</td><td style="font-size:11px">'+d.catatan[si]+'</td><td style="font-size:11px">'+d.rtl[si]+'</td></tr>'});h+='</table>';
+  h+='<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Kepala Madrasah,</p><br><br><br><p><u>'+d.kamad+'</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>'+profil.nama+'</u></p><p>NIP. '+profil.nip+'</p></div></div>';
+  showModal('Cetak Supervisi Manajerial',h+'<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
+}
+
+function showRekapSupMan(){
+  const data=getSupManajerial();if(data.length===0){alert('Belum ada data.');return}
+  let h='<table><tr><th>No</th><th>Madrasah</th><th>Tanggal</th><th>%</th><th>Predikat</th></tr>';
+  data.forEach((d,i)=>{const p=getPredikat(d.persen);h+='<tr><td>'+(i+1)+'</td><td>'+d.madrasah+'</td><td>'+d.tanggal+'</td><td>'+d.persen.toFixed(1)+'%</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td></tr>'});
+  h+='</table><div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>';
+  showModal('Rekap Supervisi Manajerial',h);
+}
+
+// ===== PKG (skor 1-4 + penggalian) =====
+function renderPKG(){
+  const data=getPKGData();
+  let h='<div class="card no-print"><button class="btn btn-primary" onclick="showFormPKG()">+ Penilaian Baru</button> <button class="btn btn-info" onclick="showRekapPKG()">📊 Rekap</button></div>';
+  if(data.length===0)return h+'<div class="card"><p style="color:var(--text-light);text-align:center">Belum ada data PKG.</p></div>';
+  h+='<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Tanggal</th><th>Guru</th><th>Madrasah</th><th>Skor</th><th>Predikat</th><th>Aksi</th></tr>';
+  data.forEach((d,i)=>{const p=getPredikat(d.persen);h+='<tr><td>'+(i+1)+'</td><td>'+d.tanggal+'</td><td>'+d.namaGuru+'</td><td>'+d.madrasah+'</td><td>'+d.persen.toFixed(1)+'%</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td><td><button class="btn btn-info btn-sm" onclick="cetakPKG('+i+')">Cetak</button> <button class="btn btn-danger btn-sm" onclick="delPKG('+i+')">Hapus</button></td></tr>'});
+  h+='</table></div></div>';return h;
+}
+
+function showFormPKG(){
+  const mdr=getMadrasah();let opts='<option value="">-- Pilih Madrasah --</option>';
+  mdr.forEach(m=>{opts+='<option value="'+m.id+'">'+m.nama+'</option>'});
+  let f='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="pkgTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="pkgMdr" onchange="autoFillMdr(\'pkg\')">'+opts+'</select></div></div>';
+  f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="pkgNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="pkgKamad" readonly></div></div>';
+  f+='<div class="form-group"><label>Nama Guru</label><input id="pkgGuru" placeholder="Nama guru yang dinilai"></div>';
+  f+='<div class="form-group"><label>Mata Pelajaran</label><input id="pkgMapel"></div>';
+  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 untuk panduan penggalian data.</p>';
+  let curKat='';
+  INSTRUMEN_PKG.forEach((komp,ki)=>{
+    if(komp.kategori!==curKat){curKat=komp.kategori;f+='<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:12px 0 8px;font-size:12px;font-weight:bold">'+curKat+'</div>'}
+    f+='<div style="margin-bottom:10px;padding:8px;background:#f9f9f9;border-radius:4px"><strong style="font-size:12px;color:var(--primary)">Kompetensi '+(ki+1)+': '+komp.nama+'</strong>';
+    komp.indikator.forEach((ind,ii)=>{
+      f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\'Komp '+(ki+1)+' - '+(ii+1)+'\',INSTRUMEN_PKG['+ki+'].penggalian['+ii+'])">🔍</button><select class="score-select" id="pkg_'+ki+'_'+ii+'"><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1</option></select></span></div>';
     });
+    f+='</div>';
   });
-
-  const persen = (totalSkor / totalMax) * 100;
-  const pred = getPredikat(persen);
-
-  // Auto-generate catatan & RTL per standar
-  const catatan = [];
-  const rtl = [];
-  STANDAR_MANAJERIAL.forEach((std, si) => {
-    const stdTotal = skor[si].reduce((a,b) => a+b, 0);
-    const stdMax = skor[si].length * 4;
-    const stdPersen = (stdTotal/stdMax)*100;
-    catatan.push(autoCatatan(std.nama, stdPersen));
-    rtl.push(autoRTL(std.nama, stdPersen));
-  });
-
-  const entry = {
-    tanggal: document.getElementById('smTanggal').value,
-    madrasahId: madrasahId,
-    madrasah: m.nama,
-    nsm: m.nsm,
-    kamad: m.kamad,
-    skor: skor,
-    totalSkor: totalSkor,
-    totalMax: totalMax,
-    persen: persen,
-    predikat: pred.label,
-    catatan: catatan,
-    rtl: rtl
-  };
-
-  if(editIdx >= 0) {
-    data[editIdx] = entry;
-  } else {
-    data.push(entry);
-  }
-  saveSupervisiManajerial(data);
-  closeModal();
-  render();
+  f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="savePKG()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
+  showModal('Penilaian Kinerja Guru (PKG)',f);
 }
 
-function deleteSupervisiManajerial(idx) {
-  if(!confirm('Hapus data supervisi ini?')) return;
-  const data = getSupervisiManajerial();
-  data.splice(idx, 1);
-  saveSupervisiManajerial(data);
-  render();
+function savePKG(){
+  const mid=parseInt(document.getElementById('pkgMdr').value);const m=getMadrasah().find(x=>x.id===mid);
+  if(!m){alert('Pilih madrasah!');return}
+  const guru=document.getElementById('pkgGuru').value;if(!guru){alert('Masukkan nama guru!');return}
+  const skor=[];let total=0,max=0;
+  INSTRUMEN_PKG.forEach((komp,ki)=>{skor[ki]=[];komp.indikator.forEach((ind,ii)=>{const v=parseInt(document.getElementById('pkg_'+ki+'_'+ii).value)||3;skor[ki][ii]=v;total+=v;max+=4})});
+  const persen=(total/max)*100;
+  const entry={tanggal:document.getElementById('pkgTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,namaGuru:guru,mapel:document.getElementById('pkgMapel').value,skor,total,max,persen,predikat:getPredikat(persen).label};
+  const data=getPKGData();data.push(entry);savePKGData(data);closeModal();render();
 }
 
-function cetakSupervisiManajerial(idx) {
-  const data = getSupervisiManajerial()[idx];
-  if(!data) return;
-  const profil = getProfil();
-  const pred = getPredikat(data.persen);
+function delPKG(i){if(!confirm('Hapus?'))return;const d=getPKGData();d.splice(i,1);savePKGData(d);render()}
 
-  let html = '<div style="text-align:center;margin-bottom:20px"><h3>INSTRUMEN SUPERVISI MANAJERIAL</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
-  html += '<table style="width:auto;border:none;margin-bottom:16px"><tr><td style="border:none;padding:2px 8px">Madrasah</td><td style="border:none;padding:2px 8px">: ' + data.madrasah + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">NSM</td><td style="border:none;padding:2px 8px">: ' + data.nsm + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Kepala Madrasah</td><td style="border:none;padding:2px 8px">: ' + data.kamad + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Tanggal</td><td style="border:none;padding:2px 8px">: ' + data.tanggal + '</td></tr></table>';
-
-  html += '<table><tr><th>No</th><th>Standar</th><th>Skor</th><th>Maks</th><th>%</th><th>Predikat</th></tr>';
-  STANDAR_MANAJERIAL.forEach((std, si) => {
-    const stdTotal = data.skor[si].reduce((a,b)=>a+b,0);
-    const stdMax = data.skor[si].length * 4;
-    const stdPersen = (stdTotal/stdMax)*100;
-    const sp = getPredikat(stdPersen);
-    html += '<tr><td>' + (si+1) + '</td><td>' + std.nama + '</td><td>' + stdTotal + '</td><td>' + stdMax + '</td><td>' + stdPersen.toFixed(1) + '</td><td><span class="badge ' + sp.cls + '">' + sp.label + '</span></td></tr>';
-  });
-  html += '<tr style="font-weight:bold"><td colspan="2">TOTAL</td><td>' + data.totalSkor + '</td><td>' + data.totalMax + '</td><td>' + data.persen.toFixed(1) + '</td><td><span class="badge ' + pred.cls + '">' + pred.label + '</span></td></tr></table>';
-
-  html += '<h4 style="margin-top:16px">Catatan & Rekomendasi Tindak Lanjut:</h4><table><tr><th>Standar</th><th>Catatan</th><th>RTL</th></tr>';
-  STANDAR_MANAJERIAL.forEach((std, si) => {
-    html += '<tr><td>' + std.nama + '</td><td style="font-size:11px">' + data.catatan[si] + '</td><td style="font-size:11px">' + data.rtl[si] + '</td></tr>';
-  });
-  html += '</table>';
-
-  html += '<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Kepala Madrasah,</p><br><br><br><p><u>' + data.kamad + '</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>' + profil.nama + '</u></p><p>NIP. ' + profil.nip + '</p></div></div>';
-
-  showModal('Cetak Supervisi Manajerial', html + '<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
+function cetakPKG(idx){
+  const d=getPKGData()[idx];if(!d)return;const profil=getProfil();const pred=getPredikat(d.persen);
+  let h='<div style="text-align:center;margin-bottom:16px"><h3>PENILAIAN KINERJA GURU (PKG)</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
+  h+='<table style="width:auto;border:none;margin-bottom:12px"><tr><td style="border:none;padding:2px 8px">Nama Guru</td><td style="border:none">: '+d.namaGuru+'</td></tr><tr><td style="border:none;padding:2px 8px">Mapel</td><td style="border:none">: '+d.mapel+'</td></tr><tr><td style="border:none;padding:2px 8px">Madrasah</td><td style="border:none">: '+d.madrasah+'</td></tr><tr><td style="border:none;padding:2px 8px">Tanggal</td><td style="border:none">: '+d.tanggal+'</td></tr></table>';
+  h+='<table><tr><th>No</th><th>Kompetensi</th><th>Skor</th><th>Maks</th><th>%</th><th>Predikat</th></tr>';
+  INSTRUMEN_PKG.forEach((komp,ki)=>{const kt=d.skor[ki].reduce((a,b)=>a+b,0),km=d.skor[ki].length*4,kp=(kt/km)*100;const p=getPredikat(kp);h+='<tr><td>'+(ki+1)+'</td><td style="font-size:11px">'+komp.nama+'</td><td>'+kt+'</td><td>'+km+'</td><td>'+kp.toFixed(1)+'</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td></tr>'});
+  h+='<tr style="font-weight:bold"><td colspan="2">TOTAL</td><td>'+d.total+'</td><td>'+d.max+'</td><td>'+d.persen.toFixed(1)+'</td><td><span class="badge '+pred.cls+'">'+pred.label+'</span></td></tr></table>';
+  h+='<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Guru yang Dinilai,</p><br><br><br><p><u>'+d.namaGuru+'</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>'+profil.nama+'</u></p><p>NIP. '+profil.nip+'</p></div></div>';
+  showModal('Cetak PKG',h+'<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
 }
 
-function showRekapSupervisiManajerial() {
-  const data = getSupervisiManajerial();
-  if(data.length === 0) { alert('Belum ada data supervisi manajerial.'); return; }
-
-  let html = '<div style="overflow-x:auto"><table><tr><th>No</th><th>Madrasah</th><th>Tanggal</th><th>Skor (%)</th><th>Predikat</th></tr>';
-  data.forEach((d, i) => {
-    const pred = getPredikat(d.persen);
-    html += '<tr><td>' + (i+1) + '</td><td>' + d.madrasah + '</td><td>' + d.tanggal + '</td><td>' + d.persen.toFixed(1) + '%</td><td><span class="badge ' + pred.cls + '">' + pred.label + '</span></td></tr>';
-  });
-  html += '</table></div>';
-  html += '<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak Rekap</button></div>';
-  showModal('Rekap Supervisi Manajerial', html);
+function showRekapPKG(){
+  const data=getPKGData();if(data.length===0){alert('Belum ada data.');return}
+  let h='<table><tr><th>No</th><th>Guru</th><th>Madrasah</th><th>Tanggal</th><th>%</th><th>Predikat</th></tr>';
+  data.forEach((d,i)=>{const p=getPredikat(d.persen);h+='<tr><td>'+(i+1)+'</td><td>'+d.namaGuru+'</td><td>'+d.madrasah+'</td><td>'+d.tanggal+'</td><td>'+d.persen.toFixed(1)+'%</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td></tr>'});
+  h+='</table><div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>';
+  showModal('Rekap PKG',h);
 }
 
 
-// ===== PKG (Penilaian Kinerja Guru) =====
-function renderPKG() {
-  const data = getPKG();
-  let html = '<div class="card no-print"><button class="btn btn-primary" onclick="showFormPKG()">+ Penilaian Baru</button> <button class="btn btn-info" onclick="showRekapPKG()">📊 Rekap</button></div>';
-
-  if(data.length === 0) {
-    html += '<div class="card"><p style="color:var(--text-light);text-align:center">Belum ada data PKG. Klik tombol di atas untuk memulai penilaian.</p></div>';
-    return html;
-  }
-
-  html += '<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Tanggal</th><th>Nama Guru</th><th>Madrasah</th><th>Skor</th><th>Predikat</th><th>Aksi</th></tr>';
-  data.forEach((d, i) => {
-    const pred = getPredikat(d.persen);
-    html += '<tr><td>' + (i+1) + '</td><td>' + d.tanggal + '</td><td>' + d.namaGuru + '</td><td>' + d.madrasah + '</td><td>' + d.persen.toFixed(1) + '%</td><td><span class="badge ' + pred.cls + '">' + pred.label + '</span></td>';
-    html += '<td><button class="btn btn-info btn-sm" onclick="cetakPKG(' + i + ')">Cetak</button> <button class="btn btn-danger btn-sm" onclick="deletePKG(' + i + ')">Hapus</button></td></tr>';
-  });
-  html += '</table></div></div>';
-  return html;
+// ===== PKKM (skor 1-4 + penggalian) =====
+function renderPKKM(){
+  const data=getPKKMData();
+  let h='<div class="card no-print"><button class="btn btn-primary" onclick="showFormPKKM()">+ Penilaian Baru</button> <button class="btn btn-info" onclick="showRekapPKKM()">📊 Rekap</button></div>';
+  if(data.length===0)return h+'<div class="card"><p style="color:var(--text-light);text-align:center">Belum ada data PKKM.</p></div>';
+  h+='<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Tanggal</th><th>Madrasah</th><th>Kamad</th><th>Skor</th><th>Predikat</th><th>Aksi</th></tr>';
+  data.forEach((d,i)=>{const p=getPredikat(d.persen);h+='<tr><td>'+(i+1)+'</td><td>'+d.tanggal+'</td><td>'+d.madrasah+'</td><td>'+d.kamad+'</td><td>'+d.persen.toFixed(1)+'%</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td><td><button class="btn btn-info btn-sm" onclick="cetakPKKM('+i+')">Cetak</button> <button class="btn btn-danger btn-sm" onclick="delPKKM('+i+')">Hapus</button></td></tr>'});
+  h+='</table></div></div>';return h;
 }
 
-function showFormPKG() {
-  const madrasah = getMadrasah();
-  let madrasahOpts = '<option value="">-- Pilih Madrasah --</option>';
-  madrasah.forEach(m => { madrasahOpts += '<option value="' + m.id + '">' + m.nama + '</option>'; });
-
-  let formHtml = '<div class="form-row"><div class="form-group"><label>Tanggal Penilaian</label><input type="date" id="pkgTanggal" value="' + today() + '"></div><div class="form-group"><label>Madrasah</label><select id="pkgMadrasah" onchange="autoFillMadrasah(\'pkg\')">' + madrasahOpts + '</select></div></div>';
-  formHtml += '<div class="form-row"><div class="form-group"><label>NSM</label><input id="pkgNsm" readonly></div><div class="form-group"><label>Kepala Madrasah</label><input id="pkgKamad" readonly></div></div>';
-  formHtml += '<div class="form-group"><label>Nama Guru yang Dinilai</label><input id="pkgNamaGuru" placeholder="Masukkan nama guru"></div>';
-  formHtml += '<div class="form-group"><label>Mata Pelajaran</label><input id="pkgMapel" placeholder="Masukkan mata pelajaran"></div>';
-
-  formHtml += '<hr style="margin:16px 0"><h4 style="margin-bottom:8px">Penilaian Kompetensi</h4>';
-  formHtml += '<p style="font-size:11px;color:var(--text-light);margin-bottom:12px">Skor: 0=Tidak terpenuhi, 1=Terpenuhi sebagian, 2=Seluruhnya terpenuhi</p>';
-
-  let currentKategori = '';
-  PKG_KOMPETENSI.forEach((komp, ki) => {
-    if(komp.kategori !== currentKategori) {
-      currentKategori = komp.kategori;
-      formHtml += '<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:12px 0 8px;font-size:12px;font-weight:bold">' + currentKategori + '</div>';
-    }
-    formHtml += '<div style="margin-bottom:10px;padding:8px;background:#f9f9f9;border-radius:4px"><strong style="font-size:12px">Kompetensi ' + komp.id + ': ' + komp.nama + '</strong>';
-    formHtml += '<table style="margin-top:6px"><tr><th style="background:var(--primary-light);font-size:11px">No</th><th style="background:var(--primary-light);font-size:11px">Indikator</th><th style="background:var(--primary-light);font-size:11px">Skor</th></tr>';
-    komp.indikator.forEach((ind, ii) => {
-      formHtml += '<tr><td style="font-size:11px">' + (ii+1) + '</td><td style="font-size:11px">' + ind + '</td><td class="score-cell"><select id="pkg_' + ki + '_' + ii + '" style="width:45px;padding:2px"><option value="2" selected>2</option><option value="1">1</option><option value="0">0</option></select></td></tr>';
-    });
-    formHtml += '</table></div>';
-  });
-
-  formHtml += '<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveFormPKG()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
-  showModal('Penilaian Kinerja Guru (PKG)', formHtml);
-}
-
-function saveFormPKG() {
-  const madrasahId = parseInt(document.getElementById('pkgMadrasah').value);
-  const m = getMadrasah().find(x => x.id === madrasahId);
-  if(!m) { alert('Pilih madrasah!'); return; }
-  const namaGuru = document.getElementById('pkgNamaGuru').value;
-  if(!namaGuru) { alert('Masukkan nama guru!'); return; }
-
-  const skor = [];
-  let totalSkor = 0, totalMax = 0;
-  PKG_KOMPETENSI.forEach((komp, ki) => {
-    skor[ki] = [];
-    komp.indikator.forEach((ind, ii) => {
-      const val = parseInt(document.getElementById('pkg_' + ki + '_' + ii).value) || 0;
-      skor[ki][ii] = val;
-      totalSkor += val;
-      totalMax += 2;
-    });
-  });
-
-  const persen = (totalSkor / totalMax) * 100;
-  const pred = getPredikat(persen);
-
-  const entry = {
-    tanggal: document.getElementById('pkgTanggal').value,
-    madrasahId: madrasahId,
-    madrasah: m.nama,
-    nsm: m.nsm,
-    kamad: m.kamad,
-    namaGuru: namaGuru,
-    mapel: document.getElementById('pkgMapel').value,
-    skor: skor,
-    totalSkor: totalSkor,
-    totalMax: totalMax,
-    persen: persen,
-    predikat: pred.label
-  };
-
-  const data = getPKG();
-  data.push(entry);
-  savePKG(data);
-  closeModal();
-  render();
-}
-
-function deletePKG(idx) {
-  if(!confirm('Hapus data PKG ini?')) return;
-  const data = getPKG();
-  data.splice(idx, 1);
-  savePKG(data);
-  render();
-}
-
-function cetakPKG(idx) {
-  const data = getPKG()[idx];
-  if(!data) return;
-  const profil = getProfil();
-  const pred = getPredikat(data.persen);
-
-  let html = '<div style="text-align:center;margin-bottom:16px"><h3>INSTRUMEN PENILAIAN KINERJA GURU (PKG)</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
-  html += '<table style="width:auto;border:none;margin-bottom:12px"><tr><td style="border:none;padding:2px 8px">Nama Guru</td><td style="border:none;padding:2px 8px">: ' + data.namaGuru + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Mata Pelajaran</td><td style="border:none;padding:2px 8px">: ' + data.mapel + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Madrasah</td><td style="border:none;padding:2px 8px">: ' + data.madrasah + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Tanggal</td><td style="border:none;padding:2px 8px">: ' + data.tanggal + '</td></tr></table>';
-
-  html += '<table><tr><th>No</th><th>Kompetensi</th><th>Skor</th><th>Maks</th><th>Nilai (%)</th><th>Predikat</th></tr>';
-  PKG_KOMPETENSI.forEach((komp, ki) => {
-    const kTotal = data.skor[ki].reduce((a,b)=>a+b,0);
-    const kMax = data.skor[ki].length * 2;
-    const kPersen = (kTotal/kMax)*100;
-    const kp = getPredikat(kPersen);
-    html += '<tr><td>' + komp.id + '</td><td style="font-size:11px">' + komp.nama + '</td><td>' + kTotal + '</td><td>' + kMax + '</td><td>' + kPersen.toFixed(1) + '</td><td><span class="badge ' + kp.cls + '">' + kp.label + '</span></td></tr>';
-  });
-  html += '<tr style="font-weight:bold"><td colspan="2">TOTAL</td><td>' + data.totalSkor + '</td><td>' + data.totalMax + '</td><td>' + data.persen.toFixed(1) + '</td><td><span class="badge ' + pred.cls + '">' + pred.label + '</span></td></tr></table>';
-
-  html += '<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Guru yang Dinilai,</p><br><br><br><p><u>' + data.namaGuru + '</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>' + profil.nama + '</u></p><p>NIP. ' + profil.nip + '</p></div></div>';
-
-  showModal('Cetak PKG', html + '<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
-}
-
-function showRekapPKG() {
-  const data = getPKG();
-  if(data.length === 0) { alert('Belum ada data PKG.'); return; }
-  let html = '<div style="overflow-x:auto"><table><tr><th>No</th><th>Nama Guru</th><th>Madrasah</th><th>Tanggal</th><th>Skor (%)</th><th>Predikat</th></tr>';
-  data.forEach((d, i) => {
-    const pred = getPredikat(d.persen);
-    html += '<tr><td>' + (i+1) + '</td><td>' + d.namaGuru + '</td><td>' + d.madrasah + '</td><td>' + d.tanggal + '</td><td>' + d.persen.toFixed(1) + '%</td><td><span class="badge ' + pred.cls + '">' + pred.label + '</span></td></tr>';
-  });
-  html += '</table></div><div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>';
-  showModal('Rekap PKG', html);
-}
-
-// ===== PKKM (Penilaian Kinerja Kepala Madrasah) =====
-function renderPKKM() {
-  const data = getPKKM();
-  let html = '<div class="card no-print"><button class="btn btn-primary" onclick="showFormPKKM()">+ Penilaian Baru</button> <button class="btn btn-info" onclick="showRekapPKKM()">📊 Rekap</button></div>';
-
-  if(data.length === 0) {
-    html += '<div class="card"><p style="color:var(--text-light);text-align:center">Belum ada data PKKM. Klik tombol di atas untuk memulai penilaian.</p></div>';
-    return html;
-  }
-
-  html += '<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Tanggal</th><th>Madrasah</th><th>Kepala Madrasah</th><th>Skor</th><th>Predikat</th><th>Aksi</th></tr>';
-  data.forEach((d, i) => {
-    const pred = getPredikat(d.persen);
-    html += '<tr><td>' + (i+1) + '</td><td>' + d.tanggal + '</td><td>' + d.madrasah + '</td><td>' + d.kamad + '</td><td>' + d.persen.toFixed(1) + '%</td><td><span class="badge ' + pred.cls + '">' + pred.label + '</span></td>';
-    html += '<td><button class="btn btn-info btn-sm" onclick="cetakPKKM(' + i + ')">Cetak</button> <button class="btn btn-danger btn-sm" onclick="deletePKKM(' + i + ')">Hapus</button></td></tr>';
-  });
-  html += '</table></div></div>';
-  return html;
-}
-
-function showFormPKKM() {
-  const madrasah = getMadrasah();
-  let madrasahOpts = '<option value="">-- Pilih Madrasah --</option>';
-  madrasah.forEach(m => { madrasahOpts += '<option value="' + m.id + '">' + m.nama + '</option>'; });
-
-  let formHtml = '<div class="form-row"><div class="form-group"><label>Tanggal Penilaian</label><input type="date" id="pkkmTanggal" value="' + today() + '"></div><div class="form-group"><label>Madrasah</label><select id="pkkmMadrasah" onchange="autoFillMadrasah(\'pkkm\')">' + madrasahOpts + '</select></div></div>';
-  formHtml += '<div class="form-row"><div class="form-group"><label>NSM</label><input id="pkkmNsm" readonly></div><div class="form-group"><label>Kepala Madrasah</label><input id="pkkmKamad" readonly></div></div>';
-
-  formHtml += '<hr style="margin:16px 0"><h4 style="margin-bottom:8px">Penilaian Kinerja Kepala Madrasah</h4>';
-  formHtml += '<p style="font-size:11px;color:var(--text-light);margin-bottom:12px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik</p>';
-
-  PKKM_KOMPONEN.forEach((komp, ki) => {
-    formHtml += '<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:12px 0 8px;font-size:12px;font-weight:bold">' + komp.id + '. ' + komp.nama + '</div>';
-    komp.unsur.forEach((unsur, ui) => {
-      formHtml += '<div style="margin-bottom:8px;padding:8px;background:#f9f9f9;border-radius:4px"><strong style="font-size:11px">' + unsur.kode + ' ' + unsur.nama + '</strong>';
-      formHtml += '<table style="margin-top:4px"><tr><th style="background:var(--primary-light);font-size:10px">No</th><th style="background:var(--primary-light);font-size:10px">Indikator</th><th style="background:var(--primary-light);font-size:10px">Skor</th></tr>';
-      unsur.indikator.forEach((ind, ii) => {
-        formHtml += '<tr><td style="font-size:11px">' + (ii+1) + '</td><td style="font-size:11px">' + ind + '</td><td class="score-cell"><select id="pkkm_' + ki + '_' + ui + '_' + ii + '" style="width:45px;padding:2px"><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1</option></select></td></tr>';
+function showFormPKKM(){
+  const mdr=getMadrasah();let opts='<option value="">-- Pilih Madrasah --</option>';
+  mdr.forEach(m=>{opts+='<option value="'+m.id+'">'+m.nama+'</option>'});
+  let f='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="pkkmTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="pkkmMdr" onchange="autoFillMdr(\'pkkm\')">'+opts+'</select></div></div>';
+  f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="pkkmNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="pkkmKamad" readonly></div></div>';
+  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 untuk panduan penggalian data.</p>';
+  INSTRUMEN_PKKM.forEach((komp,ki)=>{
+    f+='<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:12px 0 8px;font-size:12px;font-weight:bold">'+komp.id+'. '+komp.nama+'</div>';
+    komp.unsur.forEach((unsur,ui)=>{
+      f+='<div style="margin-bottom:8px;padding:8px;background:#f9f9f9;border-radius:4px"><strong style="font-size:11px;color:var(--primary)">'+unsur.kode+' '+unsur.nama+'</strong>';
+      unsur.indikator.forEach((ind,ii)=>{
+        f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+unsur.kode+' - '+(ii+1)+'\',INSTRUMEN_PKKM['+ki+'].unsur['+ui+'].penggalian['+ii+'])">🔍</button><select class="score-select" id="pkkm_'+ki+'_'+ui+'_'+ii+'"><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1</option></select></span></div>';
       });
-      formHtml += '</table></div>';
+      f+='</div>';
     });
   });
-
-  formHtml += '<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveFormPKKM()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
-  showModal('Penilaian Kinerja Kepala Madrasah (PKKM)', formHtml);
+  f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="savePKKM()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
+  showModal('Penilaian Kinerja Kepala Madrasah (PKKM)',f);
 }
 
-function saveFormPKKM() {
-  const madrasahId = parseInt(document.getElementById('pkkmMadrasah').value);
-  const m = getMadrasah().find(x => x.id === madrasahId);
-  if(!m) { alert('Pilih madrasah!'); return; }
+function savePKKM(){
+  const mid=parseInt(document.getElementById('pkkmMdr').value);const m=getMadrasah().find(x=>x.id===mid);
+  if(!m){alert('Pilih madrasah!');return}
+  const skor=[];let total=0,max=0;
+  INSTRUMEN_PKKM.forEach((komp,ki)=>{skor[ki]=[];komp.unsur.forEach((unsur,ui)=>{skor[ki][ui]=[];unsur.indikator.forEach((ind,ii)=>{const v=parseInt(document.getElementById('pkkm_'+ki+'_'+ui+'_'+ii).value)||3;skor[ki][ui][ii]=v;total+=v;max+=4})})});
+  const persen=(total/max)*100;
+  const entry={tanggal:document.getElementById('pkkmTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,total,max,persen,predikat:getPredikat(persen).label};
+  const data=getPKKMData();data.push(entry);savePKKMData(data);closeModal();render();
+}
 
-  const skor = [];
-  let totalSkor = 0, totalMax = 0;
-  PKKM_KOMPONEN.forEach((komp, ki) => {
-    skor[ki] = [];
-    komp.unsur.forEach((unsur, ui) => {
-      skor[ki][ui] = [];
-      unsur.indikator.forEach((ind, ii) => {
-        const val = parseInt(document.getElementById('pkkm_' + ki + '_' + ui + '_' + ii).value) || 3;
-        skor[ki][ui][ii] = val;
-        totalSkor += val;
-        totalMax += 4;
-      });
-    });
+function delPKKM(i){if(!confirm('Hapus?'))return;const d=getPKKMData();d.splice(i,1);savePKKMData(d);render()}
+
+function cetakPKKM(idx){
+  const d=getPKKMData()[idx];if(!d)return;const profil=getProfil();const pred=getPredikat(d.persen);
+  let h='<div style="text-align:center;margin-bottom:16px"><h3>PENILAIAN KINERJA KEPALA MADRASAH (PKKM)</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
+  h+='<table style="width:auto;border:none;margin-bottom:12px"><tr><td style="border:none;padding:2px 8px">Madrasah</td><td style="border:none">: '+d.madrasah+'</td></tr><tr><td style="border:none;padding:2px 8px">Kamad</td><td style="border:none">: '+d.kamad+'</td></tr><tr><td style="border:none;padding:2px 8px">Tanggal</td><td style="border:none">: '+d.tanggal+'</td></tr></table>';
+  h+='<table><tr><th>No</th><th>Komponen</th><th>Skor</th><th>Maks</th><th>%</th><th>Predikat</th></tr>';
+  INSTRUMEN_PKKM.forEach((komp,ki)=>{let ks=0,km=0;komp.unsur.forEach((u,ui)=>{u.indikator.forEach((ind,ii)=>{ks+=d.skor[ki][ui][ii];km+=4})});const kp=(ks/km)*100;const p=getPredikat(kp);h+='<tr><td>'+komp.id+'</td><td>'+komp.nama+'</td><td>'+ks+'</td><td>'+km+'</td><td>'+kp.toFixed(1)+'</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td></tr>'});
+  h+='<tr style="font-weight:bold"><td colspan="2">TOTAL</td><td>'+d.total+'</td><td>'+d.max+'</td><td>'+d.persen.toFixed(1)+'</td><td><span class="badge '+pred.cls+'">'+pred.label+'</span></td></tr></table>';
+  h+='<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Kepala Madrasah,</p><br><br><br><p><u>'+d.kamad+'</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>'+profil.nama+'</u></p><p>NIP. '+profil.nip+'</p></div></div>';
+  showModal('Cetak PKKM',h+'<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
+}
+
+function showRekapPKKM(){
+  const data=getPKKMData();if(data.length===0){alert('Belum ada data.');return}
+  let h='<table><tr><th>No</th><th>Madrasah</th><th>Kamad</th><th>Tanggal</th><th>%</th><th>Predikat</th></tr>';
+  data.forEach((d,i)=>{const p=getPredikat(d.persen);h+='<tr><td>'+(i+1)+'</td><td>'+d.madrasah+'</td><td>'+d.kamad+'</td><td>'+d.tanggal+'</td><td>'+d.persen.toFixed(1)+'%</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td></tr>'});
+  h+='</table><div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>';
+  showModal('Rekap PKKM',h);
+}
+
+// ===== SEKOLAH MODEL (skor 1-4 + penggalian) =====
+function renderSekolahModel(){
+  const data=getModelData();
+  let h='<div class="card no-print"><button class="btn btn-primary" onclick="showFormModel()">+ Asesmen Baru</button> <button class="btn btn-info" onclick="showRekapModel()">📊 Rekap</button></div>';
+  if(data.length===0)return h+'<div class="card"><p style="color:var(--text-light);text-align:center">Belum ada data pembinaan sekolah model.</p></div>';
+  h+='<div class="card"><h3>📊 Tracking Progres</h3>';
+  data.forEach(d=>{const t=getTingkat(d.rata);h+='<div style="padding:8px;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between"><strong style="font-size:13px">'+d.madrasah+'</strong><span class="badge '+t.cls+'">'+t.label+'</span></div><div class="progress-bar" style="margin-top:6px"><div class="progress-fill" style="width:'+(d.rata/4*100)+'%;background:'+t.color+'"></div></div><div style="font-size:11px;color:var(--text-light);margin-top:4px">Skor: '+d.rata.toFixed(2)+'/4.00 | '+d.tanggal+'</div></div>'});
+  h+='</div>';
+  h+='<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Tanggal</th><th>Madrasah</th><th>Skor</th><th>Tingkat</th><th>Aksi</th></tr>';
+  data.forEach((d,i)=>{const t=getTingkat(d.rata);h+='<tr><td>'+(i+1)+'</td><td>'+d.tanggal+'</td><td>'+d.madrasah+'</td><td>'+d.rata.toFixed(2)+'</td><td><span class="badge '+t.cls+'">'+t.label+'</span></td><td><button class="btn btn-info btn-sm" onclick="cetakModel('+i+')">Cetak</button> <button class="btn btn-danger btn-sm" onclick="delModel('+i+')">Hapus</button></td></tr>'});
+  h+='</table></div></div>';return h;
+}
+
+function getTingkat(skor){
+  if(skor>=3.6)return{label:'Unggul',cls:'badge-success',color:'#2E7D32'};
+  if(skor>=3.0)return{label:'Maju',cls:'badge-info',color:'#1565c0'};
+  if(skor>=2.0)return{label:'Berkembang',cls:'badge-warning',color:'#f57f17'};
+  return{label:'Pra Berkembang',cls:'badge-danger',color:'#c62828'};
+}
+
+function showFormModel(){
+  const mdr=getMadrasah();let opts='<option value="">-- Pilih Madrasah --</option>';
+  mdr.forEach(m=>{opts+='<option value="'+m.id+'">'+m.nama+'</option>'});
+  let f='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="mdlTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="mdlMdr" onchange="autoFillMdr(\'mdl\')">'+opts+'</select></div></div>';
+  f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="mdlNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="mdlKamad" readonly></div></div>';
+  f+='<hr style="margin:12px 0"><h4 style="margin-bottom:8px">Asesmen Tingkat Kematangan Sekolah Model</h4>';
+  f+='<p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Pra Berkembang, 2=Berkembang, 3=Maju, 4=Unggul. Klik 🔍 untuk panduan.</p>';
+  INSTRUMEN_SEKOLAH_MODEL.forEach((item,i)=>{
+    f+='<div class="indikator-row"><span class="indikator-num">'+(i+1)+'</span><span class="indikator-text">'+item.nama+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+item.nama.substring(0,40)+'\',INSTRUMEN_SEKOLAH_MODEL['+i+'].penggalian)">🔍</button><select class="score-select" id="mdl_'+i+'"><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1</option></select></span></div>';
   });
-
-  const persen = (totalSkor / totalMax) * 100;
-  const pred = getPredikat(persen);
-
-  const entry = {
-    tanggal: document.getElementById('pkkmTanggal').value,
-    madrasahId: madrasahId,
-    madrasah: m.nama,
-    nsm: m.nsm,
-    kamad: m.kamad,
-    skor: skor,
-    totalSkor: totalSkor,
-    totalMax: totalMax,
-    persen: persen,
-    predikat: pred.label
-  };
-
-  const data = getPKKM();
-  data.push(entry);
-  savePKKM(data);
-  closeModal();
-  render();
+  f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveModel()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
+  showModal('Pembinaan Sekolah Model PM & KKA',f);
 }
 
-function deletePKKM(idx) {
-  if(!confirm('Hapus data PKKM ini?')) return;
-  const data = getPKKM();
-  data.splice(idx, 1);
-  savePKKM(data);
-  render();
+function saveModel(){
+  const mid=parseInt(document.getElementById('mdlMdr').value);const m=getMadrasah().find(x=>x.id===mid);
+  if(!m){alert('Pilih madrasah!');return}
+  const skor=[];let total=0;
+  INSTRUMEN_SEKOLAH_MODEL.forEach((item,i)=>{const v=parseInt(document.getElementById('mdl_'+i).value)||3;skor.push(v);total+=v});
+  const rata=total/INSTRUMEN_SEKOLAH_MODEL.length;
+  const entry={tanggal:document.getElementById('mdlTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,rata};
+  const data=getModelData();data.push(entry);saveModelData(data);closeModal();render();
 }
 
-function cetakPKKM(idx) {
-  const data = getPKKM()[idx];
-  if(!data) return;
-  const profil = getProfil();
-  const pred = getPredikat(data.persen);
+function delModel(i){if(!confirm('Hapus?'))return;const d=getModelData();d.splice(i,1);saveModelData(d);render()}
 
-  let html = '<div style="text-align:center;margin-bottom:16px"><h3>PENILAIAN KINERJA KEPALA MADRASAH (PKKM)</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
-  html += '<table style="width:auto;border:none;margin-bottom:12px"><tr><td style="border:none;padding:2px 8px">Madrasah</td><td style="border:none;padding:2px 8px">: ' + data.madrasah + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Kepala Madrasah</td><td style="border:none;padding:2px 8px">: ' + data.kamad + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Tanggal</td><td style="border:none;padding:2px 8px">: ' + data.tanggal + '</td></tr></table>';
-
-  html += '<table><tr><th>No</th><th>Komponen</th><th>Skor</th><th>Maks</th><th>%</th><th>Predikat</th></tr>';
-  PKKM_KOMPONEN.forEach((komp, ki) => {
-    let kompSkor = 0, kompMax = 0;
-    komp.unsur.forEach((unsur, ui) => {
-      unsur.indikator.forEach((ind, ii) => {
-        kompSkor += data.skor[ki][ui][ii];
-        kompMax += 4;
-      });
-    });
-    const kPersen = (kompSkor/kompMax)*100;
-    const kp = getPredikat(kPersen);
-    html += '<tr><td>' + komp.id + '</td><td>' + komp.nama + '</td><td>' + kompSkor + '</td><td>' + kompMax + '</td><td>' + kPersen.toFixed(1) + '</td><td><span class="badge ' + kp.cls + '">' + kp.label + '</span></td></tr>';
-  });
-  html += '<tr style="font-weight:bold"><td colspan="2">TOTAL</td><td>' + data.totalSkor + '</td><td>' + data.totalMax + '</td><td>' + data.persen.toFixed(1) + '</td><td><span class="badge ' + pred.cls + '">' + pred.label + '</span></td></tr></table>';
-
-  html += '<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Kepala Madrasah,</p><br><br><br><p><u>' + data.kamad + '</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>' + profil.nama + '</u></p><p>NIP. ' + profil.nip + '</p></div></div>';
-
-  showModal('Cetak PKKM', html + '<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
+function cetakModel(idx){
+  const d=getModelData()[idx];if(!d)return;const profil=getProfil();const t=getTingkat(d.rata);
+  let h='<div style="text-align:center;margin-bottom:16px"><h3>LAPORAN PEMBINAAN SEKOLAH MODEL PM & KKA</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
+  h+='<table style="width:auto;border:none;margin-bottom:12px"><tr><td style="border:none;padding:2px 8px">Madrasah</td><td style="border:none">: '+d.madrasah+'</td></tr><tr><td style="border:none;padding:2px 8px">Kamad</td><td style="border:none">: '+d.kamad+'</td></tr><tr><td style="border:none;padding:2px 8px">Tanggal</td><td style="border:none">: '+d.tanggal+'</td></tr><tr><td style="border:none;padding:2px 8px">Tingkat</td><td style="border:none">: <span class="badge '+t.cls+'">'+t.label+'</span> ('+d.rata.toFixed(2)+')</td></tr></table>';
+  h+='<table><tr><th>No</th><th>Indikator</th><th>Skor</th></tr>';
+  INSTRUMEN_SEKOLAH_MODEL.forEach((item,i)=>{h+='<tr><td>'+(i+1)+'</td><td style="font-size:12px">'+item.nama+'</td><td>'+d.skor[i]+'</td></tr>'});
+  h+='<tr style="font-weight:bold"><td colspan="2">Rata-rata</td><td>'+d.rata.toFixed(2)+'</td></tr></table>';
+  h+='<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Kepala Madrasah,</p><br><br><br><p><u>'+d.kamad+'</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>'+profil.nama+'</u></p><p>NIP. '+profil.nip+'</p></div></div>';
+  showModal('Cetak Sekolah Model',h+'<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
 }
 
-function showRekapPKKM() {
-  const data = getPKKM();
-  if(data.length === 0) { alert('Belum ada data PKKM.'); return; }
-  let html = '<div style="overflow-x:auto"><table><tr><th>No</th><th>Madrasah</th><th>Kepala Madrasah</th><th>Tanggal</th><th>Skor (%)</th><th>Predikat</th></tr>';
-  data.forEach((d, i) => {
-    const pred = getPredikat(d.persen);
-    html += '<tr><td>' + (i+1) + '</td><td>' + d.madrasah + '</td><td>' + d.kamad + '</td><td>' + d.tanggal + '</td><td>' + d.persen.toFixed(1) + '%</td><td><span class="badge ' + pred.cls + '">' + pred.label + '</span></td></tr>';
-  });
-  html += '</table></div><div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>';
-  showModal('Rekap PKKM', html);
+function showRekapModel(){
+  const data=getModelData();if(data.length===0){alert('Belum ada data.');return}
+  let h='<table><tr><th>No</th><th>Madrasah</th><th>Tanggal</th><th>Skor</th><th>Tingkat</th></tr>';
+  data.forEach((d,i)=>{const t=getTingkat(d.rata);h+='<tr><td>'+(i+1)+'</td><td>'+d.madrasah+'</td><td>'+d.tanggal+'</td><td>'+d.rata.toFixed(2)+'</td><td><span class="badge '+t.cls+'">'+t.label+'</span></td></tr>'});
+  h+='</table><div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>';
+  showModal('Rekap Sekolah Model',h);
 }
 
 
-// ===== SEKOLAH MODEL PM & KKA =====
-const INDIKATOR_SEKOLAH_MODEL = [
-  "Keunggulan belajar murid (pembelajaran mendalam terjadi)",
-  "Keunggulan mengajar pendidik (guru menerapkan PM konsisten)",
-  "Keunggulan kepemimpinan kepala madrasah",
-  "Visi-misi madrasah mencerminkan PM & KKA",
-  "Budaya belajar profesional terbangun",
-  "Supervisi akademik mendukung PM",
-  "Sumber daya dialokasikan untuk PM & KKA",
-  "Kolaborasi antar guru dalam pengembangan PM",
-  "Keterlibatan peserta didik dalam pembelajaran aktif",
-  "Dokumentasi dan diseminasi praktik baik"
-];
-
-const CHECKLIST_OBSERVASI_PM = [
-  "Guru menggunakan strategi pembelajaran mendalam",
-  "Peserta didik aktif berpikir kritis dan reflektif",
-  "Pembelajaran berbasis konteks kehidupan nyata",
-  "Kolaborasi antar peserta didik terjadi",
-  "Guru memberikan umpan balik yang konstruktif",
-  "Penggunaan media/sumber belajar yang bervariasi",
-  "Diferensiasi pembelajaran sesuai kebutuhan murid",
-  "Asesmen formatif dilakukan selama pembelajaran",
-  "Peserta didik menunjukkan pemahaman mendalam",
-  "Refleksi pembelajaran dilakukan di akhir sesi"
-];
-
-const LANGKAH_TET = [
-  "Identifikasi masalah pembelajaran",
-  "Studi literatur dan referensi",
-  "Desain eksperimen pembelajaran",
-  "Pelaksanaan eksperimen di kelas",
-  "Observasi dan pengumpulan data",
-  "Refleksi dan analisis hasil",
-  "Perbaikan desain pembelajaran",
-  "Dokumentasi dan berbagi praktik baik"
-];
-
-function renderSekolahModel() {
-  const data = getSekolahModel();
-  let html = '<div class="card no-print"><button class="btn btn-primary" onclick="showFormSekolahModel()">+ Asesmen Baru</button> <button class="btn btn-info" onclick="showRekapSekolahModel()">📊 Rekap</button></div>';
-
-  if(data.length === 0) {
-    html += '<div class="card"><p style="color:var(--text-light);text-align:center">Belum ada data pembinaan sekolah model. Klik tombol di atas untuk memulai asesmen.</p></div>';
-    return html;
-  }
-
-  html += '<div class="card"><h3>📊 Tracking Progres Madrasah Model</h3>';
-  data.forEach((d, i) => {
-    const tingkat = getTingkatKematangan(d.rataAsesmen);
-    html += '<div style="padding:8px;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px"><strong>' + d.madrasah + '</strong></span><span class="badge ' + tingkat.cls + '">' + tingkat.label + '</span></div>';
-    html += '<div class="progress-bar" style="margin-top:6px"><div class="progress-fill" style="width:' + (d.rataAsesmen/4*100) + '%;background:' + tingkat.color + '"></div></div>';
-    html += '<div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--text-light)"><span>Skor: ' + d.rataAsesmen.toFixed(2) + '/4.00</span><span>' + d.tanggal + '</span></div></div>';
-  });
-  html += '</div>';
-
-  html += '<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Tanggal</th><th>Madrasah</th><th>Skor</th><th>Tingkat</th><th>Aksi</th></tr>';
-  data.forEach((d, i) => {
-    const tingkat = getTingkatKematangan(d.rataAsesmen);
-    html += '<tr><td>' + (i+1) + '</td><td>' + d.tanggal + '</td><td>' + d.madrasah + '</td><td>' + d.rataAsesmen.toFixed(2) + '</td><td><span class="badge ' + tingkat.cls + '">' + tingkat.label + '</span></td>';
-    html += '<td><button class="btn btn-info btn-sm" onclick="cetakSekolahModel(' + i + ')">Cetak</button> <button class="btn btn-danger btn-sm" onclick="deleteSekolahModel(' + i + ')">Hapus</button></td></tr>';
-  });
-  html += '</table></div></div>';
-  return html;
+// ===== RENCANA KERJA =====
+function renderRencanaKerja(){
+  const data=getRencanaKerja();
+  let h='<div class="card no-print"><button class="btn btn-primary" onclick="showFormRK()">+ Tambah Kegiatan</button> <button class="btn btn-info" onclick="cetakRK()">🖨️ Cetak</button></div>';
+  if(data.length===0)return h+'<div class="card"><p style="color:var(--text-light);text-align:center">Belum ada rencana kerja.</p></div>';
+  h+='<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Kegiatan</th><th>Sasaran</th><th>Jadwal</th><th>Target</th><th>Ket</th><th>Aksi</th></tr>';
+  data.forEach((d,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+d.kegiatan+'</td><td>'+d.sasaran+'</td><td>'+d.jadwal+'</td><td>'+d.target+'</td><td>'+d.ket+'</td><td><button class="btn btn-warning btn-sm" onclick="editRK('+i+')">Edit</button> <button class="btn btn-danger btn-sm" onclick="delRK('+i+')">Hapus</button></td></tr>'});
+  h+='</table></div></div>';return h;
 }
-
-function getTingkatKematangan(skor) {
-  if(skor >= 3.6) return {label:'Unggul',cls:'badge-success',color:'#2E7D32'};
-  if(skor >= 3.0) return {label:'Maju',cls:'badge-info',color:'#1565c0'};
-  if(skor >= 2.0) return {label:'Berkembang',cls:'badge-warning',color:'#f57f17'};
-  return {label:'Pra Berkembang',cls:'badge-danger',color:'#c62828'};
+function showFormRK(idx){
+  const isEdit=idx!==undefined;const e=isEdit?getRencanaKerja()[idx]:null;
+  let f='<div class="form-group"><label>Kegiatan</label><input id="rkKeg" value="'+(e?e.kegiatan:'')+'"></div>';
+  f+='<div class="form-row"><div class="form-group"><label>Sasaran</label><input id="rkSas" value="'+(e?e.sasaran:'')+'"></div><div class="form-group"><label>Jadwal</label><input id="rkJdw" value="'+(e?e.jadwal:'')+'" placeholder="Contoh: Januari 2026"></div></div>';
+  f+='<div class="form-row"><div class="form-group"><label>Target</label><input id="rkTgt" value="'+(e?e.target:'')+'"></div><div class="form-group"><label>Keterangan</label><input id="rkKet" value="'+(e?e.ket:'')+'"></div></div>';
+  f+='<button class="btn btn-primary" onclick="saveRK('+(isEdit?idx:-1)+')">Simpan</button>';
+  showModal((isEdit?'Edit':'Tambah')+' Rencana Kerja',f);
 }
-
-function showFormSekolahModel() {
-  const madrasah = getMadrasah();
-  let madrasahOpts = '<option value="">-- Pilih Madrasah --</option>';
-  madrasah.forEach(m => { madrasahOpts += '<option value="' + m.id + '">' + m.nama + '</option>'; });
-
-  let formHtml = '<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="smTgl" value="' + today() + '"></div><div class="form-group"><label>Madrasah</label><select id="smMdr" onchange="autoFillMadrasahSM()">' + madrasahOpts + '</select></div></div>';
-  formHtml += '<div class="form-row"><div class="form-group"><label>NSM</label><input id="smNsmM" readonly></div><div class="form-group"><label>Kepala Madrasah</label><input id="smKamadM" readonly></div></div>';
-
-  // Tab navigation
-  formHtml += '<div class="tab-bar" style="margin-top:16px"><div class="tab-item active" onclick="switchTabSM(0,this)">Asesmen Awal</div><div class="tab-item" onclick="switchTabSM(1,this)">Observasi PM</div><div class="tab-item" onclick="switchTabSM(2,this)">Checklist TET</div></div>';
-
-  // Tab 1: Asesmen Awal
-  formHtml += '<div id="tabSM0"><h4 style="margin-bottom:8px">Asesmen Awal Tingkat Kematangan</h4>';
-  formHtml += '<p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Pra Berkembang, 2=Berkembang, 3=Maju, 4=Unggul</p>';
-  formHtml += '<table><tr><th>No</th><th>Indikator</th><th>Skor</th></tr>';
-  INDIKATOR_SEKOLAH_MODEL.forEach((ind, i) => {
-    formHtml += '<tr><td>' + (i+1) + '</td><td style="font-size:12px">' + ind + '</td><td class="score-cell"><select id="smAsesmen_' + i + '" style="width:45px;padding:2px"><option value="3">3</option><option value="4">4</option><option value="2">2</option><option value="1">1</option></select></td></tr>';
-  });
-  formHtml += '</table></div>';
-
-  // Tab 2: Observasi PM
-  formHtml += '<div id="tabSM1" style="display:none"><h4 style="margin-bottom:8px">Monitoring Implementasi PM (Observasi Kelas)</h4>';
-  formHtml += '<p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Tidak terlihat, 2=Sebagian, 3=Terlihat jelas, 4=Sangat baik</p>';
-  formHtml += '<table><tr><th>No</th><th>Item Observasi</th><th>Skor</th></tr>';
-  CHECKLIST_OBSERVASI_PM.forEach((item, i) => {
-    formHtml += '<tr><td>' + (i+1) + '</td><td style="font-size:12px">' + item + '</td><td class="score-cell"><select id="smObs_' + i + '" style="width:45px;padding:2px"><option value="3">3</option><option value="4">4</option><option value="2">2</option><option value="1">1</option></select></td></tr>';
-  });
-  formHtml += '</table></div>';
-
-  // Tab 3: TET
-  formHtml += '<div id="tabSM2" style="display:none"><h4 style="margin-bottom:8px">Checklist Teacher Experimental Training (TET)</h4>';
-  formHtml += '<table><tr><th>No</th><th>Langkah TET</th><th>Status</th></tr>';
-  LANGKAH_TET.forEach((langkah, i) => {
-    formHtml += '<tr><td>' + (i+1) + '</td><td style="font-size:12px">' + langkah + '</td><td><select id="smTet_' + i + '" style="width:80px;padding:2px;font-size:11px"><option value="Belum">Belum</option><option value="Proses">Proses</option><option value="Selesai">Selesai</option></select></td></tr>';
-  });
-  formHtml += '</table></div>';
-
-  formHtml += '<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveFormSekolahModel()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
-  showModal('Pembinaan Sekolah Model PM & KKA', formHtml);
+function saveRK(idx){
+  const entry={kegiatan:document.getElementById('rkKeg').value,sasaran:document.getElementById('rkSas').value,jadwal:document.getElementById('rkJdw').value,target:document.getElementById('rkTgt').value,ket:document.getElementById('rkKet').value};
+  if(!entry.kegiatan){alert('Masukkan kegiatan!');return}
+  const d=getRencanaKerja();if(idx>=0)d[idx]=entry;else d.push(entry);saveRencanaKerja(d);closeModal();render();
 }
-
-function switchTabSM(idx, el) {
-  for(let i=0;i<3;i++) {
-    const tab = document.getElementById('tabSM'+i);
-    if(tab) tab.style.display = i===idx ? 'block' : 'none';
-  }
-  el.parentElement.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function autoFillMadrasahSM() {
-  const sel = document.getElementById('smMdr');
-  const id = parseInt(sel.value);
-  const m = getMadrasah().find(x => x.id === id);
-  document.getElementById('smNsmM').value = m ? m.nsm : '';
-  document.getElementById('smKamadM').value = m ? m.kamad : '';
-}
-
-function saveFormSekolahModel() {
-  const madrasahId = parseInt(document.getElementById('smMdr').value);
-  const m = getMadrasah().find(x => x.id === madrasahId);
-  if(!m) { alert('Pilih madrasah!'); return; }
-
-  const asesmen = [];
-  let totalAsesmen = 0;
-  INDIKATOR_SEKOLAH_MODEL.forEach((ind, i) => {
-    const val = parseInt(document.getElementById('smAsesmen_' + i).value) || 3;
-    asesmen.push(val);
-    totalAsesmen += val;
-  });
-  const rataAsesmen = totalAsesmen / INDIKATOR_SEKOLAH_MODEL.length;
-
-  const observasi = [];
-  let totalObs = 0;
-  CHECKLIST_OBSERVASI_PM.forEach((item, i) => {
-    const val = parseInt(document.getElementById('smObs_' + i).value) || 3;
-    observasi.push(val);
-    totalObs += val;
-  });
-  const rataObs = totalObs / CHECKLIST_OBSERVASI_PM.length;
-
-  const tet = [];
-  LANGKAH_TET.forEach((langkah, i) => {
-    tet.push(document.getElementById('smTet_' + i).value);
-  });
-
-  const entry = {
-    tanggal: document.getElementById('smTgl').value,
-    madrasahId: madrasahId,
-    madrasah: m.nama,
-    nsm: m.nsm,
-    kamad: m.kamad,
-    asesmen: asesmen,
-    rataAsesmen: rataAsesmen,
-    observasi: observasi,
-    rataObs: rataObs,
-    tet: tet
-  };
-
-  const data = getSekolahModel();
-  data.push(entry);
-  saveSekolahModel(data);
-  closeModal();
-  render();
-}
-
-function deleteSekolahModel(idx) {
-  if(!confirm('Hapus data ini?')) return;
-  const data = getSekolahModel();
-  data.splice(idx, 1);
-  saveSekolahModel(data);
-  render();
-}
-
-function cetakSekolahModel(idx) {
-  const data = getSekolahModel()[idx];
-  if(!data) return;
-  const profil = getProfil();
-  const tingkat = getTingkatKematangan(data.rataAsesmen);
-
-  let html = '<div style="text-align:center;margin-bottom:16px"><h3>LAPORAN PEMBINAAN SEKOLAH MODEL PM & KKA</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
-  html += '<table style="width:auto;border:none;margin-bottom:12px"><tr><td style="border:none;padding:2px 8px">Madrasah</td><td style="border:none;padding:2px 8px">: ' + data.madrasah + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Kepala Madrasah</td><td style="border:none;padding:2px 8px">: ' + data.kamad + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Tanggal</td><td style="border:none;padding:2px 8px">: ' + data.tanggal + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Tingkat Kematangan</td><td style="border:none;padding:2px 8px">: <span class="badge ' + tingkat.cls + '">' + tingkat.label + '</span> (Skor: ' + data.rataAsesmen.toFixed(2) + ')</td></tr></table>';
-
-  html += '<h4 style="margin-top:16px">A. Asesmen Awal Tingkat Kematangan</h4>';
-  html += '<table><tr><th>No</th><th>Indikator</th><th>Skor</th></tr>';
-  INDIKATOR_SEKOLAH_MODEL.forEach((ind, i) => {
-    html += '<tr><td>' + (i+1) + '</td><td style="font-size:12px">' + ind + '</td><td>' + data.asesmen[i] + '</td></tr>';
-  });
-  html += '<tr style="font-weight:bold"><td colspan="2">Rata-rata</td><td>' + data.rataAsesmen.toFixed(2) + '</td></tr></table>';
-
-  html += '<h4 style="margin-top:16px">B. Monitoring Implementasi PM</h4>';
-  html += '<table><tr><th>No</th><th>Item Observasi</th><th>Skor</th></tr>';
-  CHECKLIST_OBSERVASI_PM.forEach((item, i) => {
-    html += '<tr><td>' + (i+1) + '</td><td style="font-size:12px">' + item + '</td><td>' + data.observasi[i] + '</td></tr>';
-  });
-  html += '<tr style="font-weight:bold"><td colspan="2">Rata-rata</td><td>' + data.rataObs.toFixed(2) + '</td></tr></table>';
-
-  html += '<h4 style="margin-top:16px">C. Checklist TET</h4>';
-  html += '<table><tr><th>No</th><th>Langkah</th><th>Status</th></tr>';
-  LANGKAH_TET.forEach((langkah, i) => {
-    const status = data.tet[i];
-    const cls = status === 'Selesai' ? 'badge-success' : status === 'Proses' ? 'badge-warning' : 'badge-danger';
-    html += '<tr><td>' + (i+1) + '</td><td style="font-size:12px">' + langkah + '</td><td><span class="badge ' + cls + '">' + status + '</span></td></tr>';
-  });
-  html += '</table>';
-
-  html += '<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Kepala Madrasah,</p><br><br><br><p><u>' + data.kamad + '</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>' + profil.nama + '</u></p><p>NIP. ' + profil.nip + '</p></div></div>';
-
-  showModal('Cetak Laporan Sekolah Model', html + '<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
-}
-
-function showRekapSekolahModel() {
-  const data = getSekolahModel();
-  if(data.length === 0) { alert('Belum ada data.'); return; }
-  let html = '<div style="overflow-x:auto"><table><tr><th>No</th><th>Madrasah</th><th>Tanggal</th><th>Skor Asesmen</th><th>Tingkat</th><th>Skor Observasi</th></tr>';
-  data.forEach((d, i) => {
-    const tingkat = getTingkatKematangan(d.rataAsesmen);
-    html += '<tr><td>' + (i+1) + '</td><td>' + d.madrasah + '</td><td>' + d.tanggal + '</td><td>' + d.rataAsesmen.toFixed(2) + '</td><td><span class="badge ' + tingkat.cls + '">' + tingkat.label + '</span></td><td>' + d.rataObs.toFixed(2) + '</td></tr>';
-  });
-  html += '</table></div><div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>';
-  showModal('Rekap Sekolah Model PM & KKA', html);
-}
-
-
-// ===== RENCANA KERJA PENGAWAS =====
-function renderRencanaKerja() {
-  const data = getRencanaKerja();
-  let html = '<div class="card no-print"><button class="btn btn-primary" onclick="showFormRencanaKerja()">+ Tambah Kegiatan</button> <button class="btn btn-info" onclick="cetakRencanaKerja()">🖨️ Cetak</button></div>';
-
-  if(data.length === 0) {
-    html += '<div class="card"><p style="color:var(--text-light);text-align:center">Belum ada rencana kerja. Klik tombol di atas untuk menambah kegiatan.</p></div>';
-    return html;
-  }
-
-  html += '<div class="card"><div style="overflow-x:auto"><table><tr><th>No</th><th>Kegiatan</th><th>Sasaran</th><th>Jadwal</th><th>Target</th><th>Keterangan</th><th>Aksi</th></tr>';
-  data.forEach((d, i) => {
-    html += '<tr><td>' + (i+1) + '</td><td>' + d.kegiatan + '</td><td>' + d.sasaran + '</td><td>' + d.jadwal + '</td><td>' + d.target + '</td><td>' + d.keterangan + '</td>';
-    html += '<td><button class="btn btn-warning btn-sm" onclick="editRencanaKerja(' + i + ')">Edit</button> <button class="btn btn-danger btn-sm" onclick="deleteRencanaKerja(' + i + ')">Hapus</button></td></tr>';
-  });
-  html += '</table></div></div>';
-  return html;
-}
-
-function showFormRencanaKerja(editIdx) {
-  const isEdit = editIdx !== undefined;
-  const existing = isEdit ? getRencanaKerja()[editIdx] : null;
-
-  let formHtml = '<div class="form-group"><label>Kegiatan</label><input id="rkKegiatan" value="' + (existing ? existing.kegiatan : '') + '"></div>';
-  formHtml += '<div class="form-row"><div class="form-group"><label>Sasaran</label><input id="rkSasaran" value="' + (existing ? existing.sasaran : '') + '"></div>';
-  formHtml += '<div class="form-group"><label>Jadwal</label><input id="rkJadwal" value="' + (existing ? existing.jadwal : '') + '" placeholder="Contoh: Januari 2026"></div></div>';
-  formHtml += '<div class="form-row"><div class="form-group"><label>Target</label><input id="rkTarget" value="' + (existing ? existing.target : '') + '"></div>';
-  formHtml += '<div class="form-group"><label>Keterangan</label><input id="rkKeterangan" value="' + (existing ? existing.keterangan : '') + '"></div></div>';
-  formHtml += '<button class="btn btn-primary" onclick="saveRencanaKerjaForm(' + (isEdit ? editIdx : -1) + ')">Simpan</button>';
-
-  showModal((isEdit ? 'Edit' : 'Tambah') + ' Rencana Kerja', formHtml);
-}
-
-function saveRencanaKerjaForm(editIdx) {
-  const entry = {
-    kegiatan: document.getElementById('rkKegiatan').value,
-    sasaran: document.getElementById('rkSasaran').value,
-    jadwal: document.getElementById('rkJadwal').value,
-    target: document.getElementById('rkTarget').value,
-    keterangan: document.getElementById('rkKeterangan').value
-  };
-  if(!entry.kegiatan) { alert('Masukkan nama kegiatan!'); return; }
-
-  const data = getRencanaKerja();
-  if(editIdx >= 0) { data[editIdx] = entry; }
-  else { data.push(entry); }
-  saveRencanaKerja(data);
-  closeModal();
-  render();
-}
-
-function editRencanaKerja(idx) { showFormRencanaKerja(idx); }
-
-function deleteRencanaKerja(idx) {
-  if(!confirm('Hapus kegiatan ini?')) return;
-  const data = getRencanaKerja();
-  data.splice(idx, 1);
-  saveRencanaKerja(data);
-  render();
-}
-
-function cetakRencanaKerja() {
-  const data = getRencanaKerja();
-  if(data.length === 0) { alert('Belum ada data.'); return; }
-  const profil = getProfil();
-
-  let html = '<div style="text-align:center;margin-bottom:16px"><h3>RENCANA KERJA PENGAWAS MADRASAH</h3><p>Kementerian Agama Kabupaten Jember</p><p>' + profil.wilayah + '</p></div>';
-  html += '<table style="width:auto;border:none;margin-bottom:12px"><tr><td style="border:none;padding:2px 8px">Nama Pengawas</td><td style="border:none;padding:2px 8px">: ' + profil.nama + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">NIP</td><td style="border:none;padding:2px 8px">: ' + profil.nip + '</td></tr></table>';
-
-  html += '<table><tr><th>No</th><th>Kegiatan</th><th>Sasaran</th><th>Jadwal</th><th>Target</th><th>Keterangan</th></tr>';
-  data.forEach((d, i) => {
-    html += '<tr><td>' + (i+1) + '</td><td>' + d.kegiatan + '</td><td>' + d.sasaran + '</td><td>' + d.jadwal + '</td><td>' + d.target + '</td><td>' + d.keterangan + '</td></tr>';
-  });
-  html += '</table>';
-
-  html += '<div style="text-align:right;margin-top:40px"><p>Jember, ' + today() + '</p><p>Pengawas Madrasah,</p><br><br><br><p><u>' + profil.nama + '</u></p><p>NIP. ' + profil.nip + '</p></div>';
-
-  showModal('Cetak Rencana Kerja', html + '<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
+function editRK(i){showFormRK(i)}
+function delRK(i){if(!confirm('Hapus?'))return;const d=getRencanaKerja();d.splice(i,1);saveRencanaKerja(d);render()}
+function cetakRK(){
+  const data=getRencanaKerja();if(data.length===0){alert('Belum ada data.');return}
+  const profil=getProfil();
+  let h='<div style="text-align:center;margin-bottom:16px"><h3>RENCANA KERJA PENGAWAS MADRASAH</h3><p>Kementerian Agama Kabupaten Jember</p><p>'+profil.wilayah+'</p></div>';
+  h+='<table><tr><th>No</th><th>Kegiatan</th><th>Sasaran</th><th>Jadwal</th><th>Target</th><th>Ket</th></tr>';
+  data.forEach((d,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+d.kegiatan+'</td><td>'+d.sasaran+'</td><td>'+d.jadwal+'</td><td>'+d.target+'</td><td>'+d.ket+'</td></tr>'});
+  h+='</table><div style="text-align:right;margin-top:40px"><p>Jember, '+today()+'</p><p>Pengawas Madrasah,</p><br><br><br><p><u>'+profil.nama+'</u></p><p>NIP. '+profil.nip+'</p></div>';
+  showModal('Cetak Rencana Kerja',h+'<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
 }
 
 // ===== REKAP & LAPORAN =====
-function renderRekap() {
-  const madrasah = getMadrasah();
-  const sm = getSupervisiManajerial();
-  const pkg = getPKG();
-  const pkkm = getPKKM();
-  const model = getSekolahModel();
-
-  let html = '<div class="card"><h3>📊 Rekap Per Madrasah</h3>';
-  html += '<div style="overflow-x:auto"><table><tr><th>No</th><th>Madrasah</th><th>Sup. Manajerial</th><th>PKG</th><th>PKKM</th><th>Sekolah Model</th></tr>';
-  madrasah.forEach((m, i) => {
-    const smData = sm.filter(x => x.madrasahId === m.id);
-    const pkgData = pkg.filter(x => x.madrasahId === m.id);
-    const pkkmData = pkkm.filter(x => x.madrasahId === m.id);
-    const modelData = model.filter(x => x.madrasahId === m.id);
-
-    const smBadge = smData.length > 0 ? '<span class="badge badge-success">✓ ' + smData.length + '</span>' : '<span class="badge badge-danger">-</span>';
-    const pkgBadge = pkgData.length > 0 ? '<span class="badge badge-success">✓ ' + pkgData.length + '</span>' : '<span class="badge badge-danger">-</span>';
-    const pkkmBadge = pkkmData.length > 0 ? '<span class="badge badge-success">✓ ' + pkkmData.length + '</span>' : '<span class="badge badge-danger">-</span>';
-    const modelBadge = modelData.length > 0 ? '<span class="badge badge-success">✓ ' + modelData.length + '</span>' : '<span class="badge badge-danger">-</span>';
-
-    html += '<tr><td>' + (i+1) + '</td><td>' + m.nama + '</td><td>' + smBadge + '</td><td>' + pkgBadge + '</td><td>' + pkkmBadge + '</td><td>' + modelBadge + '</td></tr>';
-  });
-  html += '</table></div></div>';
-
-  // Summary stats
-  html += '<div class="stats-grid">';
-  html += '<div class="stat-card"><div class="number">' + sm.length + '</div><div class="label">Total Supervisi Manajerial</div></div>';
-  html += '<div class="stat-card"><div class="number">' + pkg.length + '</div><div class="label">Total PKG</div></div>';
-  html += '<div class="stat-card"><div class="number">' + pkkm.length + '</div><div class="label">Total PKKM</div></div>';
-  html += '<div class="stat-card"><div class="number">' + model.length + '</div><div class="label">Total Sekolah Model</div></div>';
-  html += '</div>';
-
-  // Rekap per jenis
-  html += '<div class="card"><h3>📋 Rekap Per Jenis Supervisi</h3>';
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
-  html += '<button class="btn btn-primary" onclick="showRekapSupervisiManajerial()">Rekap Supervisi Manajerial</button>';
-  html += '<button class="btn btn-primary" onclick="showRekapPKG()">Rekap PKG</button>';
-  html += '<button class="btn btn-primary" onclick="showRekapPKKM()">Rekap PKKM</button>';
-  html += '<button class="btn btn-primary" onclick="showRekapSekolahModel()">Rekap Sekolah Model</button>';
-  html += '</div></div>';
-
-  // Cetak laporan semester
-  html += '<div class="card no-print"><h3>🖨️ Laporan</h3>';
-  html += '<button class="btn btn-info" onclick="cetakLaporanSemester()">Cetak Laporan Semester</button></div>';
-
-  return html;
+function renderRekap(){
+  const mdr=getMadrasah(),sm=getSupManajerial(),pkg=getPKGData(),pkkm=getPKKMData(),mdl=getModelData();
+  let h='<div class="card"><h3>📊 Rekap Per Madrasah</h3><div style="overflow-x:auto"><table><tr><th>No</th><th>Madrasah</th><th>Sup.Man</th><th>PKG</th><th>PKKM</th><th>Model</th></tr>';
+  mdr.forEach((m,i)=>{
+    const hasSM=sm.filter(x=>x.madrasahId===m.id).length;
+    const hasPKG=pkg.filter(x=>x.madrasahId===m.id).length;
+    const hasPKKM=pkkm.filter(x=>x.madrasahId===m.id).length;
+    const hasMdl=mdl.filter(x=>x.madrasahId===m.id).length;
+    h+='<tr><td>'+(i+1)+'</td><td>'+m.nama+'</td><td>'+(hasSM?'<span class="badge badge-success">✓ '+hasSM+'</span>':'<span class="badge badge-danger">-</span>')+'</td><td>'+(hasPKG?'<span class="badge badge-success">✓ '+hasPKG+'</span>':'<span class="badge badge-danger">-</span>')+'</td><td>'+(hasPKKM?'<span class="badge badge-success">✓ '+hasPKKM+'</span>':'<span class="badge badge-danger">-</span>')+'</td><td>'+(hasMdl?'<span class="badge badge-success">✓ '+hasMdl+'</span>':'<span class="badge badge-danger">-</span>')+'</td></tr>'});
+  h+='</table></div></div>';
+  h+='<div class="stats-grid"><div class="stat-card"><div class="number">'+sm.length+'</div><div class="label">Supervisi Manajerial</div></div><div class="stat-card"><div class="number">'+pkg.length+'</div><div class="label">PKG</div></div><div class="stat-card"><div class="number">'+pkkm.length+'</div><div class="label">PKKM</div></div><div class="stat-card"><div class="number">'+mdl.length+'</div><div class="label">Sekolah Model</div></div></div>';
+  h+='<div class="card"><h3>📋 Rekap Per Jenis</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn btn-primary" onclick="showRekapSupMan()">Rekap Sup. Manajerial</button><button class="btn btn-primary" onclick="showRekapPKG()">Rekap PKG</button><button class="btn btn-primary" onclick="showRekapPKKM()">Rekap PKKM</button><button class="btn btn-primary" onclick="showRekapModel()">Rekap Sekolah Model</button></div></div>';
+  h+='<div class="card no-print"><h3>🖨️ Laporan</h3><button class="btn btn-info" onclick="cetakLapSemester()">Cetak Laporan Semester</button></div>';
+  return h;
 }
 
-function cetakLaporanSemester() {
-  const profil = getProfil();
-  const madrasah = getMadrasah();
-  const sm = getSupervisiManajerial();
-  const pkg = getPKG();
-  const pkkm = getPKKM();
-  const model = getSekolahModel();
-
-  let html = '<div style="text-align:center;margin-bottom:20px"><h3>LAPORAN SEMESTER PENGAWAS MADRASAH</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
-  html += '<table style="width:auto;border:none;margin-bottom:16px"><tr><td style="border:none;padding:2px 8px">Nama</td><td style="border:none;padding:2px 8px">: ' + profil.nama + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">NIP</td><td style="border:none;padding:2px 8px">: ' + profil.nip + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Wilayah Binaan</td><td style="border:none;padding:2px 8px">: ' + profil.wilayah + '</td></tr>';
-  html += '<tr><td style="border:none;padding:2px 8px">Jumlah Madrasah</td><td style="border:none;padding:2px 8px">: ' + madrasah.length + '</td></tr></table>';
-
-  html += '<h4>A. Ringkasan Kegiatan</h4>';
-  html += '<table><tr><th>No</th><th>Jenis Kegiatan</th><th>Jumlah</th><th>Keterangan</th></tr>';
-  html += '<tr><td>1</td><td>Supervisi Manajerial</td><td>' + sm.length + '</td><td>' + (sm.length > 0 ? 'Rata-rata: ' + (sm.reduce((a,b)=>a+b.persen,0)/sm.length).toFixed(1) + '%' : '-') + '</td></tr>';
-  html += '<tr><td>2</td><td>Penilaian Kinerja Guru (PKG)</td><td>' + pkg.length + '</td><td>' + (pkg.length > 0 ? 'Rata-rata: ' + (pkg.reduce((a,b)=>a+b.persen,0)/pkg.length).toFixed(1) + '%' : '-') + '</td></tr>';
-  html += '<tr><td>3</td><td>Penilaian Kinerja Kepala Madrasah</td><td>' + pkkm.length + '</td><td>' + (pkkm.length > 0 ? 'Rata-rata: ' + (pkkm.reduce((a,b)=>a+b.persen,0)/pkkm.length).toFixed(1) + '%' : '-') + '</td></tr>';
-  html += '<tr><td>4</td><td>Pembinaan Sekolah Model</td><td>' + model.length + '</td><td>' + (model.length > 0 ? 'Rata-rata: ' + (model.reduce((a,b)=>a+b.rataAsesmen,0)/model.length).toFixed(2) : '-') + '</td></tr>';
-  html += '</table>';
-
-  html += '<h4 style="margin-top:16px">B. Capaian Per Madrasah</h4>';
-  html += '<table><tr><th>No</th><th>Madrasah</th><th>SM</th><th>PKG</th><th>PKKM</th><th>Model</th></tr>';
-  madrasah.forEach((m, i) => {
-    const hasSM = sm.some(x => x.madrasahId === m.id) ? '✓' : '-';
-    const hasPKG = pkg.some(x => x.madrasahId === m.id) ? '✓' : '-';
-    const hasPKKM = pkkm.some(x => x.madrasahId === m.id) ? '✓' : '-';
-    const hasModel = model.some(x => x.madrasahId === m.id) ? '✓' : '-';
-    html += '<tr><td>' + (i+1) + '</td><td>' + m.nama + '</td><td>' + hasSM + '</td><td>' + hasPKG + '</td><td>' + hasPKKM + '</td><td>' + hasModel + '</td></tr>';
-  });
-  html += '</table>';
-
-  html += '<div style="text-align:right;margin-top:40px"><p>Jember, ' + today() + '</p><p>Pengawas Madrasah,</p><br><br><br><p><u>' + profil.nama + '</u></p><p>NIP. ' + profil.nip + '</p></div>';
-
-  showModal('Laporan Semester', html + '<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
+function cetakLapSemester(){
+  const profil=getProfil(),mdr=getMadrasah(),sm=getSupManajerial(),pkg=getPKGData(),pkkm=getPKKMData(),mdl=getModelData();
+  let h='<div style="text-align:center;margin-bottom:16px"><h3>LAPORAN SEMESTER PENGAWAS MADRASAH</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
+  h+='<table style="width:auto;border:none;margin-bottom:16px"><tr><td style="border:none;padding:2px 8px">Nama</td><td style="border:none">: '+profil.nama+'</td></tr><tr><td style="border:none;padding:2px 8px">NIP</td><td style="border:none">: '+profil.nip+'</td></tr><tr><td style="border:none;padding:2px 8px">Wilayah</td><td style="border:none">: '+profil.wilayah+'</td></tr><tr><td style="border:none;padding:2px 8px">Madrasah</td><td style="border:none">: '+mdr.length+'</td></tr></table>';
+  h+='<h4>A. Ringkasan Kegiatan</h4><table><tr><th>No</th><th>Jenis</th><th>Jumlah</th><th>Rata-rata</th></tr>';
+  h+='<tr><td>1</td><td>Supervisi Manajerial</td><td>'+sm.length+'</td><td>'+(sm.length>0?(sm.reduce((a,b)=>a+b.persen,0)/sm.length).toFixed(1)+'%':'-')+'</td></tr>';
+  h+='<tr><td>2</td><td>PKG</td><td>'+pkg.length+'</td><td>'+(pkg.length>0?(pkg.reduce((a,b)=>a+b.persen,0)/pkg.length).toFixed(1)+'%':'-')+'</td></tr>';
+  h+='<tr><td>3</td><td>PKKM</td><td>'+pkkm.length+'</td><td>'+(pkkm.length>0?(pkkm.reduce((a,b)=>a+b.persen,0)/pkkm.length).toFixed(1)+'%':'-')+'</td></tr>';
+  h+='<tr><td>4</td><td>Sekolah Model</td><td>'+mdl.length+'</td><td>'+(mdl.length>0?(mdl.reduce((a,b)=>a+b.rata,0)/mdl.length).toFixed(2):'-')+'</td></tr></table>';
+  h+='<h4 style="margin-top:16px">B. Capaian Per Madrasah</h4><table><tr><th>No</th><th>Madrasah</th><th>SM</th><th>PKG</th><th>PKKM</th><th>Model</th></tr>';
+  mdr.forEach((m,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+m.nama+'</td><td>'+(sm.some(x=>x.madrasahId===m.id)?'✓':'-')+'</td><td>'+(pkg.some(x=>x.madrasahId===m.id)?'✓':'-')+'</td><td>'+(pkkm.some(x=>x.madrasahId===m.id)?'✓':'-')+'</td><td>'+(mdl.some(x=>x.madrasahId===m.id)?'✓':'-')+'</td></tr>'});
+  h+='</table><div style="text-align:right;margin-top:40px"><p>Jember, '+today()+'</p><p>Pengawas Madrasah,</p><br><br><br><p><u>'+profil.nama+'</u></p><p>NIP. '+profil.nip+'</p></div>';
+  showModal('Laporan Semester',h+'<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
 }
 
 // ===== PENGATURAN =====
-function renderPengaturan() {
-  const profil = getProfil();
-  let html = '<div class="card"><h3>👤 Profil Pengawas</h3>';
-  html += '<div class="form-group"><label>Nama Lengkap</label><input id="setNama" value="' + profil.nama + '"></div>';
-  html += '<div class="form-row"><div class="form-group"><label>NIP</label><input id="setNip" value="' + profil.nip + '"></div>';
-  html += '<div class="form-group"><label>Pangkat/Golongan</label><input id="setPangkat" value="' + profil.pangkat + '"></div></div>';
-  html += '<div class="form-group"><label>Wilayah Binaan</label><input id="setWilayah" value="' + profil.wilayah + '"></div>';
-  html += '<button class="btn btn-primary" onclick="savePengaturanProfil()">💾 Simpan Profil</button></div>';
-
-  html += '<div class="card"><h3>🔑 Ganti Password</h3>';
-  html += '<div class="form-row"><div class="form-group"><label>Password Baru</label><input type="password" id="setPass1"></div>';
-  html += '<div class="form-group"><label>Konfirmasi Password</label><input type="password" id="setPass2"></div></div>';
-  html += '<button class="btn btn-primary" onclick="changePassword()">🔑 Ganti Password</button></div>';
-
-  html += '<div class="card"><h3>⚠️ Reset Data</h3>';
-  html += '<p style="font-size:12px;color:var(--text-light);margin-bottom:12px">Hati-hati! Tindakan ini tidak dapat dibatalkan.</p>';
-  html += '<button class="btn btn-danger" onclick="resetAllData()">🗑️ Reset Semua Data</button> ';
-  html += '<button class="btn btn-warning" onclick="resetMadrasahData()">Reset Data Madrasah ke Default</button></div>';
-
-  return html;
+function renderPengaturan(){
+  const p=getProfil();
+  let h='<div class="card"><h3>👤 Profil Pengawas</h3>';
+  h+='<div class="form-group"><label>Nama</label><input id="sNama" value="'+p.nama+'"></div>';
+  h+='<div class="form-row"><div class="form-group"><label>NIP</label><input id="sNip" value="'+p.nip+'"></div><div class="form-group"><label>Pangkat</label><input id="sPangkat" value="'+p.pangkat+'"></div></div>';
+  h+='<div class="form-group"><label>Wilayah Binaan</label><input id="sWilayah" value="'+p.wilayah+'"></div>';
+  h+='<button class="btn btn-primary" onclick="simpanProfil()">💾 Simpan</button></div>';
+  h+='<div class="card"><h3>🔑 Ganti Password</h3><div class="form-row"><div class="form-group"><label>Password Baru</label><input type="password" id="sP1"></div><div class="form-group"><label>Konfirmasi</label><input type="password" id="sP2"></div></div><button class="btn btn-primary" onclick="gantiPass()">🔑 Ganti</button></div>';
+  h+='<div class="card"><h3>⚠️ Reset Data</h3><p style="font-size:12px;color:var(--text-light);margin-bottom:12px">Hati-hati! Tidak dapat dibatalkan.</p><button class="btn btn-danger" onclick="resetAll()">🗑️ Reset Semua</button> <button class="btn btn-warning" onclick="resetMdr()">Reset Madrasah ke Default</button></div>';
+  return h;
 }
-
-function savePengaturanProfil() {
-  saveProfil({
-    nama: document.getElementById('setNama').value,
-    nip: document.getElementById('setNip').value,
-    pangkat: document.getElementById('setPangkat').value,
-    wilayah: document.getElementById('setWilayah').value
-  });
-  alert('Profil berhasil disimpan!');
-  render();
-}
-
-function changePassword() {
-  const p1 = document.getElementById('setPass1').value;
-  const p2 = document.getElementById('setPass2').value;
-  if(!p1) { alert('Masukkan password baru!'); return; }
-  if(p1 !== p2) { alert('Password tidak cocok!'); return; }
-  setPassword(p1);
-  alert('Password berhasil diubah!');
-  document.getElementById('setPass1').value = '';
-  document.getElementById('setPass2').value = '';
-}
-
-function resetAllData() {
-  if(!confirm('PERINGATAN: Semua data akan dihapus! Lanjutkan?')) return;
-  if(!confirm('Anda yakin? Data tidak dapat dikembalikan!')) return;
-  localStorage.clear();
-  alert('Semua data berhasil direset.');
-  render();
-}
-
-function resetMadrasahData() {
-  if(!confirm('Reset data madrasah ke default (20 MA)?')) return;
-  saveMadrasah(DEFAULT_MADRASAH);
-  alert('Data madrasah berhasil direset ke default.');
-  render();
-}
+function simpanProfil(){saveProfil({nama:document.getElementById('sNama').value,nip:document.getElementById('sNip').value,pangkat:document.getElementById('sPangkat').value,wilayah:document.getElementById('sWilayah').value});alert('Profil disimpan!');render()}
+function gantiPass(){const a=document.getElementById('sP1').value,b=document.getElementById('sP2').value;if(!a){alert('Masukkan password!');return}if(a!==b){alert('Tidak cocok!');return}setPassword(a);alert('Password diubah!')}
+function resetAll(){if(!confirm('SEMUA data akan dihapus!'))return;if(!confirm('Yakin?'))return;localStorage.clear();alert('Reset berhasil.');render()}
+function resetMdr(){if(!confirm('Reset madrasah ke default?'))return;saveMadrasah(DEFAULT_MADRASAH);alert('Reset berhasil.');render()}
 
 // ===== INIT =====
 render();
-</script>\n</body>\n</html>
+</script>
+</body>
+</html>
