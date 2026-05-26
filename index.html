@@ -68,7 +68,17 @@ tr:hover{background:#f9f9f9}
 .login-box input{width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:10px;font-size:13px}
 .login-box button{width:100%;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer}
 .login-box .error{color:var(--danger);font-size:12px;margin-top:8px}
-.skor-radio{background:none;border:none;cursor:pointer;font-size:1.1rem;color:#94a3b8;transition:all .2s;padding:0 3px;position:relative}.skor-radio::after{content:attr(data-val);position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--text-light)}.skor-radio:hover{color:var(--primary)}.skor-radio.selected{color:var(--primary);font-weight:bold}.score-group{display:inline-flex;align-items:center;gap:0}
+.instrumen-table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:12px}
+.instrumen-table th,.instrumen-table td{border:1px solid #e0e0e0;padding:6px 5px;text-align:center;vertical-align:middle}
+.instrumen-table th{background:var(--primary);color:#fff;font-weight:600;font-size:11px}
+.instrumen-table .col-no{width:30px}
+.instrumen-table .col-aspek{text-align:left;min-width:200px;font-size:11px}
+.instrumen-table .col-aspek.clickable{cursor:pointer;color:var(--primary)}
+.instrumen-table .col-aspek.clickable:hover{text-decoration:underline}
+.instrumen-table .col-skor{width:32px}
+.instrumen-table .col-catatan{min-width:120px;text-align:left}
+.instrumen-table .col-catatan input{width:100%;padding:4px 6px;border:1px solid #e0e0e0;border-radius:3px;font-size:11px}
+.skor-radio{background:none;border:none;cursor:pointer;font-size:1.1rem;color:#94a3b8;transition:all .2s;padding:0 3px;position:relative}.skor-radio:hover{color:var(--primary)}.skor-radio.selected{color:var(--primary);font-weight:bold}.score-group{display:inline-flex;align-items:center;gap:0}
 .indikator-row{display:flex;align-items:center;padding:2px 0;border-bottom:none}
 .indikator-row:last-child{border-bottom:none}
 .indikator-num{width:30px;font-weight:bold;font-size:12px;color:var(--primary)}
@@ -424,6 +434,45 @@ function getSkor(id){
   for(let i=0;i<btns.length;i++){if(btns[i].classList.contains('selected'))return i+1}
   return 3;
 }
+function setSkorTable(key,idx,val){
+  const cells=document.querySelectorAll('[data-skor-id="'+key+'_'+idx+'"]');
+  cells.forEach((cell,i)=>{const btn=cell.querySelector('.skor-radio');if(btn){btn.classList.toggle('selected',i===val-1);btn.innerHTML=(i===val-1)?'&#9679;':'&#9675;'}});
+  // Auto-fill catatan
+  const catEl=document.getElementById(key+'_cat_'+idx);
+  if(catEl&&!catEl.dataset.manual){catEl.value=getAutoCatatanByScore(val)}
+}
+function getAutoCatatanByScore(skor){
+  if(skor===4)return'Amat Baik - Pertahankan dan tingkatkan kualitas';
+  if(skor===3)return'Baik - Masih ada ruang untuk peningkatan';
+  if(skor===2)return'Cukup - Perlu pembinaan di beberapa aspek';
+  if(skor===1)return'Kurang - Perlu pembinaan intensif';
+  return'';
+}
+function setCatatanManual(key,idx,val){
+  const el=document.getElementById(key+'_cat_'+idx);
+  if(el){el.dataset.manual='1'}
+}
+function getSkorTable(key,idx){
+  const cells=document.querySelectorAll('[data-skor-id="'+key+'_'+idx+'"]');
+  for(let i=0;i<cells.length;i++){const btn=cells[i].querySelector('.skor-radio.selected');if(btn)return i+1}
+  return 3;
+}
+function getCatatanTable(key,idx){
+  const el=document.getElementById(key+'_cat_'+idx);
+  return el?el.value:'';
+}
+
+function renderSkorCells(key,idx,defaultVal){
+  defaultVal=defaultVal||3;
+  let h='';
+  for(let s=1;s<=4;s++){
+    const sel=s===defaultVal?'selected':'';
+    const sym=s===defaultVal?'&#9679;':'&#9675;';
+    h+='<td class="col-skor" data-skor-id="'+key+'_'+idx+'"><button class="skor-radio '+sel+'" onclick="setSkorTable(\''+key+'\','+idx+','+s+')">'+sym+'</button></td>';
+  }
+  return h;
+}
+
 
 
 // ===== NAVIGATION & RENDER =====
@@ -547,17 +596,21 @@ function showFormSupMan(){
   mdr.forEach(m=>{opts+='<option value="'+m.id+'">'+m.nama+'</option>'});
   let f='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="smTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="smMdr" onchange="autoFillMdr(\'sm\')">'+opts+'</select></div></div>';
   f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="smNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="smKamad" readonly></div></div>';
-  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 untuk panduan penggalian data.</p>';
+  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 indikator untuk lihat penggalian data.</p>';
+  let globalIdx=0;
   INSTRUMEN_MANAJERIAL.forEach((std,si)=>{
-    f+='<div style="margin-bottom:12px;padding:10px;background:#f9f9f9;border-radius:6px"><strong style="font-size:13px;color:var(--primary)">'+(si+1)+'. '+std.nama+'</strong>';
+    f+='<div style="background:var(--primary);color:#fff;padding:8px 12px;border-radius:6px;margin:12px 0 8px;font-size:12px;font-weight:600">'+(si+1)+'. '+std.nama+'</div>';
+    f+='<table class="instrumen-table"><thead><tr><th class="col-no">No</th><th class="col-aspek">Indikator</th><th class="col-skor">1</th><th class="col-skor">2</th><th class="col-skor">3</th><th class="col-skor">4</th><th class="col-catatan">Catatan</th></tr></thead><tbody>';
     std.indikator.forEach((ind,ii)=>{
-      f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+std.nama+' - '+(ii+1)+'\',INSTRUMEN_MANAJERIAL['+si+'].penggalian['+ii+'])">🔍</button><span class="score-group" data-id="sm_'+si+'_'+ii+'"><button class="skor-radio" data-val="1" onclick="setSkor(this,1)">&#9675;</button><button class="skor-radio" data-val="2" onclick="setSkor(this,2)">&#9675;</button><button class="skor-radio selected" data-val="3" onclick="setSkor(this,3)">&#9679;</button><button class="skor-radio" data-val="4" onclick="setSkor(this,4)">&#9675;</button></span></span></div>';
+      const gi=globalIdx++;
+      f+='<tr><td class="col-no">'+(ii+1)+'</td>';
+      f+='<td class="col-aspek clickable" onclick="showPenggalian(\''+std.nama.replace(/\'/g,'')+' - '+(ii+1)+'\',INSTRUMEN_MANAJERIAL['+si+'].penggalian['+ii+'])" title="Klik untuk lihat penggalian data">🔍 '+ind+'</td>';
+      f+=renderSkorCells('sm',gi,3);
+      f+='<td class="col-catatan"><input type="text" id="sm_cat_'+gi+'" value="Baik - Masih ada ruang untuk peningkatan" onchange="setCatatanManual(\'sm\','+gi+')" placeholder="Otomatis"></td></tr>';
     });
-    f+='<div style="margin-top:6px;font-size:12px;font-weight:bold;color:var(--primary)">Hasil Skor: <span id="smHasil_'+si+'">-</span></div>';
-    f+='<div class="form-group" style="margin-top:4px"><label style="font-size:11px">Catatan</label><textarea id="smCatatan_'+si+'" rows="2" style="font-size:11px" placeholder="Catatan untuk standar ini..."></textarea></div>';
-    f+='<div class="form-group"><label style="font-size:11px">Catatan Hasil Supervisi</label><textarea id="smHasilSup_'+si+'" rows="2" style="font-size:11px" placeholder="Catatan hasil supervisi..."></textarea></div>';
-    f+='<div class="form-group"><label style="font-size:11px">Rencana Tindak Lanjut (RTL)</label><textarea id="smRTL_'+si+'" rows="2" style="font-size:11px" placeholder="RTL..."></textarea></div>';
-    f+='</div>';
+    f+='</tbody></table>';
+    f+='<div class="form-group" style="margin-top:8px"><label style="font-size:11px">Catatan Hasil Supervisi - '+std.nama+'</label><textarea id="smHasilSup_'+si+'" rows="2" style="font-size:11px" placeholder="Catatan hasil supervisi..."></textarea></div>';
+    f+='<div class="form-group"><label style="font-size:11px">Rencana Tindak Lanjut - '+std.nama+'</label><textarea id="smRTL_'+si+'" rows="2" style="font-size:11px" placeholder="RTL..."></textarea></div>';
   });
   f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveSupMan()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
   showModal('Supervisi Manajerial',f);
@@ -566,11 +619,23 @@ function showFormSupMan(){
 function saveSupMan(){
   const mid=parseInt(document.getElementById('smMdr').value);const m=getMadrasah().find(x=>x.id===mid);
   if(!m){alert('Pilih madrasah!');return}
-  const skor=[];let total=0,max=0;
-  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{skor[si]=[];std.indikator.forEach((ind,ii)=>{const v=getSkor('sm_'+si+'_'+ii);skor[si][ii]=v;total+=v;max+=4})});
-  const persen=(total/max)*100;const catatan=[],rtl=[];
-  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{const st=skor[si].reduce((a,b)=>a+b,0),sm2=skor[si].length*4,sp=(st/sm2)*100;catatan.push(autoCatatan(std.nama,sp));rtl.push(autoRTL(std.nama,sp))});
-  const entry={tanggal:document.getElementById('smTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,total,max,persen,predikat:getPredikat(persen).label,catatan,rtl};
+  const skor=[],catatanInd=[];let total=0,max=0,gi=0;
+  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{skor[si]=[];catatanInd[si]=[];
+    std.indikator.forEach((ind,ii)=>{
+      const v=getSkorTable('sm',gi);skor[si][ii]=v;total+=v;max+=4;
+      catatanInd[si][ii]=getCatatanTable('sm',gi);
+      gi++;
+    });
+  });
+  const persen=(total/max)*100;const hasilSup=[],rtl=[];
+  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{
+    const hEl=document.getElementById('smHasilSup_'+si);
+    const rEl=document.getElementById('smRTL_'+si);
+    const st=skor[si].reduce((a,b)=>a+b,0),sm2=skor[si].length*4,sp=(st/sm2)*100;
+    hasilSup.push(hEl&&hEl.value?hEl.value:'Skor '+st+'/'+sm2+' ('+sp.toFixed(1)+'%) - '+getPredikat(sp).label);
+    rtl.push(rEl&&rEl.value?rEl.value:autoRTL(std.nama,sp));
+  });
+  const entry={tanggal:document.getElementById('smTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,total,max,persen,predikat:getPredikat(persen).label,catatanInd,hasilSup,rtl};
   const data=getSupManajerial();data.push(entry);saveSupManajerial(data);closeModal();render();
 }
 
@@ -580,11 +645,21 @@ function cetakSupMan(idx){
   const d=getSupManajerial()[idx];if(!d)return;const profil=getProfil();
   let h='<div style="text-align:center;margin-bottom:16px"><h3>INSTRUMEN SUPERVISI MANAJERIAL</h3><p>Kementerian Agama Kabupaten Jember</p></div>';
   h+='<table style="width:auto;border:none;margin-bottom:12px"><tr><td style="border:none;padding:2px 8px">Madrasah</td><td style="border:none">: '+d.madrasah+'</td></tr><tr><td style="border:none;padding:2px 8px">NSM</td><td style="border:none">: '+d.nsm+'</td></tr><tr><td style="border:none;padding:2px 8px">Kamad</td><td style="border:none">: '+d.kamad+'</td></tr><tr><td style="border:none;padding:2px 8px">Tanggal</td><td style="border:none">: '+d.tanggal+'</td></tr></table>';
-  h+='<table><tr><th>No</th><th>Standar</th><th>Skor</th><th>Maks</th><th>%</th><th>Predikat</th></tr>';
-  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{const st=d.skor[si].reduce((a,b)=>a+b,0),sm2=d.skor[si].length*4,sp=(st/sm2)*100;const p=getPredikat(sp);h+='<tr><td>'+(si+1)+'</td><td>'+std.nama+'</td><td>'+st+'</td><td>'+sm2+'</td><td>'+sp.toFixed(1)+'</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td></tr>'});
-  const pred=getPredikat(d.persen);h+='<tr style="font-weight:bold"><td colspan="2">TOTAL</td><td>'+d.total+'</td><td>'+d.max+'</td><td>'+d.persen.toFixed(1)+'</td><td><span class="badge '+pred.cls+'">'+pred.label+'</span></td></tr></table>';
-  h+='<h4 style="margin-top:16px">Catatan, Hasil Supervisi & RTL:</h4><table><tr><th>Standar</th><th>Catatan</th><th>Catatan Hasil Supervisi</th><th>RTL</th></tr>';
-  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{h+='<tr><td style="font-size:11px">'+std.nama+'</td><td style="font-size:11px">'+(d.catatan[si]||'-')+'</td><td style="font-size:11px">'+(d.hasilSup?d.hasilSup[si]:'-')+'</td><td style="font-size:11px">'+(d.rtl[si]||'-')+'</td></tr>'});h+='</table>';
+  // Detail per standar dengan tabel indikator
+  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{
+    const st=d.skor[si].reduce((a,b)=>a+b,0),sm2=d.skor[si].length*4,sp=(st/sm2)*100;
+    h+='<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:12px 0 6px;font-size:12px;font-weight:600">'+(si+1)+'. '+std.nama+'</div>';
+    h+='<table><tr><th>No</th><th>Indikator</th><th>Skor</th><th>Catatan</th></tr>';
+    std.indikator.forEach((ind,ii)=>{
+      h+='<tr><td>'+(ii+1)+'</td><td style="font-size:11px;text-align:left">'+ind+'</td><td>'+d.skor[si][ii]+'</td><td style="font-size:11px;text-align:left">'+(d.catatanInd&&d.catatanInd[si]&&d.catatanInd[si][ii]?d.catatanInd[si][ii]:'-')+'</td></tr>';
+    });
+    h+='<tr style="font-weight:bold"><td colspan="2">Total Skor</td><td>'+st+'/'+sm2+'</td><td>'+sp.toFixed(1)+'% - '+getPredikat(sp).label+'</td></tr></table>';
+    if(d.hasilSup&&d.hasilSup[si])h+='<p style="font-size:11px;margin:4px 0"><b>Catatan Hasil Supervisi:</b> '+d.hasilSup[si]+'</p>';
+    if(d.rtl&&d.rtl[si])h+='<p style="font-size:11px;margin:4px 0 12px"><b>RTL:</b> '+d.rtl[si]+'</p>';
+  });
+  // Total summary
+  const pred=getPredikat(d.persen);
+  h+='<div style="background:#f9f9f9;padding:12px;border-radius:6px;margin-top:12px"><strong>TOTAL: '+d.total+'/'+d.max+' = '+d.persen.toFixed(1)+'% - <span class="badge '+pred.cls+'">'+pred.label+'</span></strong></div>';
   h+='<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Kepala Madrasah,</p><br><br><br><p><u>'+d.kamad+'</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>'+profil.nama+'</u></p><p>NIP. '+profil.nip+'</p></div></div>';
   showModal('Cetak Supervisi Manajerial',h+'<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
 }
@@ -614,15 +689,22 @@ function showFormPKG(){
   f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="pkgNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="pkgKamad" readonly></div></div>';
   f+='<div class="form-group"><label>Nama Guru</label><input id="pkgGuru" placeholder="Nama guru yang dinilai"></div>';
   f+='<div class="form-group"><label>Mata Pelajaran</label><input id="pkgMapel"></div>';
-  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 untuk panduan penggalian data.</p>';
-  let curKat='';
+  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 indikator untuk lihat penggalian data.</p>';
+  let curKat='',gi=0;
   INSTRUMEN_PKG.forEach((komp,ki)=>{
-    if(komp.kategori!==curKat){curKat=komp.kategori;f+='<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:12px 0 8px;font-size:12px;font-weight:bold">'+curKat+'</div>'}
-    f+='<div style="margin-bottom:10px;padding:8px;background:#f9f9f9;border-radius:4px"><strong style="font-size:12px;color:var(--primary)">Kompetensi '+(ki+1)+': '+komp.nama+'</strong>';
+    if(komp.kategori!==curKat){curKat=komp.kategori;f+='<div style="background:var(--primary-dark);color:#fff;padding:6px 12px;border-radius:4px;margin:14px 0 6px;font-size:12px;font-weight:600">'+curKat+'</div>'}
+    f+='<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:8px 0 6px;font-size:11px;font-weight:600">Kompetensi '+(ki+1)+': '+komp.nama+'</div>';
+    f+='<table class="instrumen-table"><thead><tr><th class="col-no">No</th><th class="col-aspek">Indikator</th><th class="col-skor">1</th><th class="col-skor">2</th><th class="col-skor">3</th><th class="col-skor">4</th><th class="col-catatan">Catatan</th></tr></thead><tbody>';
     komp.indikator.forEach((ind,ii)=>{
-      f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\'Komp '+(ki+1)+' - '+(ii+1)+'\',INSTRUMEN_PKG['+ki+'].penggalian['+ii+'])">🔍</button><span class="score-group" data-id="pkg_'+ki+'_'+ii+'"><button class="skor-radio" onclick="setSkor(this,1)" data-val="1">&#9675;</button><button class="skor-radio" onclick="setSkor(this,2)" data-val="2">&#9675;</button><button class="skor-radio selected" onclick="setSkor(this,3)">&#9679;</button><button class="skor-radio" onclick="setSkor(this,4)" data-val="4">&#9675;</button></span></span></div>';
+      const idx=gi++;
+      f+='<tr><td class="col-no">'+(ii+1)+'</td>';
+      f+='<td class="col-aspek clickable" onclick="showPenggalian(\'Kompetensi '+(ki+1)+' - '+(ii+1)+'\',INSTRUMEN_PKG['+ki+'].penggalian['+ii+'])" title="Klik untuk lihat penggalian data">🔍 '+ind+'</td>';
+      f+=renderSkorCells('pkg',idx,3);
+      f+='<td class="col-catatan"><input type="text" id="pkg_cat_'+idx+'" value="Baik - Masih ada ruang untuk peningkatan" onchange="setCatatanManual(\'pkg\','+idx+')" placeholder="Otomatis"></td></tr>';
     });
-    f+='</div>';
+    f+='</tbody></table>';
+    f+='<div class="form-group" style="margin-top:6px"><label style="font-size:11px">Catatan Hasil Supervisi - Kompetensi '+(ki+1)+'</label><textarea id="pkgHasilSup_'+ki+'" rows="2" style="font-size:11px"></textarea></div>';
+    f+='<div class="form-group"><label style="font-size:11px">Rencana Tindak Lanjut - Kompetensi '+(ki+1)+'</label><textarea id="pkgRTL_'+ki+'" rows="2" style="font-size:11px"></textarea></div>';
   });
   f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="savePKG()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
   showModal('Penilaian Kinerja Guru (PKG)',f);
@@ -632,19 +714,23 @@ function savePKG(){
   const mid=parseInt(document.getElementById('pkgMdr').value);const m=getMadrasah().find(x=>x.id===mid);
   if(!m){alert('Pilih madrasah!');return}
   const guru=document.getElementById('pkgGuru').value;if(!guru){alert('Masukkan nama guru!');return}
-  const skor=[];let total=0,max=0;
-  INSTRUMEN_PKG.forEach((komp,ki)=>{skor[ki]=[];komp.indikator.forEach((ind,ii)=>{const v=getSkor('pkg_'+ki+'_'+ii);skor[ki][ii]=v;total+=v;max+=4})});
-  const persen=(total/max)*100;
-  const catatan=[],hasilSup=[],rtl=[];
-  INSTRUMEN_PKG.forEach((komp,ki)=>{const kt=skor[ki].reduce((a,b)=>a+b,0),km=skor[ki].length*4,kp=(kt/km)*100;
-    const cEl=document.getElementById('pkgCatatan_'+ki);
+  const skor=[],catatanInd=[];let total=0,max=0,gi=0;
+  INSTRUMEN_PKG.forEach((komp,ki)=>{skor[ki]=[];catatanInd[ki]=[];
+    komp.indikator.forEach((ind,ii)=>{
+      const v=getSkorTable('pkg',gi);skor[ki][ii]=v;total+=v;max+=4;
+      catatanInd[ki][ii]=getCatatanTable('pkg',gi);
+      gi++;
+    });
+  });
+  const persen=(total/max)*100;const hasilSup=[],rtl=[];
+  INSTRUMEN_PKG.forEach((komp,ki)=>{
+    const kt=skor[ki].reduce((a,b)=>a+b,0),km=skor[ki].length*4,kp=(kt/km)*100;
     const hEl=document.getElementById('pkgHasilSup_'+ki);
     const rEl=document.getElementById('pkgRTL_'+ki);
-    catatan.push(cEl&&cEl.value?cEl.value:autoCatatan(komp.nama,kp));
     hasilSup.push(hEl&&hEl.value?hEl.value:'Skor '+kt+'/'+km+' ('+kp.toFixed(1)+'%) - '+getPredikat(kp).label);
     rtl.push(rEl&&rEl.value?rEl.value:autoRTL(komp.nama,kp));
   });
-  const entry={tanggal:document.getElementById('pkgTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,namaGuru:guru,mapel:document.getElementById('pkgMapel').value,skor,total,max,persen,predikat:getPredikat(persen).label,catatan,hasilSup,rtl};
+  const entry={tanggal:document.getElementById('pkgTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,namaGuru:guru,mapel:document.getElementById('pkgMapel').value,skor,total,max,persen,predikat:getPredikat(persen).label,catatanInd,hasilSup,rtl};
   const data=getPKGData();data.push(entry);savePKGData(data);closeModal();render();
 }
 
@@ -687,15 +773,23 @@ function showFormPKKM(){
   mdr.forEach(m=>{opts+='<option value="'+m.id+'">'+m.nama+'</option>'});
   let f='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="pkkmTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="pkkmMdr" onchange="autoFillMdr(\'pkkm\')">'+opts+'</select></div></div>';
   f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="pkkmNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="pkkmKamad" readonly></div></div>';
-  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 untuk panduan penggalian data.</p>';
+  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 indikator untuk lihat penggalian data.</p>';
+  let gi=0;
   INSTRUMEN_PKKM.forEach((komp,ki)=>{
-    f+='<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:12px 0 8px;font-size:12px;font-weight:bold">'+komp.id+'. '+komp.nama+'</div>';
+    f+='<div style="background:var(--primary-dark);color:#fff;padding:6px 12px;border-radius:4px;margin:14px 0 6px;font-size:12px;font-weight:600">'+komp.id+'. '+komp.nama+'</div>';
     komp.unsur.forEach((unsur,ui)=>{
-      f+='<div style="margin-bottom:8px;padding:8px;background:#f9f9f9;border-radius:4px"><strong style="font-size:11px;color:var(--primary)">'+unsur.kode+' '+unsur.nama+'</strong>';
+      f+='<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:8px 0 6px;font-size:11px;font-weight:600">'+unsur.kode+' '+unsur.nama+'</div>';
+      f+='<table class="instrumen-table"><thead><tr><th class="col-no">No</th><th class="col-aspek">Indikator</th><th class="col-skor">1</th><th class="col-skor">2</th><th class="col-skor">3</th><th class="col-skor">4</th><th class="col-catatan">Catatan</th></tr></thead><tbody>';
       unsur.indikator.forEach((ind,ii)=>{
-        f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+unsur.kode+' - '+(ii+1)+'\',INSTRUMEN_PKKM['+ki+'].unsur['+ui+'].penggalian['+ii+'])">🔍</button><span class="score-group" data-id="pkkm_'+ki+'_'+ui+'_'+ii+'"><button class="skor-radio" onclick="setSkor(this,1)" data-val="1">&#9675;</button><button class="skor-radio" onclick="setSkor(this,2)" data-val="2">&#9675;</button><button class="skor-radio selected" onclick="setSkor(this,3)">&#9679;</button><button class="skor-radio" onclick="setSkor(this,4)" data-val="4">&#9675;</button></span></span></div>';
+        const idx=gi++;
+        f+='<tr><td class="col-no">'+(ii+1)+'</td>';
+        f+='<td class="col-aspek clickable" onclick="showPenggalian(\''+unsur.kode+' - '+(ii+1)+'\',INSTRUMEN_PKKM['+ki+'].unsur['+ui+'].penggalian['+ii+'])" title="Klik untuk lihat penggalian data">🔍 '+ind+'</td>';
+        f+=renderSkorCells('pkkm',idx,3);
+        f+='<td class="col-catatan"><input type="text" id="pkkm_cat_'+idx+'" value="Baik - Masih ada ruang untuk peningkatan" onchange="setCatatanManual(\'pkkm\','+idx+')" placeholder="Otomatis"></td></tr>';
       });
-      f+='</div>';
+      f+='</tbody></table>';
+      f+='<div class="form-group" style="margin-top:4px"><label style="font-size:11px">Catatan Hasil Supervisi - '+unsur.kode+'</label><textarea id="pkkmHasilSup_'+ki+'_'+ui+'" rows="2" style="font-size:11px"></textarea></div>';
+      f+='<div class="form-group"><label style="font-size:11px">RTL - '+unsur.kode+'</label><textarea id="pkkmRTL_'+ki+'_'+ui+'" rows="2" style="font-size:11px"></textarea></div>';
     });
   });
   f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="savePKKM()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
@@ -705,21 +799,23 @@ function showFormPKKM(){
 function savePKKM(){
   const mid=parseInt(document.getElementById('pkkmMdr').value);const m=getMadrasah().find(x=>x.id===mid);
   if(!m){alert('Pilih madrasah!');return}
-  const skor=[],catatan=[],hasilSup=[],rtl=[];let total=0,max=0;
-  INSTRUMEN_PKKM.forEach((komp,ki)=>{skor[ki]=[];catatan[ki]=[];hasilSup[ki]=[];rtl[ki]=[];
-    komp.unsur.forEach((unsur,ui)=>{skor[ki][ui]=[];
-      unsur.indikator.forEach((ind,ii)=>{const v=getSkor('pkkm_'+ki+'_'+ui+'_'+ii);skor[ki][ui][ii]=v;total+=v;max+=4});
+  const skor=[],catatanInd=[],hasilSup=[],rtl=[];let total=0,max=0,gi=0;
+  INSTRUMEN_PKKM.forEach((komp,ki)=>{skor[ki]=[];catatanInd[ki]=[];hasilSup[ki]=[];rtl[ki]=[];
+    komp.unsur.forEach((unsur,ui)=>{skor[ki][ui]=[];catatanInd[ki][ui]=[];
+      unsur.indikator.forEach((ind,ii)=>{
+        const v=getSkorTable('pkkm',gi);skor[ki][ui][ii]=v;total+=v;max+=4;
+        catatanInd[ki][ui][ii]=getCatatanTable('pkkm',gi);
+        gi++;
+      });
       const us=skor[ki][ui].reduce((a,b)=>a+b,0),um=skor[ki][ui].length*4,up=(us/um)*100;
-      const cEl=document.getElementById('pkkmCatatan_'+ki+'_'+ui);
       const hEl=document.getElementById('pkkmHasilSup_'+ki+'_'+ui);
       const rEl=document.getElementById('pkkmRTL_'+ki+'_'+ui);
-      catatan[ki].push(cEl&&cEl.value?cEl.value:autoCatatan(unsur.nama,up));
       hasilSup[ki].push(hEl&&hEl.value?hEl.value:'Skor '+us+'/'+um+' ('+up.toFixed(1)+'%) - '+getPredikat(up).label);
       rtl[ki].push(rEl&&rEl.value?rEl.value:autoRTL(unsur.nama,up));
     });
   });
   const persen=(total/max)*100;
-  const entry={tanggal:document.getElementById('pkkmTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,total,max,persen,predikat:getPredikat(persen).label,catatan,hasilSup,rtl};
+  const entry={tanggal:document.getElementById('pkkmTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,total,max,persen,predikat:getPredikat(persen).label,catatanInd,hasilSup,rtl};
   const data=getPKKMData();data.push(entry);savePKKMData(data);closeModal();render();
 }
 
@@ -773,9 +869,16 @@ function showFormModel(){
   f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="mdlNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="mdlKamad" readonly></div></div>';
   f+='<hr style="margin:12px 0"><h4 style="margin-bottom:8px">Asesmen Tingkat Kematangan Sekolah Model</h4>';
   f+='<p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Pra Berkembang, 2=Berkembang, 3=Maju, 4=Unggul. Klik 🔍 untuk panduan.</p>';
+  f+='<table class="instrumen-table"><thead><tr><th class="col-no">No</th><th class="col-aspek">Indikator</th><th class="col-skor">1</th><th class="col-skor">2</th><th class="col-skor">3</th><th class="col-skor">4</th><th class="col-catatan">Catatan</th></tr></thead><tbody>';
   INSTRUMEN_SEKOLAH_MODEL.forEach((item,i)=>{
-    f+='<div class="indikator-row"><span class="indikator-num">'+(i+1)+'</span><span class="indikator-text">'+item.nama+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+item.nama.substring(0,40)+'\',INSTRUMEN_SEKOLAH_MODEL['+i+'].penggalian)">🔍</button><span class="score-group" data-id="mdl_'+i+'"><button class="skor-radio" onclick="setSkor(this,1)" data-val="1">&#9675;</button><button class="skor-radio" onclick="setSkor(this,2)" data-val="2">&#9675;</button><button class="skor-radio selected" onclick="setSkor(this,3)">&#9679;</button><button class="skor-radio" onclick="setSkor(this,4)" data-val="4">&#9675;</button></span></span></div>';
+    f+='<tr><td class="col-no">'+(i+1)+'</td>';
+    f+='<td class="col-aspek clickable" onclick="showPenggalian(\''+item.nama.replace(/\'/g,'').substring(0,40)+'\',INSTRUMEN_SEKOLAH_MODEL['+i+'].penggalian)" title="Klik untuk lihat penggalian data">🔍 '+item.nama+'</td>';
+    f+=renderSkorCells('mdl',i,3);
+    f+='<td class="col-catatan"><input type="text" id="mdl_cat_'+i+'" value="Maju" onchange="setCatatanManual(\'mdl\','+i+')" placeholder="Otomatis"></td></tr>';
   });
+  f+='</tbody></table>';
+  f+='<div class="form-group" style="margin-top:8px"><label style="font-size:11px">Catatan Hasil Asesmen</label><textarea id="mdlHasil" rows="3" style="font-size:11px"></textarea></div>';
+  f+='<div class="form-group"><label style="font-size:11px">Rencana Tindak Lanjut</label><textarea id="mdlRTL" rows="3" style="font-size:11px"></textarea></div>';
   f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveModel()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
   showModal('Pembinaan Sekolah Model PM & KKA',f);
 }
@@ -783,10 +886,11 @@ function showFormModel(){
 function saveModel(){
   const mid=parseInt(document.getElementById('mdlMdr').value);const m=getMadrasah().find(x=>x.id===mid);
   if(!m){alert('Pilih madrasah!');return}
-  const skor=[];let total=0;
-  INSTRUMEN_SEKOLAH_MODEL.forEach((item,i)=>{const v=getSkor('mdl_'+i);skor.push(v);total+=v});
+  const skor=[],catatanInd=[];let total=0;
+  INSTRUMEN_SEKOLAH_MODEL.forEach((item,i)=>{const v=getSkorTable('mdl',i);skor.push(v);total+=v;catatanInd.push(getCatatanTable('mdl',i))});
   const rata=total/INSTRUMEN_SEKOLAH_MODEL.length;
-  const entry={tanggal:document.getElementById('mdlTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,rata};
+  const hEl=document.getElementById('mdlHasil');const rEl=document.getElementById('mdlRTL');
+  const entry={tanggal:document.getElementById('mdlTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,catatanInd,rata,hasilAsesmen:hEl?hEl.value:'',rtl:rEl?rEl.value:''};
   const data=getModelData();data.push(entry);saveModelData(data);closeModal();render();
 }
 
