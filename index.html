@@ -630,7 +630,16 @@ function savePKG(){
   const skor=[];let total=0,max=0;
   INSTRUMEN_PKG.forEach((komp,ki)=>{skor[ki]=[];komp.indikator.forEach((ind,ii)=>{const v=getSkor('pkg_'+ki+'_'+ii);skor[ki][ii]=v;total+=v;max+=4})});
   const persen=(total/max)*100;
-  const entry={tanggal:document.getElementById('pkgTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,namaGuru:guru,mapel:document.getElementById('pkgMapel').value,skor,total,max,persen,predikat:getPredikat(persen).label};
+  const catatan=[],hasilSup=[],rtl=[];
+  INSTRUMEN_PKG.forEach((komp,ki)=>{const kt=skor[ki].reduce((a,b)=>a+b,0),km=skor[ki].length*4,kp=(kt/km)*100;
+    const cEl=document.getElementById('pkgCatatan_'+ki);
+    const hEl=document.getElementById('pkgHasilSup_'+ki);
+    const rEl=document.getElementById('pkgRTL_'+ki);
+    catatan.push(cEl&&cEl.value?cEl.value:autoCatatan(komp.nama,kp));
+    hasilSup.push(hEl&&hEl.value?hEl.value:'Skor '+kt+'/'+km+' ('+kp.toFixed(1)+'%) - '+getPredikat(kp).label);
+    rtl.push(rEl&&rEl.value?rEl.value:autoRTL(komp.nama,kp));
+  });
+  const entry={tanggal:document.getElementById('pkgTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,namaGuru:guru,mapel:document.getElementById('pkgMapel').value,skor,total,max,persen,predikat:getPredikat(persen).label,catatan,hasilSup,rtl};
   const data=getPKGData();data.push(entry);savePKGData(data);closeModal();render();
 }
 
@@ -643,6 +652,8 @@ function cetakPKG(idx){
   h+='<table><tr><th>No</th><th>Kompetensi</th><th>Skor</th><th>Maks</th><th>%</th><th>Predikat</th></tr>';
   INSTRUMEN_PKG.forEach((komp,ki)=>{const kt=d.skor[ki].reduce((a,b)=>a+b,0),km=d.skor[ki].length*4,kp=(kt/km)*100;const p=getPredikat(kp);h+='<tr><td>'+(ki+1)+'</td><td style="font-size:11px">'+komp.nama+'</td><td>'+kt+'</td><td>'+km+'</td><td>'+kp.toFixed(1)+'</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td></tr>'});
   h+='<tr style="font-weight:bold"><td colspan="2">TOTAL</td><td>'+d.total+'</td><td>'+d.max+'</td><td>'+d.persen.toFixed(1)+'</td><td><span class="badge '+pred.cls+'">'+pred.label+'</span></td></tr></table>';
+  if(d.catatan){h+='<h4 style="margin-top:16px">Catatan, Hasil Supervisi & RTL:</h4><table><tr><th>Kompetensi</th><th>Catatan</th><th>Hasil Supervisi</th><th>RTL</th></tr>';
+  INSTRUMEN_PKG.forEach((komp,ki)=>{h+='<tr><td style="font-size:11px">'+komp.nama+'</td><td style="font-size:11px">'+(d.catatan[ki]||'-')+'</td><td style="font-size:11px">'+(d.hasilSup?d.hasilSup[ki]:'-')+'</td><td style="font-size:11px">'+(d.rtl?d.rtl[ki]:'-')+'</td></tr>'});h+='</table>';}
   h+='<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Guru yang Dinilai,</p><br><br><br><p><u>'+d.namaGuru+'</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>'+profil.nama+'</u></p><p>NIP. '+profil.nip+'</p></div></div>';
   showModal('Cetak PKG',h+'<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
 }
@@ -689,10 +700,21 @@ function showFormPKKM(){
 function savePKKM(){
   const mid=parseInt(document.getElementById('pkkmMdr').value);const m=getMadrasah().find(x=>x.id===mid);
   if(!m){alert('Pilih madrasah!');return}
-  const skor=[];let total=0,max=0;
-  INSTRUMEN_PKKM.forEach((komp,ki)=>{skor[ki]=[];komp.unsur.forEach((unsur,ui)=>{skor[ki][ui]=[];unsur.indikator.forEach((ind,ii)=>{const v=getSkor('pkkm_'+ki+'_'+ui+'_'+ii);skor[ki][ui][ii]=v;total+=v;max+=4})})});
+  const skor=[],catatan=[],hasilSup=[],rtl=[];let total=0,max=0;
+  INSTRUMEN_PKKM.forEach((komp,ki)=>{skor[ki]=[];catatan[ki]=[];hasilSup[ki]=[];rtl[ki]=[];
+    komp.unsur.forEach((unsur,ui)=>{skor[ki][ui]=[];
+      unsur.indikator.forEach((ind,ii)=>{const v=getSkor('pkkm_'+ki+'_'+ui+'_'+ii);skor[ki][ui][ii]=v;total+=v;max+=4});
+      const us=skor[ki][ui].reduce((a,b)=>a+b,0),um=skor[ki][ui].length*4,up=(us/um)*100;
+      const cEl=document.getElementById('pkkmCatatan_'+ki+'_'+ui);
+      const hEl=document.getElementById('pkkmHasilSup_'+ki+'_'+ui);
+      const rEl=document.getElementById('pkkmRTL_'+ki+'_'+ui);
+      catatan[ki].push(cEl&&cEl.value?cEl.value:autoCatatan(unsur.nama,up));
+      hasilSup[ki].push(hEl&&hEl.value?hEl.value:'Skor '+us+'/'+um+' ('+up.toFixed(1)+'%) - '+getPredikat(up).label);
+      rtl[ki].push(rEl&&rEl.value?rEl.value:autoRTL(unsur.nama,up));
+    });
+  });
   const persen=(total/max)*100;
-  const entry={tanggal:document.getElementById('pkkmTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,total,max,persen,predikat:getPredikat(persen).label};
+  const entry={tanggal:document.getElementById('pkkmTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,total,max,persen,predikat:getPredikat(persen).label,catatan,hasilSup,rtl};
   const data=getPKKMData();data.push(entry);savePKKMData(data);closeModal();render();
 }
 
@@ -705,6 +727,8 @@ function cetakPKKM(idx){
   h+='<table><tr><th>No</th><th>Komponen</th><th>Skor</th><th>Maks</th><th>%</th><th>Predikat</th></tr>';
   INSTRUMEN_PKKM.forEach((komp,ki)=>{let ks=0,km=0;komp.unsur.forEach((u,ui)=>{u.indikator.forEach((ind,ii)=>{ks+=d.skor[ki][ui][ii];km+=4})});const kp=(ks/km)*100;const p=getPredikat(kp);h+='<tr><td>'+komp.id+'</td><td>'+komp.nama+'</td><td>'+ks+'</td><td>'+km+'</td><td>'+kp.toFixed(1)+'</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td></tr>'});
   h+='<tr style="font-weight:bold"><td colspan="2">TOTAL</td><td>'+d.total+'</td><td>'+d.max+'</td><td>'+d.persen.toFixed(1)+'</td><td><span class="badge '+pred.cls+'">'+pred.label+'</span></td></tr></table>';
+  if(d.catatan){h+='<h4 style="margin-top:16px">Catatan, Hasil Supervisi & RTL:</h4><table><tr><th>Unsur</th><th>Catatan</th><th>Hasil Supervisi</th><th>RTL</th></tr>';
+  INSTRUMEN_PKKM.forEach((komp,ki)=>{komp.unsur.forEach((u,ui)=>{h+='<tr><td style="font-size:11px">'+u.kode+' '+u.nama+'</td><td style="font-size:11px">'+(d.catatan[ki]&&d.catatan[ki][ui]?d.catatan[ki][ui]:'-')+'</td><td style="font-size:11px">'+(d.hasilSup&&d.hasilSup[ki]&&d.hasilSup[ki][ui]?d.hasilSup[ki][ui]:'-')+'</td><td style="font-size:11px">'+(d.rtl&&d.rtl[ki]&&d.rtl[ki][ui]?d.rtl[ki][ui]:'-')+'</td></tr>'})});h+='</table>';}
   h+='<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Kepala Madrasah,</p><br><br><br><p><u>'+d.kamad+'</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>'+profil.nama+'</u></p><p>NIP. '+profil.nip+'</p></div></div>';
   showModal('Cetak PKKM',h+'<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
 }
