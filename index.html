@@ -68,7 +68,7 @@ tr:hover{background:#f9f9f9}
 .login-box input{width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:10px;font-size:13px}
 .login-box button{width:100%;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer}
 .login-box .error{color:var(--danger);font-size:12px;margin-top:8px}
-.score-select{width:50px;text-align:center;padding:4px;border:1px solid var(--border);border-radius:3px;font-size:12px}
+.score-btn{display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:11px;font-weight:bold;margin:0 1px;transition:all .15s;background:#fff}.score-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}.score-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}.score-group{display:inline-flex;gap:2px}
 .indikator-row{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0}
 .indikator-row:last-child{border-bottom:none}
 .indikator-num{width:30px;font-weight:bold;font-size:12px;color:var(--primary)}
@@ -413,6 +413,16 @@ function showPenggalian(title,content){
 function closePenggalian(){
   document.getElementById('modalPenggalian').style.display='none';
 }
+function setSkor(el,val){
+  el.parentElement.querySelectorAll('.score-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+function getSkor(id){
+  const grp=document.querySelector('[data-id="'+id+'"]');
+  if(!grp)return 3;
+  const active=grp.querySelector('.score-btn.active');
+  return active?parseInt(active.textContent):3;
+}
 
 
 // ===== NAVIGATION & RENDER =====
@@ -535,7 +545,7 @@ function showFormSupMan(){
   INSTRUMEN_MANAJERIAL.forEach((std,si)=>{
     f+='<div style="margin-bottom:12px;padding:10px;background:#f9f9f9;border-radius:6px"><strong style="font-size:13px;color:var(--primary)">'+(si+1)+'. '+std.nama+'</strong>';
     std.indikator.forEach((ind,ii)=>{
-      f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+std.nama+' - '+(ii+1)+'\',INSTRUMEN_MANAJERIAL['+si+'].penggalian['+ii+'])">🔍</button><select class="score-select" id="sm_'+si+'_'+ii+'"><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1</option></select></span></div>';
+      f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+std.nama+' - '+(ii+1)+'\',INSTRUMEN_MANAJERIAL['+si+'].penggalian['+ii+'])">🔍</button><span class="score-group" data-id="sm_'+si+'_'+ii+'"><span class="score-btn" onclick="setSkor(this,1)">1</span><span class="score-btn" onclick="setSkor(this,2)">2</span><span class="score-btn active" onclick="setSkor(this,3)">3</span><span class="score-btn" onclick="setSkor(this,4)">4</span></span></span></div>';
     });
     f+='</div>';
   });
@@ -547,7 +557,7 @@ function saveSupMan(){
   const mid=parseInt(document.getElementById('smMdr').value);const m=getMadrasah().find(x=>x.id===mid);
   if(!m){alert('Pilih madrasah!');return}
   const skor=[];let total=0,max=0;
-  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{skor[si]=[];std.indikator.forEach((ind,ii)=>{const v=parseInt(document.getElementById('sm_'+si+'_'+ii).value)||3;skor[si][ii]=v;total+=v;max+=4})});
+  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{skor[si]=[];std.indikator.forEach((ind,ii)=>{const v=getSkor('sm_'+si+'_'+ii);skor[si][ii]=v;total+=v;max+=4})});
   const persen=(total/max)*100;const catatan=[],rtl=[];
   INSTRUMEN_MANAJERIAL.forEach((std,si)=>{const st=skor[si].reduce((a,b)=>a+b,0),sm2=skor[si].length*4,sp=(st/sm2)*100;catatan.push(autoCatatan(std.nama,sp));rtl.push(autoRTL(std.nama,sp))});
   const entry={tanggal:document.getElementById('smTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,total,max,persen,predikat:getPredikat(persen).label,catatan,rtl};
@@ -600,7 +610,7 @@ function showFormPKG(){
     if(komp.kategori!==curKat){curKat=komp.kategori;f+='<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:12px 0 8px;font-size:12px;font-weight:bold">'+curKat+'</div>'}
     f+='<div style="margin-bottom:10px;padding:8px;background:#f9f9f9;border-radius:4px"><strong style="font-size:12px;color:var(--primary)">Kompetensi '+(ki+1)+': '+komp.nama+'</strong>';
     komp.indikator.forEach((ind,ii)=>{
-      f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\'Komp '+(ki+1)+' - '+(ii+1)+'\',INSTRUMEN_PKG['+ki+'].penggalian['+ii+'])">🔍</button><select class="score-select" id="pkg_'+ki+'_'+ii+'"><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1</option></select></span></div>';
+      f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\'Komp '+(ki+1)+' - '+(ii+1)+'\',INSTRUMEN_PKG['+ki+'].penggalian['+ii+'])">🔍</button><span class="score-group" data-id="pkg_'+ki+'_'+ii+'"><span class="score-btn" onclick="setSkor(this,1)">1</span><span class="score-btn" onclick="setSkor(this,2)">2</span><span class="score-btn active" onclick="setSkor(this,3)">3</span><span class="score-btn" onclick="setSkor(this,4)">4</span></span></span></div>';
     });
     f+='</div>';
   });
@@ -613,7 +623,7 @@ function savePKG(){
   if(!m){alert('Pilih madrasah!');return}
   const guru=document.getElementById('pkgGuru').value;if(!guru){alert('Masukkan nama guru!');return}
   const skor=[];let total=0,max=0;
-  INSTRUMEN_PKG.forEach((komp,ki)=>{skor[ki]=[];komp.indikator.forEach((ind,ii)=>{const v=parseInt(document.getElementById('pkg_'+ki+'_'+ii).value)||3;skor[ki][ii]=v;total+=v;max+=4})});
+  INSTRUMEN_PKG.forEach((komp,ki)=>{skor[ki]=[];komp.indikator.forEach((ind,ii)=>{const v=getSkor('pkg_'+ki+'_'+ii);skor[ki][ii]=v;total+=v;max+=4})});
   const persen=(total/max)*100;
   const entry={tanggal:document.getElementById('pkgTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,namaGuru:guru,mapel:document.getElementById('pkgMapel').value,skor,total,max,persen,predikat:getPredikat(persen).label};
   const data=getPKGData();data.push(entry);savePKGData(data);closeModal();render();
@@ -662,7 +672,7 @@ function showFormPKKM(){
     komp.unsur.forEach((unsur,ui)=>{
       f+='<div style="margin-bottom:8px;padding:8px;background:#f9f9f9;border-radius:4px"><strong style="font-size:11px;color:var(--primary)">'+unsur.kode+' '+unsur.nama+'</strong>';
       unsur.indikator.forEach((ind,ii)=>{
-        f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+unsur.kode+' - '+(ii+1)+'\',INSTRUMEN_PKKM['+ki+'].unsur['+ui+'].penggalian['+ii+'])">🔍</button><select class="score-select" id="pkkm_'+ki+'_'+ui+'_'+ii+'"><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1</option></select></span></div>';
+        f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+unsur.kode+' - '+(ii+1)+'\',INSTRUMEN_PKKM['+ki+'].unsur['+ui+'].penggalian['+ii+'])">🔍</button><span class="score-group" data-id="pkkm_'+ki+'_'+ui+'_'+ii+'"><span class="score-btn" onclick="setSkor(this,1)">1</span><span class="score-btn" onclick="setSkor(this,2)">2</span><span class="score-btn active" onclick="setSkor(this,3)">3</span><span class="score-btn" onclick="setSkor(this,4)">4</span></span></span></div>';
       });
       f+='</div>';
     });
@@ -675,7 +685,7 @@ function savePKKM(){
   const mid=parseInt(document.getElementById('pkkmMdr').value);const m=getMadrasah().find(x=>x.id===mid);
   if(!m){alert('Pilih madrasah!');return}
   const skor=[];let total=0,max=0;
-  INSTRUMEN_PKKM.forEach((komp,ki)=>{skor[ki]=[];komp.unsur.forEach((unsur,ui)=>{skor[ki][ui]=[];unsur.indikator.forEach((ind,ii)=>{const v=parseInt(document.getElementById('pkkm_'+ki+'_'+ui+'_'+ii).value)||3;skor[ki][ui][ii]=v;total+=v;max+=4})})});
+  INSTRUMEN_PKKM.forEach((komp,ki)=>{skor[ki]=[];komp.unsur.forEach((unsur,ui)=>{skor[ki][ui]=[];unsur.indikator.forEach((ind,ii)=>{const v=getSkor('pkkm_'+ki+'_'+ui+'_'+ii);skor[ki][ui][ii]=v;total+=v;max+=4})})});
   const persen=(total/max)*100;
   const entry={tanggal:document.getElementById('pkkmTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,total,max,persen,predikat:getPredikat(persen).label};
   const data=getPKKMData();data.push(entry);savePKKMData(data);closeModal();render();
@@ -730,7 +740,7 @@ function showFormModel(){
   f+='<hr style="margin:12px 0"><h4 style="margin-bottom:8px">Asesmen Tingkat Kematangan Sekolah Model</h4>';
   f+='<p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Pra Berkembang, 2=Berkembang, 3=Maju, 4=Unggul. Klik 🔍 untuk panduan.</p>';
   INSTRUMEN_SEKOLAH_MODEL.forEach((item,i)=>{
-    f+='<div class="indikator-row"><span class="indikator-num">'+(i+1)+'</span><span class="indikator-text">'+item.nama+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+item.nama.substring(0,40)+'\',INSTRUMEN_SEKOLAH_MODEL['+i+'].penggalian)">🔍</button><select class="score-select" id="mdl_'+i+'"><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1</option></select></span></div>';
+    f+='<div class="indikator-row"><span class="indikator-num">'+(i+1)+'</span><span class="indikator-text">'+item.nama+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+item.nama.substring(0,40)+'\',INSTRUMEN_SEKOLAH_MODEL['+i+'].penggalian)">🔍</button><span class="score-group" data-id="mdl_'+i+'"><span class="score-btn" onclick="setSkor(this,1)">1</span><span class="score-btn" onclick="setSkor(this,2)">2</span><span class="score-btn active" onclick="setSkor(this,3)">3</span><span class="score-btn" onclick="setSkor(this,4)">4</span></span></span></div>';
   });
   f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveModel()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
   showModal('Pembinaan Sekolah Model PM & KKA',f);
@@ -740,7 +750,7 @@ function saveModel(){
   const mid=parseInt(document.getElementById('mdlMdr').value);const m=getMadrasah().find(x=>x.id===mid);
   if(!m){alert('Pilih madrasah!');return}
   const skor=[];let total=0;
-  INSTRUMEN_SEKOLAH_MODEL.forEach((item,i)=>{const v=parseInt(document.getElementById('mdl_'+i).value)||3;skor.push(v);total+=v});
+  INSTRUMEN_SEKOLAH_MODEL.forEach((item,i)=>{const v=getSkor('mdl_'+i);skor.push(v);total+=v});
   const rata=total/INSTRUMEN_SEKOLAH_MODEL.length;
   const entry={tanggal:document.getElementById('mdlTgl').value,madrasahId:mid,madrasah:m.nama,nsm:m.nsm,kamad:m.kamad,skor,rata};
   const data=getModelData();data.push(entry);saveModelData(data);closeModal();render();
