@@ -69,7 +69,7 @@ tr:hover{background:#f9f9f9}
 .login-box button{width:100%;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer}
 .login-box .error{color:var(--danger);font-size:12px;margin-top:8px}
 .skor-radio{background:none;border:none;cursor:pointer;font-size:1.1rem;color:#94a3b8;transition:all .2s;padding:0 3px;position:relative}.skor-radio::after{content:attr(data-val);position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--text-light)}.skor-radio:hover{color:var(--primary)}.skor-radio.selected{color:var(--primary);font-weight:bold}.score-group{display:inline-flex;align-items:center;gap:0}
-.indikator-row{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0}
+.indikator-row{display:flex;align-items:center;padding:2px 0;border-bottom:none}
 .indikator-row:last-child{border-bottom:none}
 .indikator-num{width:30px;font-weight:bold;font-size:12px;color:var(--primary)}
 .indikator-text{flex:1;font-size:12px;padding-right:8px}
@@ -546,8 +546,12 @@ function showFormSupMan(){
   INSTRUMEN_MANAJERIAL.forEach((std,si)=>{
     f+='<div style="margin-bottom:12px;padding:10px;background:#f9f9f9;border-radius:6px"><strong style="font-size:13px;color:var(--primary)">'+(si+1)+'. '+std.nama+'</strong>';
     std.indikator.forEach((ind,ii)=>{
-      f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+std.nama+' - '+(ii+1)+'\',INSTRUMEN_MANAJERIAL['+si+'].penggalian['+ii+'])">🔍</button><span class="score-group" data-id="sm_'+si+'_'+ii+'"><button class="skor-radio" onclick="setSkor(this,1)" data-val="1">&#9675;</button><button class="skor-radio" onclick="setSkor(this,2)" data-val="2">&#9675;</button><button class="skor-radio selected" onclick="setSkor(this,3)">&#9679;</button><button class="skor-radio" onclick="setSkor(this,4)" data-val="4">&#9675;</button></span></span></div>';
+      f+='<div class="indikator-row"><span class="indikator-num">'+(ii+1)+'</span><span class="indikator-text">'+ind+'</span><span class="indikator-actions"><button class="btn-penggalian" onclick="showPenggalian(\''+std.nama+' - '+(ii+1)+'\',INSTRUMEN_MANAJERIAL['+si+'].penggalian['+ii+'])">🔍</button><span class="score-group" data-id="sm_'+si+'_'+ii+'"><button class="skor-radio" data-val="1" onclick="setSkor(this,1)">&#9675;</button><button class="skor-radio" data-val="2" onclick="setSkor(this,2)">&#9675;</button><button class="skor-radio selected" data-val="3" onclick="setSkor(this,3)">&#9679;</button><button class="skor-radio" data-val="4" onclick="setSkor(this,4)">&#9675;</button></span></span></div>';
     });
+    f+='<div style="margin-top:6px;font-size:12px;font-weight:bold;color:var(--primary)">Hasil Skor: <span id="smHasil_'+si+'">-</span></div>';
+    f+='<div class="form-group" style="margin-top:4px"><label style="font-size:11px">Catatan</label><textarea id="smCatatan_'+si+'" rows="2" style="font-size:11px" placeholder="Catatan untuk standar ini..."></textarea></div>';
+    f+='<div class="form-group"><label style="font-size:11px">Catatan Hasil Supervisi</label><textarea id="smHasilSup_'+si+'" rows="2" style="font-size:11px" placeholder="Catatan hasil supervisi..."></textarea></div>';
+    f+='<div class="form-group"><label style="font-size:11px">Rencana Tindak Lanjut (RTL)</label><textarea id="smRTL_'+si+'" rows="2" style="font-size:11px" placeholder="RTL..."></textarea></div>';
     f+='</div>';
   });
   f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveSupMan()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
@@ -574,8 +578,8 @@ function cetakSupMan(idx){
   h+='<table><tr><th>No</th><th>Standar</th><th>Skor</th><th>Maks</th><th>%</th><th>Predikat</th></tr>';
   INSTRUMEN_MANAJERIAL.forEach((std,si)=>{const st=d.skor[si].reduce((a,b)=>a+b,0),sm2=d.skor[si].length*4,sp=(st/sm2)*100;const p=getPredikat(sp);h+='<tr><td>'+(si+1)+'</td><td>'+std.nama+'</td><td>'+st+'</td><td>'+sm2+'</td><td>'+sp.toFixed(1)+'</td><td><span class="badge '+p.cls+'">'+p.label+'</span></td></tr>'});
   const pred=getPredikat(d.persen);h+='<tr style="font-weight:bold"><td colspan="2">TOTAL</td><td>'+d.total+'</td><td>'+d.max+'</td><td>'+d.persen.toFixed(1)+'</td><td><span class="badge '+pred.cls+'">'+pred.label+'</span></td></tr></table>';
-  h+='<h4 style="margin-top:16px">Catatan & RTL:</h4><table><tr><th>Standar</th><th>Catatan</th><th>RTL</th></tr>';
-  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{h+='<tr><td style="font-size:11px">'+std.nama+'</td><td style="font-size:11px">'+d.catatan[si]+'</td><td style="font-size:11px">'+d.rtl[si]+'</td></tr>'});h+='</table>';
+  h+='<h4 style="margin-top:16px">Catatan, Hasil Supervisi & RTL:</h4><table><tr><th>Standar</th><th>Catatan</th><th>Catatan Hasil Supervisi</th><th>RTL</th></tr>';
+  INSTRUMEN_MANAJERIAL.forEach((std,si)=>{h+='<tr><td style="font-size:11px">'+std.nama+'</td><td style="font-size:11px">'+(d.catatan[si]||'-')+'</td><td style="font-size:11px">'+(d.hasilSup?d.hasilSup[si]:'-')+'</td><td style="font-size:11px">'+(d.rtl[si]||'-')+'</td></tr>'});h+='</table>';
   h+='<div style="display:flex;justify-content:space-between;margin-top:40px;text-align:center"><div><p>Kepala Madrasah,</p><br><br><br><p><u>'+d.kamad+'</u></p></div><div><p>Pengawas Madrasah,</p><br><br><br><p><u>'+profil.nama+'</u></p><p>NIP. '+profil.nip+'</p></div></div>';
   showModal('Cetak Supervisi Manajerial',h+'<div class="no-print" style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button></div>');
 }
