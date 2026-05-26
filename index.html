@@ -68,6 +68,15 @@ tr:hover{background:#f9f9f9}
 .login-box input{width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:10px;font-size:13px}
 .login-box button{width:100%;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer}
 .login-box .error{color:var(--danger);font-size:12px;margin-top:8px}
+
+.step-page{display:none}
+.step-page.active{display:block}
+.step-nav{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--border);margin-top:12px;position:sticky;bottom:0;background:#fff}
+.step-indicator{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:8px;background:#f5f5f5;border-radius:6px}
+.step-dot{width:24px;height:24px;border-radius:50%;background:#e0e0e0;color:#666;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
+.step-dot.active{background:var(--primary);color:#fff}
+.step-dot.done{background:var(--accent);color:#fff}
+.step-dot:hover{transform:scale(1.1)}
 .instrumen-table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:12px}
 .instrumen-table th,.instrumen-table td{border:1px solid #e0e0e0;padding:6px 5px;text-align:center;vertical-align:middle}
 .instrumen-table th{background:var(--primary);color:#fff;font-weight:600;font-size:11px}
@@ -442,10 +451,10 @@ function setSkorTable(key,idx,val){
   if(catEl&&!catEl.dataset.manual){catEl.value=getAutoCatatanByScore(val)}
 }
 function getAutoCatatanByScore(skor){
-  if(skor===4)return'Amat Baik - Pertahankan dan tingkatkan kualitas';
-  if(skor===3)return'Baik - Masih ada ruang untuk peningkatan';
-  if(skor===2)return'Cukup - Perlu pembinaan di beberapa aspek';
-  if(skor===1)return'Kurang - Perlu pembinaan intensif';
+  if(skor===4)return'Pertahankan dan tingkatkan kualitas';
+  if(skor===3)return'Masih ada ruang untuk peningkatan';
+  if(skor===2)return'Perlu pembinaan di beberapa aspek';
+  if(skor===1)return'Perlu pembinaan intensif';
   return'';
 }
 function setCatatanManual(key,idx,val){
@@ -461,6 +470,28 @@ function getCatatanTable(key,idx){
   const el=document.getElementById(key+'_cat_'+idx);
   return el?el.value:'';
 }
+function gotoStep(prefix,step){
+  document.querySelectorAll('[data-step-prefix="'+prefix+'"]').forEach(el=>{
+    el.classList.toggle('active',parseInt(el.dataset.step)===step);
+  });
+  document.querySelectorAll('[data-step-dot="'+prefix+'"]').forEach(el=>{
+    const s=parseInt(el.dataset.step);
+    el.classList.toggle('active',s===step);
+    el.classList.toggle('done',s<step);
+  });
+  document.getElementById(prefix+'_currentStep').value=step;
+  // Scroll modal to top
+  const modal=document.querySelector('.modal');if(modal)modal.scrollTop=0;
+}
+function nextStep(prefix,total){
+  const cur=parseInt(document.getElementById(prefix+'_currentStep').value);
+  if(cur<total-1)gotoStep(prefix,cur+1);
+}
+function prevStep(prefix){
+  const cur=parseInt(document.getElementById(prefix+'_currentStep').value);
+  if(cur>0)gotoStep(prefix,cur-1);
+}
+
 
 function renderSkorCells(key,idx,defaultVal){
   defaultVal=defaultVal||3;
@@ -594,25 +625,55 @@ function renderSupManajerial(){
 function showFormSupMan(){
   const mdr=getMadrasah();let opts='<option value="">-- Pilih Madrasah --</option>';
   mdr.forEach(m=>{opts+='<option value="'+m.id+'">'+m.nama+'</option>'});
-  let f='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="smTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="smMdr" onchange="autoFillMdr(\'sm\')">'+opts+'</select></div></div>';
+  // Total step = 1 (identitas) + 8 (per standar) + 1 (review)
+  const totalStd=INSTRUMEN_MANAJERIAL.length;
+  const totalSteps=totalStd+2;
+  let f='<input type="hidden" id="sm_currentStep" value="0">';
+  // Step indicator
+  f+='<div class="step-indicator">';
+  for(let i=0;i<totalSteps;i++){
+    const lbl=i===0?'ID':i===totalSteps-1?'✓':String(i);
+    const cls=i===0?'active':'';
+    f+='<span class="step-dot '+cls+'" data-step-dot="sm" data-step="'+i+'" onclick="gotoStep(\'sm\','+i+')" title="'+(i===0?'Identitas':i===totalSteps-1?'Review':INSTRUMEN_MANAJERIAL[i-1].nama)+'">'+lbl+'</span>';
+  }
+  f+='</div>';
+  // Step 0: Identitas
+  f+='<div class="step-page active" data-step-prefix="sm" data-step="0">';
+  f+='<h4 style="color:var(--primary);margin-bottom:12px">Identitas</h4>';
+  f+='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="smTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="smMdr" onchange="autoFillMdr(\'sm\')">'+opts+'</select></div></div>';
   f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="smNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="smKamad" readonly></div></div>';
-  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 indikator untuk lihat penggalian data.</p>';
+  f+='</div>';
+  // Step 1..N: Per standar
   let globalIdx=0;
   INSTRUMEN_MANAJERIAL.forEach((std,si)=>{
-    f+='<div style="background:var(--primary);color:#fff;padding:8px 12px;border-radius:6px;margin:12px 0 8px;font-size:12px;font-weight:600">'+(si+1)+'. '+std.nama+'</div>';
+    f+='<div class="step-page" data-step-prefix="sm" data-step="'+(si+1)+'">';
+    f+='<div style="background:var(--primary);color:#fff;padding:8px 12px;border-radius:6px;margin-bottom:8px;font-size:13px;font-weight:600">Standar '+(si+1)+': '+std.nama+'</div>';
+    f+='<p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 indikator untuk lihat penggalian data.</p>';
     f+='<table class="instrumen-table"><thead><tr><th class="col-no">No</th><th class="col-aspek">Indikator</th><th class="col-skor">1</th><th class="col-skor">2</th><th class="col-skor">3</th><th class="col-skor">4</th><th class="col-catatan">Catatan</th></tr></thead><tbody>';
     std.indikator.forEach((ind,ii)=>{
       const gi=globalIdx++;
       f+='<tr><td class="col-no">'+(ii+1)+'</td>';
       f+='<td class="col-aspek clickable" onclick="showPenggalian(\''+std.nama.replace(/\'/g,'')+' - '+(ii+1)+'\',INSTRUMEN_MANAJERIAL['+si+'].penggalian['+ii+'])" title="Klik untuk lihat penggalian data">🔍 '+ind+'</td>';
       f+=renderSkorCells('sm',gi,3);
-      f+='<td class="col-catatan"><input type="text" id="sm_cat_'+gi+'" value="Baik - Masih ada ruang untuk peningkatan" onchange="setCatatanManual(\'sm\','+gi+')" placeholder="Otomatis"></td></tr>';
+      f+='<td class="col-catatan"><input type="text" id="sm_cat_'+gi+'" value="Masih ada ruang untuk peningkatan" onchange="setCatatanManual(\'sm\','+gi+')" placeholder="Otomatis"></td></tr>';
     });
     f+='</tbody></table>';
-    f+='<div class="form-group" style="margin-top:8px"><label style="font-size:11px">Catatan Hasil Supervisi - '+std.nama+'</label><textarea id="smHasilSup_'+si+'" rows="2" style="font-size:11px" placeholder="Catatan hasil supervisi..."></textarea></div>';
-    f+='<div class="form-group"><label style="font-size:11px">Rencana Tindak Lanjut - '+std.nama+'</label><textarea id="smRTL_'+si+'" rows="2" style="font-size:11px" placeholder="RTL..."></textarea></div>';
+    f+='<div class="form-group"><label style="font-size:11px">Catatan Hasil Supervisi - '+std.nama+'</label><textarea id="smHasilSup_'+si+'" rows="3" style="font-size:11px"></textarea></div>';
+    f+='<div class="form-group"><label style="font-size:11px">Rencana Tindak Lanjut - '+std.nama+'</label><textarea id="smRTL_'+si+'" rows="3" style="font-size:11px"></textarea></div>';
+    f+='</div>';
   });
-  f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveSupMan()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
+  // Last step: Review/Save
+  f+='<div class="step-page" data-step-prefix="sm" data-step="'+(totalStd+1)+'">';
+  f+='<h4 style="color:var(--primary);margin-bottom:12px">Review & Simpan</h4>';
+  f+='<p style="font-size:12px;color:var(--text-light);margin-bottom:12px">Pastikan semua standar sudah diisi. Klik Simpan untuk menyimpan hasil supervisi.</p>';
+  f+='<div style="background:#e8f5e9;padding:12px;border-radius:6px;margin-bottom:8px"><p style="font-size:12px"><strong>📋 Total: '+totalStd+' Standar Nasional Pendidikan</strong></p><p style="font-size:11px;color:var(--text-light);margin-top:4px">Anda dapat kembali ke standar manapun melalui tombol di atas.</p></div>';
+  f+='</div>';
+  // Navigation
+  f+='<div class="step-nav">';
+  f+='<button class="btn" style="background:#eee" onclick="prevStep(\'sm\')">← Sebelumnya</button>';
+  f+='<button class="btn btn-primary" onclick="nextStep(\'sm\','+totalSteps+')">Selanjutnya →</button>';
+  f+='<button class="btn btn-primary" onclick="saveSupMan()" style="background:var(--success)">💾 Simpan</button>';
+  f+='</div>';
   showModal('Supervisi Manajerial',f);
 }
 
@@ -685,28 +746,51 @@ function renderPKG(){
 function showFormPKG(){
   const mdr=getMadrasah();let opts='<option value="">-- Pilih Madrasah --</option>';
   mdr.forEach(m=>{opts+='<option value="'+m.id+'">'+m.nama+'</option>'});
-  let f='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="pkgTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="pkgMdr" onchange="autoFillMdr(\'pkg\')">'+opts+'</select></div></div>';
+  const totalKomp=INSTRUMEN_PKG.length;
+  const totalSteps=totalKomp+2;
+  let f='<input type="hidden" id="pkg_currentStep" value="0">';
+  f+='<div class="step-indicator">';
+  for(let i=0;i<totalSteps;i++){
+    const lbl=i===0?'ID':i===totalSteps-1?'✓':String(i);
+    const cls=i===0?'active':'';
+    f+='<span class="step-dot '+cls+'" data-step-dot="pkg" data-step="'+i+'" onclick="gotoStep(\'pkg\','+i+')" title="'+(i===0?'Identitas':i===totalSteps-1?'Review':'Komp '+i)+'">'+lbl+'</span>';
+  }
+  f+='</div>';
+  // Step 0: Identitas
+  f+='<div class="step-page active" data-step-prefix="pkg" data-step="0">';
+  f+='<h4 style="color:var(--primary);margin-bottom:12px">Identitas Guru</h4>';
+  f+='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="pkgTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="pkgMdr" onchange="autoFillMdr(\'pkg\')">'+opts+'</select></div></div>';
   f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="pkgNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="pkgKamad" readonly></div></div>';
   f+='<div class="form-group"><label>Nama Guru</label><input id="pkgGuru" placeholder="Nama guru yang dinilai"></div>';
   f+='<div class="form-group"><label>Mata Pelajaran</label><input id="pkgMapel"></div>';
-  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 indikator untuk lihat penggalian data.</p>';
-  let curKat='',gi=0;
+  f+='</div>';
+  // Per kompetensi
+  let gi=0;
   INSTRUMEN_PKG.forEach((komp,ki)=>{
-    if(komp.kategori!==curKat){curKat=komp.kategori;f+='<div style="background:var(--primary-dark);color:#fff;padding:6px 12px;border-radius:4px;margin:14px 0 6px;font-size:12px;font-weight:600">'+curKat+'</div>'}
-    f+='<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:8px 0 6px;font-size:11px;font-weight:600">Kompetensi '+(ki+1)+': '+komp.nama+'</div>';
+    f+='<div class="step-page" data-step-prefix="pkg" data-step="'+(ki+1)+'">';
+    f+='<div style="background:var(--primary-dark);color:#fff;padding:6px 12px;border-radius:4px;margin-bottom:6px;font-size:11px">'+komp.kategori+'</div>';
+    f+='<div style="background:var(--primary);color:#fff;padding:8px 12px;border-radius:6px;margin-bottom:8px;font-size:13px;font-weight:600">Kompetensi '+(ki+1)+': '+komp.nama+'</div>';
+    f+='<p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 indikator untuk lihat penggalian data.</p>';
     f+='<table class="instrumen-table"><thead><tr><th class="col-no">No</th><th class="col-aspek">Indikator</th><th class="col-skor">1</th><th class="col-skor">2</th><th class="col-skor">3</th><th class="col-skor">4</th><th class="col-catatan">Catatan</th></tr></thead><tbody>';
     komp.indikator.forEach((ind,ii)=>{
       const idx=gi++;
       f+='<tr><td class="col-no">'+(ii+1)+'</td>';
       f+='<td class="col-aspek clickable" onclick="showPenggalian(\'Kompetensi '+(ki+1)+' - '+(ii+1)+'\',INSTRUMEN_PKG['+ki+'].penggalian['+ii+'])" title="Klik untuk lihat penggalian data">🔍 '+ind+'</td>';
       f+=renderSkorCells('pkg',idx,3);
-      f+='<td class="col-catatan"><input type="text" id="pkg_cat_'+idx+'" value="Baik - Masih ada ruang untuk peningkatan" onchange="setCatatanManual(\'pkg\','+idx+')" placeholder="Otomatis"></td></tr>';
+      f+='<td class="col-catatan"><input type="text" id="pkg_cat_'+idx+'" value="Masih ada ruang untuk peningkatan" onchange="setCatatanManual(\'pkg\','+idx+')" placeholder="Otomatis"></td></tr>';
     });
     f+='</tbody></table>';
-    f+='<div class="form-group" style="margin-top:6px"><label style="font-size:11px">Catatan Hasil Supervisi - Kompetensi '+(ki+1)+'</label><textarea id="pkgHasilSup_'+ki+'" rows="2" style="font-size:11px"></textarea></div>';
-    f+='<div class="form-group"><label style="font-size:11px">Rencana Tindak Lanjut - Kompetensi '+(ki+1)+'</label><textarea id="pkgRTL_'+ki+'" rows="2" style="font-size:11px"></textarea></div>';
+    f+='<div class="form-group"><label style="font-size:11px">Catatan Hasil Supervisi</label><textarea id="pkgHasilSup_'+ki+'" rows="3" style="font-size:11px"></textarea></div>';
+    f+='<div class="form-group"><label style="font-size:11px">Rencana Tindak Lanjut</label><textarea id="pkgRTL_'+ki+'" rows="3" style="font-size:11px"></textarea></div>';
+    f+='</div>';
   });
-  f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="savePKG()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
+  // Review
+  f+='<div class="step-page" data-step-prefix="pkg" data-step="'+(totalKomp+1)+'">';
+  f+='<h4 style="color:var(--primary);margin-bottom:12px">Review & Simpan</h4>';
+  f+='<p style="font-size:12px;color:var(--text-light);margin-bottom:12px">Pastikan semua kompetensi sudah diisi. Klik Simpan.</p>';
+  f+='<div style="background:#e8f5e9;padding:12px;border-radius:6px"><p style="font-size:12px"><strong>📋 Total: '+totalKomp+' Kompetensi</strong></p></div>';
+  f+='</div>';
+  f+='<div class="step-nav"><button class="btn" style="background:#eee" onclick="prevStep(\'pkg\')">← Sebelumnya</button><button class="btn btn-primary" onclick="nextStep(\'pkg\','+totalSteps+')">Selanjutnya →</button><button class="btn btn-primary" onclick="savePKG()" style="background:var(--success)">💾 Simpan</button></div>';
   showModal('Penilaian Kinerja Guru (PKG)',f);
 }
 
@@ -771,28 +855,51 @@ function renderPKKM(){
 function showFormPKKM(){
   const mdr=getMadrasah();let opts='<option value="">-- Pilih Madrasah --</option>';
   mdr.forEach(m=>{opts+='<option value="'+m.id+'">'+m.nama+'</option>'});
-  let f='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="pkkmTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="pkkmMdr" onchange="autoFillMdr(\'pkkm\')">'+opts+'</select></div></div>';
+  const totalKomp=INSTRUMEN_PKKM.length;
+  const totalSteps=totalKomp+2;
+  let f='<input type="hidden" id="pkkm_currentStep" value="0">';
+  f+='<div class="step-indicator">';
+  for(let i=0;i<totalSteps;i++){
+    const lbl=i===0?'ID':i===totalSteps-1?'✓':INSTRUMEN_PKKM[i-1].id;
+    const cls=i===0?'active':'';
+    f+='<span class="step-dot '+cls+'" data-step-dot="pkkm" data-step="'+i+'" onclick="gotoStep(\'pkkm\','+i+')" title="'+(i===0?'Identitas':i===totalSteps-1?'Review':INSTRUMEN_PKKM[i-1].nama)+'">'+lbl+'</span>';
+  }
+  f+='</div>';
+  // Step 0: Identitas
+  f+='<div class="step-page active" data-step-prefix="pkkm" data-step="0">';
+  f+='<h4 style="color:var(--primary);margin-bottom:12px">Identitas</h4>';
+  f+='<div class="form-row"><div class="form-group"><label>Tanggal</label><input type="date" id="pkkmTgl" value="'+today()+'"></div><div class="form-group"><label>Madrasah</label><select id="pkkmMdr" onchange="autoFillMdr(\'pkkm\')">'+opts+'</select></div></div>';
   f+='<div class="form-row"><div class="form-group"><label>NSM</label><input id="pkkmNsm" readonly></div><div class="form-group"><label>Kamad</label><input id="pkkmKamad" readonly></div></div>';
-  f+='<hr style="margin:12px 0"><p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 indikator untuk lihat penggalian data.</p>';
+  f+='</div>';
+  // Per komponen
   let gi=0;
   INSTRUMEN_PKKM.forEach((komp,ki)=>{
-    f+='<div style="background:var(--primary-dark);color:#fff;padding:6px 12px;border-radius:4px;margin:14px 0 6px;font-size:12px;font-weight:600">'+komp.id+'. '+komp.nama+'</div>';
+    f+='<div class="step-page" data-step-prefix="pkkm" data-step="'+(ki+1)+'">';
+    f+='<div style="background:var(--primary);color:#fff;padding:8px 12px;border-radius:6px;margin-bottom:8px;font-size:13px;font-weight:600">'+komp.id+'. '+komp.nama+'</div>';
+    f+='<p style="font-size:11px;color:var(--text-light);margin-bottom:8px">Skor: 1=Kurang, 2=Cukup, 3=Baik, 4=Amat Baik. Klik 🔍 indikator untuk lihat penggalian data.</p>';
     komp.unsur.forEach((unsur,ui)=>{
-      f+='<div style="background:var(--primary);color:#fff;padding:6px 12px;border-radius:4px;margin:8px 0 6px;font-size:11px;font-weight:600">'+unsur.kode+' '+unsur.nama+'</div>';
+      f+='<div style="background:var(--primary-light);color:#fff;padding:6px 12px;border-radius:4px;margin:8px 0 6px;font-size:11px;font-weight:600">'+unsur.kode+' '+unsur.nama+'</div>';
       f+='<table class="instrumen-table"><thead><tr><th class="col-no">No</th><th class="col-aspek">Indikator</th><th class="col-skor">1</th><th class="col-skor">2</th><th class="col-skor">3</th><th class="col-skor">4</th><th class="col-catatan">Catatan</th></tr></thead><tbody>';
       unsur.indikator.forEach((ind,ii)=>{
         const idx=gi++;
         f+='<tr><td class="col-no">'+(ii+1)+'</td>';
         f+='<td class="col-aspek clickable" onclick="showPenggalian(\''+unsur.kode+' - '+(ii+1)+'\',INSTRUMEN_PKKM['+ki+'].unsur['+ui+'].penggalian['+ii+'])" title="Klik untuk lihat penggalian data">🔍 '+ind+'</td>';
         f+=renderSkorCells('pkkm',idx,3);
-        f+='<td class="col-catatan"><input type="text" id="pkkm_cat_'+idx+'" value="Baik - Masih ada ruang untuk peningkatan" onchange="setCatatanManual(\'pkkm\','+idx+')" placeholder="Otomatis"></td></tr>';
+        f+='<td class="col-catatan"><input type="text" id="pkkm_cat_'+idx+'" value="Masih ada ruang untuk peningkatan" onchange="setCatatanManual(\'pkkm\','+idx+')" placeholder="Otomatis"></td></tr>';
       });
       f+='</tbody></table>';
-      f+='<div class="form-group" style="margin-top:4px"><label style="font-size:11px">Catatan Hasil Supervisi - '+unsur.kode+'</label><textarea id="pkkmHasilSup_'+ki+'_'+ui+'" rows="2" style="font-size:11px"></textarea></div>';
+      f+='<div class="form-group"><label style="font-size:11px">Catatan Hasil Supervisi - '+unsur.kode+'</label><textarea id="pkkmHasilSup_'+ki+'_'+ui+'" rows="2" style="font-size:11px"></textarea></div>';
       f+='<div class="form-group"><label style="font-size:11px">RTL - '+unsur.kode+'</label><textarea id="pkkmRTL_'+ki+'_'+ui+'" rows="2" style="font-size:11px"></textarea></div>';
     });
+    f+='</div>';
   });
-  f+='<div style="margin-top:16px"><button class="btn btn-primary" onclick="savePKKM()">💾 Simpan</button> <button class="btn" style="background:#eee" onclick="closeModal()">Batal</button></div>';
+  // Review
+  f+='<div class="step-page" data-step-prefix="pkkm" data-step="'+(totalKomp+1)+'">';
+  f+='<h4 style="color:var(--primary);margin-bottom:12px">Review & Simpan</h4>';
+  f+='<p style="font-size:12px;color:var(--text-light);margin-bottom:12px">Pastikan semua komponen sudah diisi. Klik Simpan.</p>';
+  f+='<div style="background:#e8f5e9;padding:12px;border-radius:6px"><p style="font-size:12px"><strong>📋 Total: '+totalKomp+' Komponen Kinerja</strong></p></div>';
+  f+='</div>';
+  f+='<div class="step-nav"><button class="btn" style="background:#eee" onclick="prevStep(\'pkkm\')">← Sebelumnya</button><button class="btn btn-primary" onclick="nextStep(\'pkkm\','+totalSteps+')">Selanjutnya →</button><button class="btn btn-primary" onclick="savePKKM()" style="background:var(--success)">💾 Simpan</button></div>';
   showModal('Penilaian Kinerja Kepala Madrasah (PKKM)',f);
 }
 
@@ -874,7 +981,7 @@ function showFormModel(){
     f+='<tr><td class="col-no">'+(i+1)+'</td>';
     f+='<td class="col-aspek clickable" onclick="showPenggalian(\''+item.nama.replace(/\'/g,'').substring(0,40)+'\',INSTRUMEN_SEKOLAH_MODEL['+i+'].penggalian)" title="Klik untuk lihat penggalian data">🔍 '+item.nama+'</td>';
     f+=renderSkorCells('mdl',i,3);
-    f+='<td class="col-catatan"><input type="text" id="mdl_cat_'+i+'" value="Maju" onchange="setCatatanManual(\'mdl\','+i+')" placeholder="Otomatis"></td></tr>';
+    f+='<td class="col-catatan"><input type="text" id="mdl_cat_'+i+'" value="Masih ada ruang untuk peningkatan" onchange="setCatatanManual(\'mdl\','+i+')" placeholder="Otomatis"></td></tr>';
   });
   f+='</tbody></table>';
   f+='<div class="form-group" style="margin-top:8px"><label style="font-size:11px">Catatan Hasil Asesmen</label><textarea id="mdlHasil" rows="3" style="font-size:11px"></textarea></div>';
