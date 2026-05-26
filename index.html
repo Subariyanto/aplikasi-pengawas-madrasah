@@ -98,7 +98,7 @@ tr:hover{background:#f9f9f9}
 
 'use strict';
 // ===== APP STATE =====
-const APP = { currentPage:'dashboard', isLoggedIn:false };
+const APP = { currentPage:'dashboard', isLoggedIn:sessionStorage.getItem('apm_session')==='1' };
 
 // ===== DEFAULT DATA =====
 const DEFAULT_MADRASAH = [
@@ -441,10 +441,15 @@ function renderLogin(){
   document.getElementById('app').innerHTML='<div class="login-page"><div class="login-box"><div style="font-size:40px;margin-bottom:10px">🕌</div><h1>Aplikasi Pengawas Madrasah</h1><h2>KKMA 04 Kabupaten Jember</h2><input type="text" id="loginUser" placeholder="Username" value="admin"><input type="password" id="loginPass" placeholder="Password" onkeypress="if(event.key===\'Enter\')doLogin()"><button onclick="doLogin()">Masuk</button><div id="loginError" class="error"></div></div></div>';
 }
 function doLogin(){
-  if(document.getElementById('loginUser').value==='admin'&&document.getElementById('loginPass').value===getPassword()){APP.isLoggedIn=true;render()}
-  else{document.getElementById('loginError').textContent='Username atau password salah!'}
+  if(document.getElementById('loginUser').value==='admin'&&document.getElementById('loginPass').value===getPassword()){
+    APP.isLoggedIn=true;
+    sessionStorage.setItem('apm_session','1');
+    render();
+  } else {
+    document.getElementById('loginError').textContent='Username atau password salah!';
+  }
 }
-function doLogout(){APP.isLoggedIn=false;render()}
+function doLogout(){APP.isLoggedIn=false;sessionStorage.removeItem('apm_session');render()}
 
 function renderSidebar(){
   const items=[{page:'dashboard',icon:'📊',label:'Dashboard'},{section:'DATA'},{page:'madrasah',icon:'🕌',label:'Data Madrasah'},{section:'SUPERVISI & PENILAIAN'},{page:'sup-manajerial',icon:'📋',label:'Supervisi Manajerial'},{page:'pkg',icon:'👨‍🏫',label:'PKG'},{page:'pkkm',icon:'👔',label:'PKKM'},{section:'PEMBINAAN'},{page:'sekolah-model',icon:'🏫',label:'Sekolah Model PM & KKA'},{page:'rencana-kerja',icon:'📅',label:'Rencana Kerja'},{section:'LAPORAN'},{page:'rekap',icon:'📈',label:'Rekap & Laporan'},{section:'SISTEM'},{page:'pengaturan',icon:'⚙️',label:'Pengaturan'}];
