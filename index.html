@@ -98,7 +98,7 @@ tr:hover{background:#f9f9f9}
 .quick-link:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .quick-link .ql-icon{font-size:24px;margin-bottom:6px}
 .quick-link .ql-label{font-size:11px;color:var(--text-light)}
-@media print{.sidebar,.topbar,.hamburger,.btn,.btn-penggalian,.no-print{display:none!important}.main{margin-left:0!important;padding:10px!important}.card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid}}
+@media print{.sidebar,.topbar,.hamburger,.btn,.btn-penggalian,.no-print{display:none!important}.main{margin-left:0!important;padding:10px!important}.card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid}body.is-trial-print::before{content:'TRIAL';position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:8rem;font-weight:900;color:rgba(220,38,38,.18) !important;pointer-events:none;z-index:9998;letter-spacing:1rem;-webkit-print-color-adjust:exact}body.is-trial-print::after{content:'DOKUMEN VERSI TRIAL \2014  TIDAK SAH UNTUK PENGGUNAAN RESMI';position:fixed;top:6px;left:0;right:0;text-align:center;font-size:9pt;color:rgba(220,38,38,.75);font-weight:700;letter-spacing:.1em;pointer-events:none;z-index:9999}}
 @media(max-width:768px){.sidebar{transform:translateX(-250px)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.hamburger{display:block}.form-row{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -384,6 +384,10 @@ const INSTRUMEN_SEKOLAH_MODEL = [
 
 // ===== STORAGE HELPERS =====
 function getData(key,def){try{return JSON.parse(localStorage.getItem(key))||def}catch(e){return def}}
+// Trial-print watermark helper
+function _apmApplyTrialPrintMark(){try{var l=getData('apm_lisensi',null);var isTrial=!!(l&&l.tier==='trial');document.body.classList.toggle('is-trial-print',isTrial);}catch(e){}}
+window.addEventListener('beforeprint',_apmApplyTrialPrintMark);
+document.addEventListener('DOMContentLoaded',_apmApplyTrialPrintMark);
 // Trial lock check
 function _apmIsTrialLocked(){
   try{
