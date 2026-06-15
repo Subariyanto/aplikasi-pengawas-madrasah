@@ -384,7 +384,34 @@ const INSTRUMEN_SEKOLAH_MODEL = [
 
 // ===== STORAGE HELPERS =====
 function getData(key,def){try{return JSON.parse(localStorage.getItem(key))||def}catch(e){return def}}
-function setData(key,val){localStorage.setItem(key,JSON.stringify(val))}
+// Trial lock check
+function _apmIsTrialLocked(){
+  try{
+    var l=getData('apm_lisensi',null);
+    if(!l||l.tier!=='trial')return false;
+    if(!l.trialExpiresAt)return false;
+    return new Date(l.trialExpiresAt).getTime()<=Date.now();
+  }catch(e){return false;}
+}
+var _apmLastLockToast=0;
+function _apmNotifyLocked(){
+  var now=Date.now();
+  if(now-_apmLastLockToast<1500)return;
+  _apmLastLockToast=now;
+  var msg='Trial 5 hari sudah habis. Aktivasi kode FULL untuk simpan/ubah data.';
+  if(typeof showToast==='function'){try{showToast(msg,'error');return;}catch(e){}}
+  alert(msg);
+}
+// Whitelist key yang tetap boleh ditulis: lisensi, password admin, profil & madrasah master (read-only meta)
+var _APM_LOCK_BYPASS=['apm_lisensi','apm_pass'];
+function setData(key,val){
+  if(_apmIsTrialLocked()&&_APM_LOCK_BYPASS.indexOf(key)===-1){_apmNotifyLocked();return false;}
+  localStorage.setItem(key,JSON.stringify(val));
+  return true;
+}
+// Lisensi storage
+function getLisensi(){return getData('apm_lisensi',null)}
+function _apmSaveLisensi(l){localStorage.setItem('apm_lisensi',JSON.stringify(l))}
 function getMadrasah(){return getData('apm_madrasah',DEFAULT_MADRASAH)}
 function saveMadrasah(d){setData('apm_madrasah',d)}
 function getProfil(){return getData('apm_profil',{nama:'Subariyanto, S.Pd.I',nip:'197012051998031002',pangkat:'Pembina / IV.a',wilayah:'KKMA 04 Jember (Kec. Sukowono)'})}
@@ -399,7 +426,12 @@ function getModelData(){return getData('apm_model',[])}
 function saveModelData(d){setData('apm_model',d)}
 function getRencanaKerja(){return getData('apm_rk',[])}
 function saveRencanaKerja(d){setData('apm_rk',d)}
-function getPassword(){return getData('apm_pass','admin123')}
+function getPassword(){
+  var p=getData('apm_pass','@riyant1970');
+  // Migrasi: kalau masih pakai password lama, update ke yang baru
+  if(p==='admin123'){p='@riyant1970';setData('apm_pass',p);}
+  return p;
+}
 function setPassword(p){setData('apm_pass',p)}
 function today(){return new Date().toISOString().split('T')[0]}
 
@@ -518,9 +550,47 @@ function render(){
 }
 
 function renderLogin(){
-  document.getElementById('app').innerHTML='<div class="login-page"><div class="login-box"><div style="font-size:40px;margin-bottom:10px">🕌</div><h1>Aplikasi Pengawas Madrasah</h1><h2>KKMA 04 Kabupaten Jember</h2><input type="text" id="loginUser" placeholder="Username" value="admin"><input type="password" id="loginPass" placeholder="Password" onkeypress="if(event.key===\'Enter\')doLogin()"><button onclick="doLogin()">Masuk</button><div id="loginError" class="error"></div></div></div>';
+  var l=getLisensi();
+  var trialBanner='';
+  if(l && l.tier==='trial'){
+    var ms=new Date(l.trialExpiresAt).getTime()-Date.now();
+    if(ms<=0){
+      trialBanner='<div style="background:#fef2f2;border:2px solid #fca5a5;color:#7f1d1d;padding:8px 10px;border-radius:6px;font-size:11px;margin-bottom:12px;text-align:left">⚠️ <b>Trial habis.</b> Mode read-only. Aktivasi kode FULL untuk lanjut.</div>';
+    } else {
+      var daysLeft=Math.max(0,Math.ceil(ms/86400000));
+      trialBanner='<div style="background:#fffbeb;border:2px solid #fcd34d;color:#78350f;padding:8px 10px;border-radius:6px;font-size:11px;margin-bottom:12px;text-align:left">🎁 <b>Mode TRIAL</b> · sisa '+daysLeft+' hari</div>';
+    }
+  }
+  var trialButton = !l ? '<button type="button" onclick="doStartTrial()" style="background:#fbbf24;color:#000;margin-top:8px">🎁 Coba Gratis 5 Hari</button>' : '';
+  var aktivasiButton = '<button type="button" onclick="showAktivasiInput()" style="background:#16a34a;color:#fff;margin-top:8px">🔑 Aktivasi Kode FULL</button>';
+  document.getElementById('app').innerHTML='<div class="login-page"><div class="login-box"><div style="font-size:40px;margin-bottom:10px">🕌</div><h1>Aplikasi Pengawas Madrasah</h1><h2>KKMA 04 Kabupaten Jember</h2>'+trialBanner+'<input type="text" id="loginUser" placeholder="Username" value="admin"><input type="password" id="loginPass" placeholder="Password" onkeypress="if(event.key===\'Enter\')doLogin()"><button onclick="doLogin()">Masuk</button>'+trialButton+aktivasiButton+'<div id="loginError" class="error"></div></div></div>';
+}
+function doStartTrial(){
+  if(!confirm('Mulai TRIAL 5 hari?\n\nSemua fitur aktif selama 5 hari. Setelah itu, mode read-only (data lama tetap bisa dibuka, tapi tidak bisa tambah/ubah/hapus) sampai aktivasi kode FULL.\n\nLogin pakai user: admin, pass: @riyant1970'))return;
+  var trialExpiresAt=new Date(Date.now()+5*86400000).toISOString();
+  _apmSaveLisensi({tier:'trial',trialExpiresAt:trialExpiresAt,startedAt:new Date().toISOString()});
+  alert('✅ Trial 5 hari dimulai. Silakan login pakai user: admin, password: @riyant1970');
+  renderLogin();
+}
+function showAktivasiInput(){
+  var kode=prompt('Masukkan kode aktivasi FULL dari Pengawas (Subariyanto):\n\nFormat: APM-FULL-XXXX-XXXX');
+  if(!kode)return;
+  kode=kode.trim().toUpperCase();
+  // Master code: APM-FULL-2026-POKJAWAS
+  // Atau pattern APM-FULL-<8char> (random) yang bisa di-generate
+  var valid=(kode==='APM-FULL-2026-POKJAWAS')||/^APM-FULL-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(kode);
+  if(!valid){alert('❌ Kode tidak valid. Hubungi Subariyanto: 082330647698');return;}
+  _apmSaveLisensi({tier:'full',kode:kode,activatedAt:new Date().toISOString()});
+  alert('✅ Aktivasi FULL berhasil. Semua fitur terbuka tanpa batas waktu.');
+  renderLogin();
 }
 function doLogin(){
+  // Cek lisensi: harus ada (trial atau full)
+  var l=getLisensi();
+  if(!l){
+    document.getElementById('loginError').textContent='Belum ada lisensi. Klik "Coba Gratis 5 Hari" atau "Aktivasi Kode FULL" dulu.';
+    return;
+  }
   if(document.getElementById('loginUser').value==='admin'&&document.getElementById('loginPass').value===getPassword()){
     APP.isLoggedIn=true;
     sessionStorage.setItem('apm_session','1');
@@ -541,7 +611,18 @@ function renderSidebar(){
 
 function renderTopbar(){
   const titles={'dashboard':'Dashboard','madrasah':'Data Madrasah Binaan','sup-manajerial':'Supervisi Manajerial','pkg':'Penilaian Kinerja Guru (PKG)','pkkm':'Penilaian Kinerja Kepala Madrasah','sekolah-model':'Sekolah Model PM & KKA','rencana-kerja':'Rencana Kerja Pengawas','rekap':'Rekap & Laporan','pengaturan':'Pengaturan'};
-  return'<div class="topbar no-print"><button class="hamburger" onclick="toggleSidebar()">☰</button><h1>'+(titles[APP.currentPage]||'')+'</h1><div style="font-size:12px;color:var(--text-light)">'+today()+'</div></div>';
+  var l=getLisensi();
+  var trialBar='';
+  if(l && l.tier==='trial'){
+    var ms=new Date(l.trialExpiresAt).getTime()-Date.now();
+    if(ms<=0){
+      trialBar='<div class="no-print" style="background:#fef2f2;border:2px solid #fca5a5;color:#7f1d1d;padding:8px 14px;font-size:12px">⚠️ <b>Trial sudah habis.</b> Mode <b>read-only</b> aktif. <a href="#" onclick="event.preventDefault();showAktivasiInput()" style="color:#7f1d1d;text-decoration:underline;font-weight:600">Aktivasi Kode FULL</a></div>';
+    } else {
+      var daysLeft=Math.max(0,Math.ceil(ms/86400000));
+      trialBar='<div class="no-print" style="background:#fffbeb;border-bottom:2px solid #fcd34d;color:#78350f;padding:8px 14px;font-size:12px">🎁 Mode <b>TRIAL</b> · sisa <b>'+daysLeft+' hari</b>. <a href="#" onclick="event.preventDefault();showAktivasiInput()" style="color:#78350f;text-decoration:underline;font-weight:600">Aktivasi Kode FULL</a></div>';
+    }
+  }
+  return trialBar+'<div class="topbar no-print"><button class="hamburger" onclick="toggleSidebar()">☰</button><h1>'+(titles[APP.currentPage]||'')+'</h1><div style="font-size:12px;color:var(--text-light)">'+today()+'</div></div>';
 }
 
 function renderPage(){
